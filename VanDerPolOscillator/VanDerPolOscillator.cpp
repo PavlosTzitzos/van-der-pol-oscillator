@@ -199,7 +199,10 @@ int main( int argc, char *argv[] )
     // Step 3: Print the result
     std::cout << "Final Performance is " << res[MAX_REPEATS-1] << std::endl;
     
-    // Step 4: Closing message
+    // Step 4: Plots
+    
+
+    // Step 5: Closing message
     std::cout << "End of program ... \n" << std::endl;
     return 0;
 }

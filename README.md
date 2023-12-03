@@ -36,4 +36,6 @@ At SPSA use a constant value but random for dtheta.
 
 - [LaTeX Report Template](https://www.overleaf.com/learn/latex/How_to_Write_a_Thesis_in_LaTeX_(Part_1)%3A_Basic_Structure)
 
-- [Plotting Library](https://vcpkg.link/ports/plplot)
+- [Plotting Library - official](http://www.gnuplot.info/)
+
+- [Plotting Library - tutorial](https://youtu.be/gsLIUtmTs8Q)
