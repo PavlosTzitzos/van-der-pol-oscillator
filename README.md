@@ -35,3 +35,5 @@ At SPSA use a constant value but random for dtheta.
 - [LaTeX in Visual Studio - Setup](https://guillaumeblanchet.medium.com/using-latex-in-visual-studio-code-on-windows-121032043dad)
 
 - [LaTeX Report Template](https://www.overleaf.com/learn/latex/How_to_Write_a_Thesis_in_LaTeX_(Part_1)%3A_Basic_Structure)
+
+- [Plotting Library](https://vcpkg.link/ports/plplot)

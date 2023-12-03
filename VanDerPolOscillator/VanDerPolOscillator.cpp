@@ -4,41 +4,67 @@
 #include <iostream>
 #include <complex>
 #include <fstream>
+#include <array>
 
-#define c 1         /*System Prameter c*/
-#define m 1         /*System Prameter m*/
-#define k 1         /*System Prameter k*/
-#define dtheta 0.05 /*Rate of change of theta angle between -0.1 <= dtheta <= -0.01 and 0.1 <= dtheta <= 0.01 */
-#define h 1       /*Rate of change of the gradient descend*/
-
-double* f(double x[2], double u);
-double* u(double x[2], double u);
-double perf(double x0[2], double theta[3], double tt[3]);
+#define c 1             /* System Prameter c */
+#define m 1             /* System Prameter m */
+#define k 1             /* System Prameter k */
+#define dtheta 0.001    /* Rate of change of theta angle between -0.1 <= dtheta <= -0.01 and 0.1 <= dtheta <= 0.01 */
+#define h 0.01          /* Rate of change of the gradient descend */
+#define dt 0.01         /* Time Step */
+#define timeFinal 100   /* Final Time */
+#define MAX_REPEATS 10  /* Maximum number of iterations for Gradient Descent */
+#define version 1       /* Choose version of code: 1, 2, 3 */
 
 
 /// <summary>
-/// Van der Pol State Space System
+/// Van der Pol State Space System of equations.
 /// </summary>
-/// <param name="x">Array of input x</param>
+/// <param name="x">Array of x - current postion</param>
+/// <param name="u">Control signal u</param>
 /// <returns>Array of x derivatives</returns>
-double* f( double x[2], double u)
+std::array<double,2> f( std::array<double,2> x, double u)
 {
-    double d_x[2] = {
-        x[1],
-        -(c / m) * (x[0] - 1) * (x[0] - 1) * x[1] - (k / m) * x[0] + (u / m)
-    };
+    //tex:
+    //$\begin{align*} \dot{\vec{x}} = f(\vec{x},u) \end{align*}$
+
+    //tex:
+    //$\begin{align*} \left[ \begin{matrix} \dot{x_1} \\ \dot{x_2} \end{matrix} \right] = \begin{bmatrix} x_2 \\ - \frac{c}{m} \cdot(x_1 - 1) ^ 2 \cdot x_2 - \frac{k}{m} \cdot x_1 + \frac{u}{m} \end{bmatrix} \end{align*}$
+    
+    std::array<double, 2> d_x {0,0};
+
+    d_x[0] = x[1];
+    d_x[1] = -(c / m) * (std::pow(x[0], 2) - 1) * x[1] - (k / m) * x[0] + (u / m);
 
     return d_x;
 }
 
-double u(double x[2], double theta[3])
+
+/// <summary>
+/// This is the control signal we apply to our system to guide it to our desired state.
+/// </summary>
+/// <param name="x">Array of x - current position</param>
+/// <param name="theta">Array of parameters</param>
+/// <returns>The control signal to be applied.</returns>
+double u(std::array<double,2> x, std::array<double,3> theta)
 {
-    double res = theta[0]*x[0] + theta[1] * x[1] + theta[2] * x[1] * (x[0] - 1) * (x[0] -1);
+    //tex:
+    //$\begin{align*} u(\theta ,\vec{x}) = \theta_1 \cdot x_1 + \theta_2 \cdot x_2 + \theta_2 \cdot x_2 \cdot (x_1 - 1)^2 \end{align*}$
+    
+    double res = theta[0]*x[0] + theta[1] * x[1] + theta[2] * x[1] * (std::pow(x[0],2) - 1);
 
     return res;
 }
 
-double perf(double x0[2], double theta[3], double tt[3], std::string filename)
+
+/// <summary>
+/// A performance function.
+/// </summary>
+/// <param name="x_old">initial performance</param>
+/// <param name="theta">theta parameters</param>
+/// <param name="filename">Name of file to save data</param>
+/// <returns></returns>
+double performace(std::array<double,2> x_old, std::array<double,3> theta, std::string filename)
 {
     std::ofstream results;
     results.open(filename, std::ofstream::app);
@@ -46,29 +72,41 @@ double perf(double x0[2], double theta[3], double tt[3], std::string filename)
     results << "t" << "\t" << "x[0]" << "\t" << "x[1]" << "\t" << "P" << "\t" << "theta[0]" << "\t" << "theta[1]" << "\t" << "theta[2]" << std::endl;
 
     double P = 0;
-    double x[2] = { 0,0 };
-    x[0] = x0[0];
-    x[1] = x0[1];
+    std::array<double,2> x_new;
+    x_new[0] = x_old[0];
+    x_new[1] = x_old[1];
+    
+    std::array<double,timeFinal> norm;
+
+    for (int i = 0;i < timeFinal;i++)
+        norm[i] = 0;
+
     // std::cout << "Performance P starts from : " << P << std::endl;
     // std::cout << "Position x starts from : [ " << x[0] << " , " << x[1] << " ]" << std::endl;
     // std::cout << "Theta starts from : [ " << theta[0] << " , " << theta[1] << " , " << theta[2] << " ]" << std::endl;
 
-    for (double t = tt[0] ; t < tt[2] ; t+=tt[1])
+    for (int t = 0 ; t < timeFinal ; t++)
     {
         // Call the f function - derivative of x vector
 
         // Calculate the next x vector 
-        x[0] = x[0] + tt[2] * f(x, u(x, theta))[0];
-        x[1] = x[1] + tt[2] * f(x, u(x, theta))[1];
+        x_new[0] = x_old[0] + dt * f(x_old, u(x_old, theta))[0];
+        x_new[1] = x_old[1] + dt * f(x_old, u(x_old, theta))[1];
         // std::cout << "Position x at time " << t << " is : [ " << x[0] << " , " << x[1] << " ]" << std::endl;
 
+        // Calculate the norm
+        norm[t] = sqrt(std::abs(std::pow(x_new[0], 2)) + std::abs(std::pow(x_new[1], 2)));
         // Calculate the performance
-        P = P + sqrt( std::abs(x[0])*std::abs(x[0]) + std::abs(x[1])*std::abs(x[1]) );
+        P = P + norm[t];
         // std::cout << "Performance is : " << P << std::endl;
+        
+        // Replace x old with x new:
+        x_old[0] = x_new[0];
+        x_old[1] = x_new[1];
 
         if (results.is_open())
         {
-            results << t << "\t" << x[0] << "\t" << x[1] << "\t" << P << "\t" << theta[0] << "\t" << theta[1] << "\t" << theta[2] << std::endl;
+            results << t << "\t" << x_new[0] << "\t" << x_new[1] << "\t" << norm[t] << "\t" << P << "\t" << theta[0] << "\t" << theta[1] << "\t" << theta[2] << std::endl;
         }
         else std::cout << "\nUnable to open file\n";
     }
@@ -76,17 +114,31 @@ double perf(double x0[2], double theta[3], double tt[3], std::string filename)
 }
 
 
-double* gradient_descent(double x0[2], double theta[3], double tt[3])
+/// <summary>
+/// Gradient Descent Algorithm with Performance calculation.
+/// </summary>
+/// <param name="x0">Initial position</param>
+/// <param name="theta">Initial theta</param>
+/// <returns>Array of performances</returns>
+std::array<double,MAX_REPEATS> gradient_descent(std::array<double,2> x0, std::array<double,3> theta)
 {
-    // Initialize result
-    double P[4] = { 0,0,0,0 };
+    std::array<double, 4> P = {0,0,0,0};
+    double Perf = 1000;
+    std::array<double, MAX_REPEATS> P_res;
+
+    for (int i = 0;i < MAX_REPEATS;i++)
+        P_res[i] = 0;
+
     std::cout << "Initial Perf = [ "<< P[0] <<" , " << P[1] <<" , " << P[2] << " , " << P[3] << " ]" << std::endl;
-    for(int i=0;i<10;i++)
+
+    int counter = 0;
+    while(std::abs(Perf)>0.1 && counter < MAX_REPEATS)
     {
         std::ofstream results;
-        std::string filename = "results_" + std::to_string(i) + ".txt";
+        std::string filename = "results_" + std::to_string(counter) + ".txt";
         results.open(filename);
-        double local_theta[3] = { 0,0,0 };
+        
+        std::array<double,3> local_theta;
         local_theta[0] = theta[0];
         local_theta[1] = theta[1];
         local_theta[2] = theta[2];
@@ -94,59 +146,60 @@ double* gradient_descent(double x0[2], double theta[3], double tt[3])
         // std::cout << "Gradient Descend loop : " << i << "\n" << std::endl;
         results << "\n" << "Current theta : [ " << theta[0] << " , " << theta[1] << " , " << theta[2] << " ] " << std::endl;
 
-        P[0] = perf(x0, local_theta, tt, filename);
+        // Compute Performances
+        P[0] = performace(x0, local_theta, filename);
         local_theta[0] = theta[0] + dtheta;
-        P[1] = perf(x0, local_theta, tt, filename);
+        P[1] = performace(x0, local_theta, filename);
         local_theta[0] = theta[0];
         local_theta[1] = theta[1] + dtheta;
-        P[2] = perf(x0, local_theta, tt, filename);
+        P[2] = performace(x0, local_theta, filename);
         local_theta[1] = theta[1];
         local_theta[2] = theta[2] + dtheta;
-        P[3] = perf(x0, local_theta, tt, filename);
+        P[3] = performace(x0, local_theta, filename);
 
         // Calculate new theta
-        for (int j = 0;j < 3;j++) {
-            theta[j] = theta[j] - h * (P[j+1] - P[j]) / dtheta;
-        }
+        theta[0] = theta[0] + h * (P[0] - P[1]) / dtheta;
+        theta[1] = theta[1] + h * (P[0] - P[2]) / dtheta;
+        theta[2] = theta[2] + h * (P[0] - P[3]) / dtheta;
 
+        // Save performance
+        P_res[counter] = P[0];
+        
+        // Close file
         results.close();
 
-        if (P[0] < 0.1 || isinf<double>(P[0]) || isnan<double>(P[0])) break;
-        if (P[1] < 0.1 || isinf<double>(P[1]) || isnan<double>(P[1])) break;
-        if (P[2] < 0.1 || isinf<double>(P[2]) || isnan<double>(P[2])) break;
-        if (P[3] < 0.1 || isinf<double>(P[3]) || isnan<double>(P[3])) break;
+        // Check for anomalies
+        if (isinf<double>(P[0]) || isnan<double>(P[0])) break;
+        if (isinf<double>(P[1]) || isnan<double>(P[1])) break;
+        if (isinf<double>(P[2]) || isnan<double>(P[2])) break;
+        if (isinf<double>(P[3]) || isnan<double>(P[3])) break;
+
+        counter += 1;
     }
 
-    return P;
+    return P_res;
 }
 
 
-int main()
-{
-    // Step 0: Test chart
 
-    // Step 1: Initial conditions
+int main( int argc, char *argv[] )
+{
     std::cout << "Start of program ... \n" << std::endl;
-    double x0[2] = {10,-10};
-    double theta[3] = {2,-4,5};
-    // Time parameters for simulation
-    double tt[3] = {
-        0,  // start
-        0.01,// step
-        1   // stop
-    };
+    // Step 1: Initial conditions
+    std::array<double,2> x0 = {1,-1};
+    std::array<double,3> theta = {0,0,0};
+
     std::cout << "Initial Postion is x0 = [ "<< x0[0] <<" , " << x0[1] <<" ]" << std::endl;
     std::cout << "Initial Theta is theta = [ " << theta[0] << " , " << theta[1] << " , " << theta[2] << " ]" << std::endl;
-    // Step 1: Call the performance function
-    double* res;
-    res = gradient_descent(x0, theta, tt);
-    // Step 3: Print the results
     
-    for (int j = 0;j < 4;j++) {
-        std::cout << "\n" << std::endl;
-        std::cout << "Result P" << j << " : " << res[j] << std::endl;
-        std::cout << "\n" << std::endl;
-    }
+    // Step 1: Call the performance function
+    std::array<double,MAX_REPEATS> res;
+    res = gradient_descent(x0, theta);
+    
+    // Step 3: Print the result
+    std::cout << "Final Performance is " << res[MAX_REPEATS-1] << std::endl;
+    
+    // Step 4: Closing message
     std::cout << "End of program ... \n" << std::endl;
     return 0;
 }
