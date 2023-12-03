@@ -30,3 +30,8 @@ At SPSA use a constant value but random for dtheta.
 - [ ] d) theta1 , theta2 , theta3 -> 0
 - [ ] keep: x1,x2 = 0.1 (generally small values)
 
+# Sources :
+
+- [LaTeX in Visual Studio - Setup](https://guillaumeblanchet.medium.com/using-latex-in-visual-studio-code-on-windows-121032043dad)
+
+- [LaTeX Report Template](https://www.overleaf.com/learn/latex/How_to_Write_a_Thesis_in_LaTeX_(Part_1)%3A_Basic_Structure)

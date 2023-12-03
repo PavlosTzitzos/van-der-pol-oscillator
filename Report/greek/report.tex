@@ -1,37 +1,66 @@
-\documentclass[12pt]{article}
+\documentclass[12pt,twoside]{report}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage[a4paper,width=150mm,top=25mm,bottom=25mm,bindingoffset=6mm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\graphicspath{ {../images/} }
 
 \usepackage{amsmath}
 
-\usepackage{graphicx}
+\usepackage[english]{babel}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhead{}
+\fancyhead[RO,LE]{Report Title}
+\fancyfoot{}
+\fancyfoot[LE,RO]{\thepage}
+\fancyfoot[LO,CE]{Chapter \thechapter}
+\fancyfoot[CO,RE]{Author Name}
 
-\usepackage{hyperref}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
 
-\usepackage[utf8]{inputenc}
+\usepackage{biblatex}
+\addbibresource{references.bib}
 
-\title{My LaTeX Title}
-
-\author{Guillaume Blanchet}
-
-\date{2020–01–13}
+\title{Report Title}
+\author{Tzitzos Pavlos , George Polymeridis}
+\date{\today}
 
 \begin{document}
 
-\maketitle
+\input{titlepage}
 
-\section{Introduction}
+\tableofcontents
 
-Blah Blah Blah
+\chapter{Introduction}
+\input{chapters/introduction}
 
-\begin{itemize}
+\chapter{Methods}
+\input{chapters/chapter02}
 
-\item Hey
+\chapter{Code C++}
+\input{chapters/chapter03}
 
-\item Oh!
+\chapter{Results 1}
+\input{chapters/chapter04}
 
-\item Let’s
+\chapter{Sensitivity Analysis}
+\input{chapters/chapter05}
 
-\item Go!
+\chapter{Results 2}
+\input{chapters/chapter06}
 
-\end{itemize}
+\chapter{Conclusion}
+\input{chapters/conclusion}
+
+\appendix
+\chapter{Appendix}
+\input{chapters/appendix}
+
+\printbibliography
 
 \end{document}
+
+
