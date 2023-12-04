@@ -39,3 +39,5 @@ At SPSA use a constant value but random for dtheta.
 - [Plotting Library - official](http://www.gnuplot.info/)
 
 - [Plotting Library - tutorial](https://youtu.be/gsLIUtmTs8Q)
+
+- [SPSA](https://www.jhuapl.edu/SPSA/index.html)
