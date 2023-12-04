@@ -6,12 +6,12 @@ At SPSA use a constant value but random for dtheta.
 
 ## ToDo List :
 - [ ] Write the report using latex. (check below)
-- [ ] Fix code to work for finite differences.
+- [x] Fix code to work for finite differences.
 - [ ] Make SPSA algorithm work. (SPSA spall)
 - [ ] make plot of position in 2d.
-- [ ] make plot of performance vs time tt.
-- [ ] Add comments with latex.
-- [ ] add links in readme for the resources (everything that is not a reference in the report)
+- [x] make plot of performance vs time tt.
+- [x] Add comments with latex.
+- [x] add links in readme for the resources (everything that is not a reference in the report)
 
 ## Report Structure:
 - [ ] 1) Problem , Methods (Gradient descent: FD , SPSA)
@@ -40,4 +40,4 @@ At SPSA use a constant value but random for dtheta.
 
 - [Plotting Library - tutorial](https://youtu.be/gsLIUtmTs8Q)
 
-- [SPSA](https://www.jhuapl.edu/SPSA/index.html)
+- [SPSA spall](https://www.jhuapl.edu/SPSA/index.html)
