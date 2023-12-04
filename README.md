@@ -1,6 +1,6 @@
 # van-der-pol-oscillator
 
-At FD use a constant value between -0.1 <= dtheta <= 0.1.
+At FD use a constant value between -0.1 &leq; &Delta; &theta; &leq; 0.1.
 
 At SPSA use a constant value but random for dtheta.
 
