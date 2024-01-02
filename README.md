@@ -7,7 +7,7 @@ At SPSA use a constant value but random for dtheta.
 ## ToDo List :
 - [ ] Write the report using latex. (check below)
 - [x] Fix code to work for finite differences.
-- [ ] Make SPSA algorithm work. (SPSA spall)
+- [x] Make SPSA algorithm work. (SPSA spall)
 - [ ] make plot of position in 2d.
 - [x] make plot of performance vs time tt.
 - [x] Add comments with latex.
