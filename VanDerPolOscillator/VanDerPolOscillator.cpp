@@ -76,7 +76,7 @@ enum algorithms
 };
 
 /// <summary>
-/// Van der Pol State Space System of equations. This is used for FD , SPSA and LQR.
+/// Van der Pol State Space System of equations. This is used for FD and SPSA.
 /// </summary>
 /// <param name="x">: Array of state space variables x</param>
 /// <param name="u">: Control signal</param>
@@ -98,6 +98,30 @@ std::array<double, 2> f(std::array<double, 2> x, double u_local, double k = 1, d
 
     d_x[0] = x[1];
     d_x[1] = -(c / m) * (std::pow(x[0], 2) - 1) * x[1] - (k / m) * x[0] + (u_local / m);
+
+    return d_x;
+}
+
+/// <summary>
+/// Van der Pol State Space System of equations. This is used for LQR.
+/// </summary>
+/// <param name="x">: Array of state space variables x</param>
+/// <param name="u">: Control signal</param>
+/// <returns>Array of derivatives of state space variables x</returns>
+std::array<double, 2> fLQR(std::array<double, 2> x, double u_local)
+{
+
+    //tex:
+    //$\begin{align*} \dot{\vec{x}} = f(\vec{x},u) \end{align*}$
+
+    //tex:
+    //$\begin{align*} \left[ \begin{matrix} \dot{x_1} \\ \dot{x_2} \end{matrix} \right] = \bar{A} \cdot \vec{x} + \bar{B} \cdot \bar{u} = \left[ \begin{matrix} 0 && 1 \\ 0 && 0 \end{matrix} \right] \cdot \left[ \begin{matrix} x_1 \\ x_2 \end{matrix} \right] + \left[ \begin{matrix} 0 \\ 1 \end{matrix} \right] \cdot \bar{u} \end{align*}$
+
+
+    std::array<double, 2> d_x{ 0,0 }; // derivative of x
+
+    d_x[0] = x[1];
+    d_x[1] = u_local;
 
     return d_x;
 }
@@ -263,11 +287,10 @@ double performance(std::array<double,2> x_old, std::array<double,3> theta, int t
 /// A performance function, used for LQR.
 /// </summary>
 /// <param name="x_old">: Initial value of state space variables x</param>
-/// <param name="theta">: Theta parameters</param>
-/// <param name="theta_sel">: Theta dimension. Must be 0 for 2 theta or 1 for 3 theta</param>
+/// <param name="K">: K parameters</param>
 /// <param name="filename">: File name to save data</param>
 /// <returns>Total performance</returns>
-double performanceLQR(std::array<double, 2> x_old, std::array<double, 2> K, std::array<double, 3> systemParameters = { 1,1,1 }, std::string filename = "dump.txt")
+double performanceLQR(std::array<double, 2> x_old, std::array<double, 2> K, std::string filename = "dump.txt")
 {
     std::ofstream results;
     results.open(filename, std::ofstream::app);
@@ -292,8 +315,8 @@ double performanceLQR(std::array<double, 2> x_old, std::array<double, 2> K, std:
         //tex:
         //$\begin{align*} \vec{x}_{new} = \vec{x}_{old} + dt \cdot \dot{\vec{x}} = \vec{x}_{old} + dt \cdot f(\vec{x}_{old} , u(\vec{x}_{old} , \vec{\theta} ) ) \end{align*}$
 
-        x_new[0] = x_old[0] + timeStep * f(x_old, uLQR(x_old, K), systemParameters[0], systemParameters[1], systemParameters[2])[0];
-        x_new[1] = x_old[1] + timeStep * f(x_old, uLQR(x_old, K), systemParameters[0], systemParameters[1], systemParameters[2])[1];
+        x_new[0] = x_old[0] + timeStep * fLQR(x_old, uLQR(x_old, K))[0];
+        x_new[1] = x_old[1] + timeStep * fLQR(x_old, uLQR(x_old, K))[1];
         
         // Calculate the norm
         norm[t] = sqrt(std::abs(std::pow(x_new[0], 2)) + std::abs(std::pow(x_new[1], 2)));
@@ -406,10 +429,6 @@ std::array<double, 4> riccati2(std::array<double, 4> matA, std::array<double, 2>
 /// <returns>The calculated parameters k1, k2.</returns>
 std::array<double, 2> lqr(std::array<double, 2>x_old, double q, double r, std::array<double, 3> systemParameters = { 1,1,1 })
 {
-    double k = systemParameters[0];
-    double m = systemParameters[1];
-    double c = systemParameters[2];
-
     double matR = r;
     double invR = 1 / r;
 
@@ -421,19 +440,13 @@ std::array<double, 2> lqr(std::array<double, 2>x_old, double q, double r, std::a
     tempP[2] = matQ[2];
     tempP[3] = matQ[3];
 
-    std::array<double, 4> matA = { 0, 1, k1, k2 };
+    std::array<double, 4> matA = { 0, 1, 0, 0 };
 
-    std::array<double, 4> transA = { 0, k1, 1, k2 };
+    std::array<double, 2> matB = { 0 , 1 };
 
-    std::array<double, 2> matB = { 0 , 1 / m };
-
-    std::array<double, 2> transB = { 0, 1 / m };
+    std::array<double, 2> transB = { 0, 1 };
 
     std::array<double, 2> matK;
-
-    std::array<double, 2> x_new;
-
-    double u_bar; // or sometimes in bibliography u_star
 
     // Step 1 : Calculate the P matrix backwards using algebraic riccati equation
     //tex:
@@ -738,6 +751,7 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradient_descent(std::array<doubl
                 //tex:
                 //$\begin{align*} \hat{g}_k (\hat{\theta} _k) = \frac{y(\hat{\theta}_k + c_k \Delta_k) - y(\hat{\theta}_k - c_k \Delta_k)}{2 c_k} \begin{bmatrix} \Delta_{k,1} ^{-1} \\ \Delta_{k,2} ^{-1} \\ \vdots \\ \Delta_{k,p} ^{-1} \end{bmatrix} \end{align*}$
 
+                
                 // This step is seperated into two parts , the first is at Step 3 above , the second at step 5 below.
                 // Please note that in the above perfomances the P[0] ~ P[2] are the positive y(+) values
                 // and the P[3] ~ P[5] are the negative y(-) values of the above formula.
@@ -908,7 +922,7 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradient_descent(std::array<doubl
                 results << "\n" << "Current K : [ " << K[0] << " , " << K[1] << " ] " << std::endl;
 
                 // Step 2 : Calculate performance
-                Perf = performanceLQR(x0, K, systemParameters, filename);
+                Perf = performanceLQR(x0, K, filename);
 
                 // Close file
                 results.close();
