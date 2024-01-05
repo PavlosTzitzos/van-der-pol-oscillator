@@ -1,5 +1,8 @@
 // VanDerPolOscillator.cpp : This file contains the 'main' function. Program execution begins and ends there.
 // LaTeX Comments Extension : https://github.com/kindermannhubert/VsTeXCommentsExtension
+// Doxygen Comments : https://www.doxygen.nl/manual/docblocks.html
+// GnuPlot : https://www.youtube.com/watch?v=gsLIUtmTs8Q
+
 
 #include <iostream>
 #include <random>
@@ -9,7 +12,7 @@
 #include <numeric>
 #include <vector>
 
-//#include "gnuplot-iostream.h"
+#include "gnuplot-iostream.h"
 
 #define dtheta 0.001    /* Rate of change of theta angle between -0.1 <= dtheta <= -0.01 and 0.1 <= dtheta <= 0.01 */
 #define hetta 0.01      /* Rate of change of the gradient descend */
@@ -44,46 +47,28 @@
 
 #define SPSA_END 0.01   /* Creteria value for SPSA termination should be small enough */
 
-/// <summary>
-/// Choose available algorithms
-/// </summary>
+
+/** An enum type.
+*   Choose available algorithms.
+*/
 enum algorithms
 {
-    /// <summary>
-    /// Finite Differences with 2 theta
-    /// </summary>
-    FD2,
-    /// <summary>
-    /// Finite Differences with 3 theta
-    /// </summary>
-    FD3,
-    /// <summary>
-    /// Simultaneous Perturbation Stochastic Approximation with 2 theta
-    /// </summary>
-    SPSA2,
-    /// <summary>
-    /// Simultaneous Perturbation Stochastic Approximation with 3 theta
-    /// </summary>
-    SPSA3,
-    /// <summary>
-    /// Linear Quadratic Regulator
-    /// </summary>
-    LQR,
-    /// <summary>
-    /// Adaptive Controller
-    /// </summary>
-    AC
+    FD2,    /* Finite Differences with 2 theta */
+    FD3,    /* Finite Differences with 3 theta */
+    SPSA2,  /* Simultaneous Perturbation Stochastic Approximation with 2 theta */
+    SPSA3,  /* Simultaneous Perturbation Stochastic Approximation with 3 theta */
+    LQR,    /* Linear Quadratic Regulator */
+    AC      /* Adaptive Controller */
 };
 
-/// <summary>
-/// Van der Pol State Space System of equations. This is used for FD and SPSA.
-/// </summary>
-/// <param name="x">: Array of state space variables x</param>
-/// <param name="u">: Control signal</param>
-/// <param name="k">: System parameter k default is 1</param>
-/// <param name="m">: System parameter m default is 1</param>
-/// <param name="c">: System parameter c default is 1</param>
-/// <returns>Array of derivatives of state space variables x</returns>
+/** Van der Pol State Space System of equations. This is used for FD and SPSA.
+* @param x : Array of state space variables x
+* @param u : Control signal
+* @param k : System parameter k default is 1
+* @param m : System parameter m default is 1
+* @param c : System parameter c default is 1
+* @return Array of derivatives of state space variables x
+*/
 std::array<double, 2> f(std::array<double, 2> x, double u_local, double k = 1, double m = 1, double c = 1)
 {
 
@@ -102,12 +87,11 @@ std::array<double, 2> f(std::array<double, 2> x, double u_local, double k = 1, d
     return d_x;
 }
 
-/// <summary>
-/// Van der Pol State Space System of equations. This is used for LQR.
-/// </summary>
-/// <param name="x">: Array of state space variables x</param>
-/// <param name="u">: Control signal</param>
-/// <returns>Array of derivatives of state space variables x</returns>
+/** Van der Pol State Space System of equations. This is used for LQR.
+* @param x : Array of state space variables x
+* @param u : Control signal
+* @return Array of derivatives of state space variables x
+*/
 std::array<double, 2> fLQR(std::array<double, 2> x, double u_local)
 {
 
@@ -126,14 +110,13 @@ std::array<double, 2> fLQR(std::array<double, 2> x, double u_local)
     return d_x;
 }
 
-/// <summary>
-/// Van der Pol State Space System of equations. This is used for Adaptive Control only.
-/// </summary>
-/// <param name="x">: Array of state space variables x</param>
-/// <param name="u_local">: Control signal</param>
-/// <param name="thetaR">: real theta</param>
-/// <param name="m">: System Parameter m (default value is 1)</param>
-/// <returns>Array of derivatives of state space variables x</returns>
+/** Van der Pol State Space System of equations. This is used for Adaptive Control only.
+* @param x : Array of state space variables x
+* @param u_local : Control signal
+* @param thetaR : real theta
+* @param m : System parameter m default is 1
+* @return Array of derivatives of state space variables x
+*/
 std::array<double, 2> fAC(std::array<double, 2> x, double u_local, std::array<double, 2> thetaR, double m = 1)
 {
 
@@ -152,12 +135,11 @@ std::array<double, 2> fAC(std::array<double, 2> x, double u_local, std::array<do
     return d_x;
 }
 
-/// <summary>
-/// This is the control signal we apply to our system to guide it to our desired state. Version with 3 theta parameters.
-/// </summary>
-/// <param name="x">: Array of state space variables x</param>
-/// <param name="theta">: Array of parameters(1,2,3)</param>
-/// <returns>The control signal to be applied.</returns>
+/** This is the control signal we apply to our system to guide it to our desired state. Version with 3 theta parameters.
+* @param x : Array of state space variables x
+* @param theta : Array of parameters(1,2,3)
+* @return The control signal to be applied
+*/
 double u3(std::array<double,2> x, std::array<double,3> theta)
 {
     //tex:
@@ -168,12 +150,11 @@ double u3(std::array<double,2> x, std::array<double,3> theta)
     return u;
 }
 
-/// <summary>
-/// This is the control signal we apply to our system to guide it to our desired state. Version with 2 theta parameters.
-/// </summary>
-/// <param name="x">: Array of state space variables x</param>
-/// <param name="theta">: Array of parameters (1,2)</param>
-/// <returns>The control signal to be applied.</returns>
+/** This is the control signal we apply to our system to guide it to our desired state. Version with 2 theta parameters.
+* @param x : Array of state space variables x
+* @param theta : Array of parameters(1,2)
+* @return The control signal to be applied
+*/
 double u2(std::array<double, 2> x, std::array<double, 3> theta)
 {
     //tex:
@@ -184,12 +165,11 @@ double u2(std::array<double, 2> x, std::array<double, 3> theta)
     return u;
 }
 
-/// <summary>
-/// This is the control signal we apply to our system to guide it to our desired state. This is used for LQR.
-/// </summary>
-/// <param name="x">: Array of state space variables x</param>
-/// <param name="K">: Array of parameters (1,2)</param>
-/// <returns>The control signal to be applied.</returns>
+/** This is the control signal we apply to our system to guide it to our desired state. This is used for LQR.
+* @param x : Array of state space variables x
+* @param K : Array of parameters(1,2)
+* @return The control signal to be applied
+*/
 double uLQR(std::array<double, 2> x, std::array<double, 2> K)
 {
     //tex:
@@ -200,13 +180,11 @@ double uLQR(std::array<double, 2> x, std::array<double, 2> K)
     return u;
 }
 
-
-/// <summary>
-/// This is the control signal we apply to our system to guide it to our desired state. This is used for Adaptive Control.
-/// </summary>
-/// <param name="x">: Array of state space variables x</param>
-/// <param name="thetaApprox">: Array of theta approximation parameters</param>
-/// <returns>The control signal to be applied.</returns>
+/** This is the control signal we apply to our system to guide it to our desired state. This is used for Adaptive Control.
+* @param x : Array of state space variables x
+* @param thetaApprox : Array of theta estimated parameters
+* @return The control signal to be applied
+*/
 double uAC(std::array<double, 2> x, std::array<double, 2> thetaApprox, double m = 1)
 {
     //tex:
@@ -217,15 +195,13 @@ double uAC(std::array<double, 2> x, std::array<double, 2> thetaApprox, double m 
     return u;
 }
 
-
-/// <summary>
-/// A performance function, used for FD and SPSA.
-/// </summary>
-/// <param name="x_old">: Initial value of state space variables x</param>
-/// <param name="theta">: Theta parameters</param>
-/// <param name="theta_sel">: Theta dimension. Must be 0 for 2 theta or 1 for 3 theta</param>
-/// <param name="filename">: File name to save data</param>
-/// <returns>Total performance</returns>
+/** A performance function, used for FD and SPSA.
+* @param x_old : Array of state space variables x
+* @param theta : Array of theta estimated parameters
+* @param theta_sel : Theta dimension. Must be 0 for 2 theta or 1 for 3 theta
+* @param filename : File name to save data
+* @return Total performance
+*/
 double performance(std::array<double,2> x_old, std::array<double,3> theta, int theta_sel, std::array<double, 3> systemParameters = { 1,1,1 }, std::string filename = "dump.txt")
 {
     std::ofstream results;
@@ -283,13 +259,12 @@ double performance(std::array<double,2> x_old, std::array<double,3> theta, int t
     return P;
 }
 
-/// <summary>
-/// A performance function, used for LQR.
-/// </summary>
-/// <param name="x_old">: Initial value of state space variables x</param>
-/// <param name="K">: K parameters</param>
-/// <param name="filename">: File name to save data</param>
-/// <returns>Total performance</returns>
+/** A performance function, used for LQR.
+* @param x_old : Initial value of state space variables x
+* @param K : K parameters
+* @param filename : File name to save data
+* @return Total performance
+*/
 double performanceLQR(std::array<double, 2> x_old, std::array<double, 2> K, std::string filename = "dump.txt")
 {
     std::ofstream results;
@@ -340,15 +315,14 @@ double performanceLQR(std::array<double, 2> x_old, std::array<double, 2> K, std:
     return P;
 }
 
-/// <summary>
-/// Algebraic Riccati Equation Solver. Solved for a 2x2 system of equations.
-/// </summary>
-/// <param name="matA">: A matrix (2x2)</param>
-/// <param name="matB">: B matrix (1x2)</param>
-/// <param name="matQ">: Q cost matrix (2x2)</param>
-/// <param name="R">: R value difault is 1</param>
-/// <param name="matPold">: Previous P solution</param>
-/// <returns>The final time P=P(N) matrix</returns>
+/** Algebraic Riccati Equation Solver. Solved for a 2x2 matrices or a system of 4 equations.
+* @param matA : A matrix (2x2)
+* @param matB : B matrix (1x2)
+* @param matQ : Q cost matrix (2x2)
+* @param matPold : Previous P solution
+* @param R : R value difault is 1
+* @return The final time P=P(N) matrix
+*/
 std::array<double, 4> riccati2(std::array<double, 4> matA, std::array<double, 2> matB, std::array<double, 4> matQ, std::array<double, 4> matPold, double R = 1 )
 {
     
@@ -418,16 +392,13 @@ std::array<double, 4> riccati2(std::array<double, 4> matA, std::array<double, 2>
     return matPnew;
 }
 
-
-/// <summary>
-/// LQR method using Algebraic Riccati Equation.
-/// </summary>
-/// <param name="x_old">: Initial position</param>
-/// <param name="q">: Diagonal elements of Q 2x2 matrix</param>
-/// <param name="r">: R element</param>
-/// <param name="systemParameters">System parameters (k,m,c) default is (1,1,1)</param>
-/// <returns>The calculated parameters k1, k2.</returns>
-std::array<double, 2> lqr(std::array<double, 2>x_old, double q, double r, std::array<double, 3> systemParameters = { 1,1,1 })
+/** LQR method using Algebraic Riccati Equation.
+* @param x_old : Initial state
+* @param q : Diagonal elements of Q 2x2 matrix
+* @param r : R element
+* @return The calculated parameters k1, k2
+*/
+std::array<double, 2> lqr(std::array<double, 2>x_old, double q, double r)
 {
     double matR = r;
     double invR = 1 / r;
@@ -471,15 +442,14 @@ std::array<double, 2> lqr(std::array<double, 2>x_old, double q, double r, std::a
     return matK;
 }
 
-/// <summary>
-/// This is the Value function, which gives the minimum LQR cost-to-go.
-/// </summary>
-/// <param name="x">: The position x</param>
-/// <param name="thetaA">: Theta Approximation (theta hat)</param>
-/// <param name="thetaR">: Theta Real (theta we try to approximate)</param>
-/// <param name="dThetaE">: Theta Error (theta difference from real)</param>
-/// <param name="m">: System parameter</param>
-/// <returns>The thetaA derivative</returns>
+/** This is the Value function, which gives the minimum LQR cost-to-go.
+* @param x : Initial state
+* @param thetaA :Theta Approximation(Estimated) (theta hat)
+* @param thetaR : Theta Real (theta we try to approximate)
+* @param dthetaE : Slope of Theta Error (theta difference from real)
+* @param m : System parameter default is 1
+* @return The thetaA derivative
+*/
 std::array<double, 2> value(std::array<double, 2> x, std::array<double, 2> thetaA, std::array<double, 2> thetaR, std::array<double, 2> dThetaE, double m = 1)
 {
     //Error of theta = real(actual) theta - approximated(calculated) theta
@@ -544,14 +514,13 @@ std::array<double, 2> value(std::array<double, 2> x, std::array<double, 2> theta
     return res;
 }
 
-/// <summary>
-/// Gradient Descent with Performance calculation.
-/// </summary>
-/// <param name="x0">Initial position</param>
-/// <param name="theta">Initial theta</param>
-/// <param name="systemParameters">System parameters (k,m,c) default is (1,1,1)</param>
-/// <returns>Array of performances</returns>
-std::array<std::array<double, MAX_REPEATS>, 2> gradient_descent(std::array<double, 2> x0, std::array<double, 3> theta, std::array<double, 3> systemParameters = {1,1,1}, std::string st = "", algorithms algo_sel = FD2)
+/** Gradient Descent with Algorithm selection.
+* @param x0 : Initial state
+* @param theta :Theta theta
+* @param systemParameters : System parameters (k,m,c) default is (1,1,1)
+* @return Array of performances
+*/
+std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double, 2> x0, std::array<double, 3> theta, std::array<double, 3> systemParameters = {1,1,1}, std::string st = "", algorithms algo_sel = FD2)
 {
     std::array<std::array<double, MAX_REPEATS>, 2> P_res;
     
@@ -969,9 +938,10 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradient_descent(std::array<doubl
 
                 // Step 2 : Calculate New theta hat
                 //tex:
-                // $\begin{align*} \vec{\hat{\theta}} = \vec{\hat{\theta}} + dt \cdot \gamma \cdot \vec{A} \end{align*}$
-                theta[0] = theta[0] + dt * gac * P[0];
-                theta[1] = theta[1] + dt * gac * P[1];
+                // $\begin{align*} \vec{\hat{\theta}} = \vec{\hat{\theta}} - d \theta \cdot \gamma \cdot A \end{align*}$
+                
+                theta[0] = theta[0] - dt * gac * P[0];
+                theta[1] = theta[1] - dt * gac * P[1];
 
                 // Step 4 : Iteration or termination
 
@@ -1025,22 +995,22 @@ int main( int argc, char *argv[] )
 
     // Step 1: Calculate using Finite Differences with 2 theta and m=c=k=1
     algorithms sel = FD2;
-    res = gradient_descent(x0, theta, temp_sysParameters, "step1", sel);
+    res = gradientDescent(x0, theta, temp_sysParameters, "step1", sel);
     std::cout << "Final Performance is " << res[0][MAX_REPEATS - 1] << std::endl;
-    
+    /*
     // Step 2: Calculate using Finite Differences with 3 theta and m=c=k=1
     sel = FD3;
-    res = gradient_descent(x0, theta, temp_sysParameters, "step2", sel);
+    res = gradientDescent(x0, theta, temp_sysParameters, "step2", sel);
     std::cout << "Final Performance is " << res[0][MAX_REPEATS - 1] << std::endl;
 
     // Step 3: Calculate using SPSA with 2 theta and m=c=k=1
     sel = SPSA2;
-    res = gradient_descent(x0, theta, temp_sysParameters, "step3", sel);
+    res = gradientDescent(x0, theta, temp_sysParameters, "step3", sel);
     std::cout << "Final Performance is P+ = " << res[0][MAX_REPEATS - 1] << " P- =  " << res[1][MAX_REPEATS - 1] << std::endl;
 
     // Step 4: Calculate using SPSA with 3 theta and m=c=k=1
     sel = SPSA3;
-    res = gradient_descent(x0, theta, temp_sysParameters, "step4", sel);
+    res = gradientDescent(x0, theta, temp_sysParameters, "step4", sel);
     std::cout << "Final Performance is P+ = " << res[0][MAX_REPEATS - 1] << " P- =  " << res[1][MAX_REPEATS - 1] << std::endl;
 
     // Step 5: Calculate using Finite Differences with 2 theta and (m,c,k) = sysParameters
@@ -1051,7 +1021,7 @@ int main( int argc, char *argv[] )
             temp_sysParameters[j] = sysParameters[i][j];
         }
         sel = FD2;
-        res = gradient_descent(x0, theta, temp_sysParameters, "step5_" + std::to_string(i), sel);
+        res = gradientDescent(x0, theta, temp_sysParameters, "step5_" + std::to_string(i), sel);
         // Print the result
         std::cout << "Final Performance is " << res[0][MAX_REPEATS - 1] << std::endl;
 
@@ -1064,7 +1034,7 @@ int main( int argc, char *argv[] )
             temp_sysParameters[j] = sysParameters[i][j];
         }
         sel = FD3;
-        res = gradient_descent(x0, theta, temp_sysParameters, "step6_" + std::to_string(i), sel);
+        res = gradientDescent(x0, theta, temp_sysParameters, "step6_" + std::to_string(i), sel);
         std::cout << "Final Performance is " << res[0][MAX_REPEATS - 1] << std::endl;
 
     }
@@ -1076,7 +1046,7 @@ int main( int argc, char *argv[] )
             temp_sysParameters[j] = sysParameters[i][j];
         }
         sel = SPSA2;
-        res = gradient_descent(x0, theta, temp_sysParameters, "step7_" + std::to_string(i), sel);
+        res = gradientDescent(x0, theta, temp_sysParameters, "step7_" + std::to_string(i), sel);
         std::cout << "Final Performance is P+ = " << res[0][MAX_REPEATS - 1] << " P- =  " << res[1][MAX_REPEATS - 1] << std::endl;
 
     }
@@ -1088,7 +1058,7 @@ int main( int argc, char *argv[] )
             temp_sysParameters[j] = sysParameters[i][j];
         }
         sel = SPSA3;
-        res = gradient_descent(x0, theta, temp_sysParameters, "step8_" + std::to_string(i), sel);
+        res = gradientDescent(x0, theta, temp_sysParameters, "step8_" + std::to_string(i), sel);
         std::cout << "Final Performance is P+ = " << res[0][MAX_REPEATS - 1] << " P- =  " << res[1][MAX_REPEATS - 1] << std::endl;
     }
     // Step 9: Calculate using Linear Quandratic Control
@@ -1097,42 +1067,31 @@ int main( int argc, char *argv[] )
     temp_sysParameters[0] = sysParameters[0][1];
     temp_sysParameters[0] = sysParameters[0][2];
 
-    res = gradient_descent(x0, theta, temp_sysParameters, "step9", sel);
+    res = gradientDescent(x0, theta, temp_sysParameters, "step9", sel);
     std::cout << "Final Performance is P+ = " << res[0][MAX_REPEATS - 1] << " P- = " << res[1][MAX_REPEATS - 1] << std::endl;
 
     // Step 10: Calculate using Adaptive Control
     sel = AC;
-    res = gradient_descent(x0, theta, temp_sysParameters, "step10", sel);
+    res = gradientDescent(x0, theta, temp_sysParameters, "step10", sel);
     std::cout << "Final Performance is P0 = " << res[0][MAX_REPEATS - 1] << " P0 = " << res[1][MAX_REPEATS - 1] << std::endl;
-
+    */
     // Step 10: Sensitivity Analysis
 
-    /*
+    
     // Step 11: Plots
     Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\"");
     std::vector<double> v0;
     for (int i = 0; i < MAX_REPEATS;i++)
     {
-        v0.push_back(res_fd[i]);
+        v0.push_back(res[i]);
     }
-    //std::partial_sum(v0.begin(), v0.end(), v0.begin());
+    std::partial_sum(v0.begin(), v0.end(), v0.begin());
     gp << "set title 'Graph of Performance'\n";
     gp << "plot '-' with lines title 'v0'\n";
     gp.send(v0);
     std::cin.get();
-    */
+    
 
     std::cout << "End of program ... \n" << std::endl;
     return 0;
 }
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
