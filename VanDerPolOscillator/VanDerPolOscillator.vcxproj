@@ -136,6 +136,9 @@
   <ItemGroup>
     <ClInclude Include="gnuplot-iostream.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="eigen\Eigen\Dense" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

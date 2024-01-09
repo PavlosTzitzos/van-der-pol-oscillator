@@ -11,6 +11,7 @@
 #include <array>
 #include <numeric>
 #include <vector>
+#include "eigen/Eigen/Dense"
 
 #include "gnuplot-iostream.h"
 
@@ -25,6 +26,7 @@
 
 /* LQR */
 #define N 100           /* Riccati number of iterations */
+#define timeFinalLQR 5000 /* Final time for LQR performance */
 
 /* Adaptive Control Parameters */
 #define dt 0.01         /* Step parameter for AC */
@@ -71,6 +73,7 @@ enum algorithms
 * @param c : System parameter c default is 1
 * @return Array of derivatives of state space variables x
 */
+
 std::array<double, 2> f(std::array<double, 2> x, double u_local, double k = 1, double m = 1, double c = 1)
 {
 
@@ -94,6 +97,7 @@ std::array<double, 2> f(std::array<double, 2> x, double u_local, double k = 1, d
 * @param u : Control signal
 * @return Array of derivatives of state space variables x
 */
+/*
 std::array<double, 2> fLQR(std::array<double, 2> x, double u_local)
 {
 
@@ -111,7 +115,7 @@ std::array<double, 2> fLQR(std::array<double, 2> x, double u_local)
 
     return d_x;
 }
-
+*/
 /** Van der Pol State Space System of equations. This is used for Adaptive Control only.
 * @param x : Array of state space variables x
 * @param u_local : Control signal
@@ -119,6 +123,7 @@ std::array<double, 2> fLQR(std::array<double, 2> x, double u_local)
 * @param m : System parameter m default is 1
 * @return Array of derivatives of state space variables x
 */
+
 std::array<double, 2> fAC(std::array<double, 2> x, double u_local, std::array<double, 2> thetaR, double m = 1)
 {
 
@@ -142,6 +147,7 @@ std::array<double, 2> fAC(std::array<double, 2> x, double u_local, std::array<do
 * @param theta : Array of parameters(1,2,3)
 * @return The control signal to be applied
 */
+
 double u3(std::array<double,2> x, std::array<double,3> theta)
 {
     //tex:
@@ -157,6 +163,7 @@ double u3(std::array<double,2> x, std::array<double,3> theta)
 * @param theta : Array of parameters(1,2)
 * @return The control signal to be applied
 */
+
 double u2(std::array<double, 2> x, std::array<double, 3> theta)
 {
     //tex:
@@ -172,6 +179,7 @@ double u2(std::array<double, 2> x, std::array<double, 3> theta)
 * @param K : Array of parameters(1,2)
 * @return The control signal to be applied
 */
+/*
 double uLQR(std::array<double, 2> x, std::array<double, 2> K)
 {
     //tex:
@@ -181,7 +189,7 @@ double uLQR(std::array<double, 2> x, std::array<double, 2> K)
 
     return u;
 }
-
+*/
 /** This is the control signal we apply to our system to guide it to our desired state. This is used for Adaptive Control.
 * @param x : Array of state space variables x
 * @param thetaApprox : Array of theta estimated parameters
@@ -258,13 +266,13 @@ std::array<std::array<double, timeFinal+1>, 3> performance(std::array<double,2> 
         x_old[0] = x_new[0];
         x_old[1] = x_new[1];
 
-        /*
-        if (results.is_open())
-        {
-            results << t << "\t" << x_new[0] << "\t" << x_new[1] << "\t" << norm[t] << "\t" << P << "\t" << theta[0] << "\t" << theta[1] << "\t" << theta[2] << std::endl;
-        }
-        else std::cout << "\nUnable to open file\n";
-        */
+        
+        //if (results.is_open())
+        //{
+        //    results << t << "\t" << x_new[0] << "\t" << x_new[1] << "\t" << norm[t] << "\t" << P << "\t" << theta[0] << "\t" << theta[1] << "\t" << theta[2] << std::endl;
+        //}
+        //else std::cout << "\nUnable to open file\n";
+        
         res[0][t+1] = P;
         res[1][t+1] = x_old[0];
         res[2][t+1] = x_old[1];
@@ -279,7 +287,8 @@ std::array<std::array<double, timeFinal+1>, 3> performance(std::array<double,2> 
 * @param filename : File name to save data
 * @return Total performance
 */
-std::array<std::array<double, timeFinal + 1>, 3> performanceLQR(std::array<double, 2> x_old, std::array<double, 2> K, std::string filename = "dump.txt")
+/*
+std::array<std::array<double, timeFinalLQR + 1>, 3> performanceLQR(std::array<double, 2> x_old, std::array<double, 2> K, std::string filename = "dump.txt")
 {
     std::ofstream results;
     results.open(filename, std::ofstream::app);
@@ -291,18 +300,18 @@ std::array<std::array<double, timeFinal + 1>, 3> performanceLQR(std::array<doubl
     x_new[0] = x_old[0];
     x_new[1] = x_old[1];
 
-    std::array<double, timeFinal> norm;
+    std::array<double, timeFinalLQR> norm;
 
-    std::array<std::array<double, timeFinal + 1>, 3> res;
+    std::array<std::array<double, timeFinalLQR + 1>, 3> res;
 
-    for (int i = 0;i < timeFinal;i++)
+    for (int i = 0;i < timeFinalLQR;i++)
         norm[i] = 0;
 
     res[0][0] = P;
     res[1][0] = x_old[0];
     res[2][0] = x_old[1];
 
-    for (int t = 0; t < timeFinal; t++)
+    for (int t = 0; t < timeFinalLQR; t++)
     {
         // Store x values into vectors to plot them later.
 
@@ -337,7 +346,7 @@ std::array<std::array<double, timeFinal + 1>, 3> performanceLQR(std::array<doubl
     }
     return res;
 }
-
+*/
 /** Algebraic Riccati Equation Solver. Solved for a 2x2 matrices or a system of 4 equations.
 * @param matA : A matrix (2x2)
 * @param matB : B matrix (1x2)
@@ -346,6 +355,7 @@ std::array<std::array<double, timeFinal + 1>, 3> performanceLQR(std::array<doubl
 * @param R : R value difault is 1
 * @return The final time P=P(N) matrix
 */
+/*
 std::array<double, 4> riccati2(std::array<double, 4> matA, std::array<double, 2> matB, std::array<double, 4> matQ, std::array<double, 4> matPold, double R = 1 )
 {
     
@@ -414,13 +424,14 @@ std::array<double, 4> riccati2(std::array<double, 4> matA, std::array<double, 2>
     //std::cout << "]\n";
     return matPnew;
 }
-
+*/
 /** LQR method using Algebraic Riccati Equation.
 * @param x_old : Initial state
 * @param q : Diagonal elements of Q 2x2 matrix
 * @param r : R element
 * @return The calculated parameters k1, k2
 */
+/*
 std::array<double, 2> lqr(std::array<double, 2>x_old, double q, double r)
 {
     double matR = r;
@@ -440,8 +451,6 @@ std::array<double, 2> lqr(std::array<double, 2>x_old, double q, double r)
 
     std::array<double, 2> transB = { 0, 1 };
 
-    std::array<double, 2> matK;
-
     // Step 1 : Calculate the P matrix backwards using algebraic riccati equation
     //tex:
     //$\begin{align*} P =  Q + A^T P A - A^T P B (R + B^T P B)^{-1} B^T P A\end{align*}$
@@ -459,12 +468,18 @@ std::array<double, 2> lqr(std::array<double, 2>x_old, double q, double r)
     //tex:
     //$\begin{align*} K = (R + B^T P B)^{-1} \cdot B^T P A \end{align*}$
 
-    matK[0] = 1/(matR + (transB[0] * matP[0] + transB[1] * matP[2]) * matB[0]) * ( (transB[0] * matP[0] + transB[1] * matP[2]) * matA[0] + (transB[0] * matP[1] + transB[1] * matP[3]) * matA[1] );
-    matK[1] = 1/(matR + (transB[0] * matP[1] + transB[1] * matP[3]) * matB[1]) * ( (transB[0] * matP[0] + transB[1] * matP[2]) * matA[2] + (transB[0] * matP[1] + transB[1] * matP[3]) * matA[3] );
+    //matK[0] = 1/(matR + (transB[0] * matP[0] + transB[1] * matP[2]) * matB[0]) * ( (transB[0] * matP[0] + transB[1] * matP[2]) * matA[0] + (transB[0] * matP[1] + transB[1] * matP[3]) * matA[1] );
+    //matK[1] = 1/(matR + (transB[0] * matP[1] + transB[1] * matP[3]) * matB[1]) * ( (transB[0] * matP[0] + transB[1] * matP[2]) * matA[2] + (transB[0] * matP[1] + transB[1] * matP[3]) * matA[3] );
+
+
+    std::array<double, 2> matK = {0,0};
+
+    matK[0] = invR * (transB[0] * matP[0] + transB[1] * matP[2]);
+    matK[1] = invR * (transB[0] * matP[1] + transB[1] * matP[3]);
 
     return matK;
 }
-
+*/
 /** This is the Value function, which gives the minimum LQR cost-to-go.
 * @param x : Initial state
 * @param thetaA :Theta Approximation(Estimated) (theta hat)
@@ -473,9 +488,10 @@ std::array<double, 2> lqr(std::array<double, 2>x_old, double q, double r)
 * @param m : System parameter default is 1
 * @return The thetaA derivative
 */
-std::array<std::array<double,timeFinal>, 5> value(std::array<double, 2> x, std::array<double, 2> thetaA, std::array<double, 2> thetaR, std::array<double, 2> dThetaE, double m = 1)
+
+std::array<std::array<double,timeFinal + 3>,2> value(std::array<double, 2> x, std::array<double, 2> thetaA, std::array<double, 2> thetaR, std::array<double, 2> dThetaE, double m = 1)
 {
-    std::array<std::array<double, timeFinal>, 5> res;
+    std::array<std::array<double, timeFinal + 3>, 2> res;
     int counter = 0;
     //Error of theta = real(actual) theta - approximated(calculated) theta
     //tex:
@@ -538,13 +554,79 @@ std::array<std::array<double,timeFinal>, 5> value(std::array<double, 2> x, std::
 
         res[0][counter] = x[0];
         res[1][counter] = x[1];
-        res[2][counter] = A1;
-        res[3][counter] = A2;
+        counter++;
     }
-    res[4][0] = counter;
+    res[0][counter + 1] = A1;
+    res[1][counter + 1] = A2;
+    res[0][timeFinal + 2] = counter;
     return res;
 }
 
+/*
+std::array<double, timeFinalLQR + 1> lqrTop(std::array<double, 2> x0, std::array<double, 3> theta, std::array<double, 3> systemParameters = { 1,1,1 }, std::string st = "", algorithms algo_sel = FD2, std::array<double, 10> constantParameters = { hetta, dtheta, betta, gamma, alpha, A, a, p, gac, dt })
+{
+
+    std::array<double, timeFinalLQR> v0, v1;
+
+    std::array<std::array<double, timeFinalLQR + 1>, 3> resPerf;
+    double Perf = 0.01;
+    int counter = 0;
+    std::array<double, 2> local_x, K;
+    local_x[0] = x0[0];
+    local_x[1] = x0[1];
+
+
+    std::array<double, timeFinalLQR + 1> ret;
+
+    while (std::abs(Perf) < 10 && counter < MAX_REPEATS)
+    {
+        std::ofstream results;
+        std::string filename = "results_lqr_" + std::to_string(counter) + ".txt";
+        results.open(filename);
+        results << "Something " << std::endl;
+
+        // Step 1 : Calculate K matrix
+        K = lqr(local_x, 1, 1);
+        //results << "\n" << "Current K : [ " << K[0] << " , " << K[1] << " ] " << std::endl;
+
+        // Step 2 : Calculate performance
+        resPerf = performanceLQR(x0, K, filename);
+
+        // Prepare data for diagram :
+        for (int i = 0;i < timeFinalLQR;i++)
+        {
+            ret[i] = resPerf[0][i];
+            if (std::abs(resPerf[1][i]) > 1000 || isnan<double>(resPerf[1][i]))
+                v0[i] = 0; // x1
+            else
+                v0[i] = resPerf[1][i];
+            if (std::abs(resPerf[2][i]) > 1000 || isnan<double>(resPerf[2][i]))
+                v1[i] = 0; // x2
+            else
+                v1[i] = resPerf[2][i];
+        }
+
+        Perf = resPerf[0][timeFinalLQR];
+        // Close file
+        results.close();
+
+        // Check for anomalies
+        if (isinf<double>(Perf) || isnan<double>(Perf)) break;
+
+        counter += 1;
+    }
+    Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\"");
+
+    gp << "set title 'Graph of x1 and x2 over iterations for LQR'\n";
+    gp << "plot '-' with lines title 'x1',"
+        << "'-' with lines title 'x2'\n";
+    gp.send(v0);
+    gp.send(v1);
+
+    std::cin.get();
+    return ret;
+}
+*/
 /** Gradient Descent with Algorithm selection.
 * @param x0 : Initial state
 * @param theta :Theta theta
@@ -578,7 +660,8 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
     * column 3: A2
     * column 4: only one element a counter (how many iterations the value function made)
     */
-    std::array<std::array<double, timeFinal>, 5> resPerfAC;
+
+    std::array<std::array<double, timeFinal + 3>, 2> resPerfAC;
 
     for (int i = 0;i < 2;i++)
         for (int j = 0;j < MAX_REPEATS;j++)
@@ -1024,57 +1107,7 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
         }
         case LQR: // Linear Quadratic Regulator Algorithm
         {
-            double Perf = 0.01;
-            int counter = 0;
-            std::array<double, 2> local_x, K;
-            local_x[0] = x0[0];
-            local_x[1] = x0[1];
-
-            while (std::abs(Perf) < 10 && counter < MAX_REPEATS)
-            {
-                std::ofstream results;
-                std::string filename = "results_lqr_" + std::to_string(counter) + ".txt";
-                results.open(filename);
-                results << "Something " << std::endl;
-
-                // Step 1 : Calculate K matrix
-                K = lqr(local_x, 1, 1);
-                results << "\n" << "Current K : [ " << K[0] << " , " << K[1] << " ] " << std::endl;
-
-                // Step 2 : Calculate performance
-                resPerf = performanceLQR(x0, K, filename);
-
-                // Prepare data for diagram :
-                for (int i = 0;i < timeFinal;i++)
-                {
-                    if (std::abs(resPerf[1][i]) > 1000 || isnan<double>(resPerf[1][i]))
-                        v0[i] = 0; // x1
-                    else
-                        v0[i] = resPerf[1][i];
-                    if (std::abs(resPerf[2][i]) > 1000 || isnan<double>(resPerf[2][i]))
-                        v1[i] = 0; // x2
-                    else
-                        v1[i] = resPerf[2][i];
-                }
-
-                Perf = resPerf[0][timeFinal];
-                // Close file
-                results.close();
-
-                // Check for anomalies
-                if (isinf<double>(Perf) || isnan<double>(Perf)) break;
-
-                counter += 1;
-            }
-            Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\"");
-
-            gp << "set title 'Graph of x1 and x2 over iterations for LQR'\n";
-            gp << "plot '-' with lines title 'x1',"
-                << "'-' with lines title 'x2'\n";
-            gp.send(v0);
-            gp.send(v1);
-
-            std::cin.get();
+            // DO NOT USE THIS SWITCH CASE
             return P_res;
         }
         case AC: // Adaptive Control ALgorithm
@@ -1111,8 +1144,9 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
                 // Step 1 : Calculate Gradient of theta hat
                 resPerfAC = value(x0, thetaHat, thetaR, dThetaError, m);
                 
-                P[0] = resPerfAC[2][(int)resPerfAC[4][0]];
-                P[1] = resPerfAC[3][(int)resPerfAC[4][0]];
+                int counter = resPerfAC[0][timeFinal + 2];
+                P[0] = resPerfAC[0][counter + 1];
+                P[1] = resPerfAC[1][counter + 1];
 
                 // Step 2 : Calculate New theta hat
                 //tex:
@@ -1138,7 +1172,7 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
                 if (end_creteria[0] > AC_END || end_creteria[1] > AC_END)
                     break;
             }
-            for (int i = 0;i < resPerfAC[4][0];i++)
+            for (int i = 0;i < resPerfAC[0][timeFinal + 2];i++)
             {
                 if (std::abs(resPerfAC[0][i]) > 10000000 || isnan<double>(resPerfAC[0][i]))
                     v0[i] = 0;
@@ -1164,6 +1198,7 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
             return P_res;
     }
 }
+
 
 /**Function for Sensitivity Analysis - NOT ready YET
 * Varies different constants of the algorithms except the system paramters (m,c,k) and the initial conditions.
@@ -1368,7 +1403,7 @@ int main(int argc, char* argv[])
     Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\"");
     std::vector<double> v0, v1;
 
-    
+    /*
     // Step 1: Calculate using Finite Differences with 2 theta and m=c=k=1
     sel = FD2;
     res = gradientDescent(x0, theta, temp_sysParameters, "step1", sel);
@@ -1383,7 +1418,7 @@ int main(int argc, char* argv[])
 
     std::cin.get();
     
-    /*
+    
     std::array<double, 10> constantParameters2 = { 0.01, 0.001, betta, gamma, alpha, A, a, p, gac, dt };
     // Step 2: Calculate using Finite Differences with 3 theta and m=c=k=1
     sel = FD3;
@@ -1526,9 +1561,10 @@ int main(int argc, char* argv[])
 
         std::cin.get();
     }
-    
-    // Step 9: Calculate using Linear Quandratic Control
-    sel = LQR;
+    */
+    /*
+    // Step 9: Calculate using Adaptive Control
+    sel = AC;
     temp_sysParameters[0] = sysParameters[0][0];
     temp_sysParameters[0] = sysParameters[0][1];
     temp_sysParameters[0] = sysParameters[0][2];
@@ -1539,16 +1575,26 @@ int main(int argc, char* argv[])
     {
         v0.push_back(res[0][i]);
     }
+    gp << "set title 'Graph of Performance over iterations for AC'\n";
+    gp << "plot '-' with lines title 'v0'\n";
+    gp.send(v0);
+
+    std::cin.get();
+    */
+    // Step 10: Calculate using Linear Quandratic Control
+    /*
+    x0 = { 0.1,0.1 };
+    std::array<double, timeFinalLQR + 1> resLQR = lqrTop(x0, theta, temp_sysParameters, "step10", sel);
+    for (int i = 0; i < MAX_REPEATS;i++)
+    {
+        v0.push_back(resLQR[i]);
+    }
     gp << "set title 'Graph of Performance over iterations for LQR'\n";
     gp << "plot '-' with lines title 'v0'\n";
     gp.send(v0);
 
     std::cin.get();
-
     */
-    // Step 10: Calculate using Adaptive Control
-    sel = AC;
-    res = gradientDescent(x0, theta, temp_sysParameters, "step10", sel);
     /*
     // Step 11: Calculate using Adaptive Control with (m,c,k) = sysParameters
     for (int i = 0;i < 8;i++)
@@ -1572,7 +1618,7 @@ int main(int argc, char* argv[])
     }
     */
     // Step 10: Sensitivity Analysis
-    //sensitivityAnalysis();
+    sensitivityAnalysis();
     /*
     // Step 11: Plots
     Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\"");
