@@ -1,26 +1,8 @@
 # van-der-pol-oscillator
 
-At FD use a constant value between -0.1 &leq; &Delta; &theta; &leq; 0.1.
-
-At SPSA use a constant value but random for dtheta.
-
 ## ToDo List :
 - [ ] Write the report using latex. (check below)
-- [x] Fix code to work for finite differences.
-- [x] Make SPSA algorithm work. (SPSA spall)
 - [ ] make plot of position in 2d.
-- [x] make plot of performance vs time tt.
-- [x] Add comments with latex.
-- [x] add links in readme for the resources (everything that is not a reference in the report)
-
-## Report Structure:
-- [ ] 1) Problem , Methods (Gradient descent: FD , SPSA)
-- [ ] 2) Code description
-- [ ] 3) For m=c=k=1 what are the perf , init , final
-- [ ] 4) Sensitivity Analysis (check below)
-- [ ] 5) k , c , m : all possible combinations of the 1,0,-1 using the best of the above
-- [ ] 6) the plots of the above combinations
-- [ ] 7) References
 
 ## Sensitivity Analysis
 - [ ] Keep constant all parameters except one (lets say parameter p) and each time give it random values ( p = rand() )
@@ -40,4 +22,3 @@ At SPSA use a constant value but random for dtheta.
 
 - [Plotting Library - tutorial](https://youtu.be/gsLIUtmTs8Q)
 
-- [SPSA spall](https://www.jhuapl.edu/SPSA/index.html)
