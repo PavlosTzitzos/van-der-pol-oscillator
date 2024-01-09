@@ -14,10 +14,12 @@
 
 #include "gnuplot-iostream.h"
 
+#define timeFinal 1000   /* Stop Value of performance function and Value function of AC */
+
+/* FD and GD */
 #define dtheta 0.001    /* Rate of change of theta angle between -0.1 <= dtheta <= -0.01 and 0.1 <= dtheta <= 0.01 */
 #define hetta 0.01      /* Rate of change of the gradient descend */
 #define timeStep 0.01   /* Time Step (must approach zero: dt->0) */
-#define timeFinal 1000   /* Stop Value of performance function */
 #define MAX_REPEATS 100 /* Maximum number of iterations for Gradient Descent Top algorithm */
 #define version 1       /* Choose version of code: 1 for FD, 2 for SPSA, 3 will be added */
 
@@ -471,8 +473,10 @@ std::array<double, 2> lqr(std::array<double, 2>x_old, double q, double r)
 * @param m : System parameter default is 1
 * @return The thetaA derivative
 */
-std::array<double, 2> value(std::array<double, 2> x, std::array<double, 2> thetaA, std::array<double, 2> thetaR, std::array<double, 2> dThetaE, double m = 1)
+std::array<std::array<double,timeFinal>, 5> value(std::array<double, 2> x, std::array<double, 2> thetaA, std::array<double, 2> thetaR, std::array<double, 2> dThetaE, double m = 1)
 {
+    std::array<std::array<double, timeFinal>, 5> res;
+    int counter = 0;
     //Error of theta = real(actual) theta - approximated(calculated) theta
     //tex:
     //$\begin{align*} \vec{\tilde{\theta}} = \vec{\theta} - \vec{\hat{\theta}} \end{align*}$
@@ -491,7 +495,7 @@ std::array<double, 2> value(std::array<double, 2> x, std::array<double, 2> theta
     double dV = 0; // Value of the derivative of the function V
 
     // Trying to minimize the W function, actually trying to find the values of theta hat that make the derivative W zero
-    while (std::abs(dW) > 0.01)
+    while (std::abs(dW) > 0.01 && counter <timeFinal)
     {
         // Step 1: Calculate A1 and A2
         //tex:
@@ -531,10 +535,13 @@ std::array<double, 2> value(std::array<double, 2> x, std::array<double, 2> theta
         // NOTE : maybe x_new is needed in the future
         x[0] = x_new[0];
         x[1] = x_new[1];
+
+        res[0][counter] = x[0];
+        res[1][counter] = x[1];
+        res[2][counter] = A1;
+        res[3][counter] = A2;
     }
-
-    std::array<double, 2> res = { A1, A2 };
-
+    res[4][0] = counter;
     return res;
 }
 
@@ -563,6 +570,15 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
     std::array<double, timeFinal> v0, v1;
     
     std::array<std::array<double, timeFinal+1>, 3> resPerf;
+
+    /** Used by AC
+    * column 0: x1
+    * column 1: x2
+    * column 2: A1
+    * column 3: A2
+    * column 4: only one element a counter (how many iterations the value function made)
+    */
+    std::array<std::array<double, timeFinal>, 5> resPerfAC;
 
     for (int i = 0;i < 2;i++)
         for (int j = 0;j < MAX_REPEATS;j++)
@@ -630,10 +646,10 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
                 results.close();
 
                 // Check for anomalies
-                if (isinf<double>(P[0]) || isnan<double>(P[0])) return P_res;
-                if (isinf<double>(P[1]) || isnan<double>(P[1])) return P_res;
-                if (isinf<double>(P[2]) || isnan<double>(P[2])) return P_res;
-                if (isinf<double>(P[3]) || isnan<double>(P[3])) return P_res;
+                if (isinf<double>(P[0]) || isnan<double>(P[0])) break;
+                if (isinf<double>(P[1]) || isnan<double>(P[1])) break;
+                if (isinf<double>(P[2]) || isnan<double>(P[2])) break;
+                if (isinf<double>(P[3]) || isnan<double>(P[3])) break;
 
                 counter += 1;
             }
@@ -790,11 +806,11 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
                 // Prepare data for diagram :
                 for (int i = 0;i < timeFinal;i++)
                 {
-                    if (std::abs(resPerf[1][i]) > 1000 || isnan<double>(resPerf[1][i]))
+                    if (std::abs(resPerf[1][i]) > 10000000 || isnan<double>(resPerf[1][i]))
                         v0[i] = 0;
                     else
                         v0[i] = resPerf[1][i];
-                    if (std::abs(resPerf[2][i]) > 1000 || isnan<double>(resPerf[2][i]))
+                    if (std::abs(resPerf[2][i]) > 10000000 || isnan<double>(resPerf[2][i]))
                         v1[i] = 0;
                     else
                         v1[i] = resPerf[2][i];
@@ -997,7 +1013,7 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
             }
             Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\"");
 
-            gp << "set title 'Graph of x1 and x2 over iterations for SPSA with 2 theta'\n";
+            gp << "set title 'Graph of x1 and x2 over iterations for SPSA with 3 theta'\n";
             gp << "plot '-' with lines title 'x1',"
                 << "'-' with lines title 'x2'\n";
             gp.send(v0);
@@ -1093,7 +1109,10 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
                 dThetaError[1] = local_gac * P[1];
 
                 // Step 1 : Calculate Gradient of theta hat
-                P = value(x0, thetaHat, thetaR, dThetaError, m);
+                resPerfAC = value(x0, thetaHat, thetaR, dThetaError, m);
+                
+                P[0] = resPerfAC[2][(int)resPerfAC[4][0]];
+                P[1] = resPerfAC[3][(int)resPerfAC[4][0]];
 
                 // Step 2 : Calculate New theta hat
                 //tex:
@@ -1108,17 +1127,37 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
                 end_creteria[1] = std::abs(local_dt * local_gac * P[1]);
 
                 // Check for anomalies
-                if (isinf<double>(P[0]) || isnan<double>(P[0])) return P_res;
-                if (isinf<double>(P[1]) || isnan<double>(P[1])) return P_res;
+                if (isinf<double>(P[0]) || isnan<double>(P[0])) break;
+                if (isinf<double>(P[1]) || isnan<double>(P[1])) break;
 
                 // Save Performance value
-                P_res[0][i] = P[0];
-                P_res[1][i] = P[1];
+                //P_res[0][i] = P[0];
+                //P_res[1][i] = P[1];
 
 
                 if (end_creteria[0] > AC_END || end_creteria[1] > AC_END)
-                    return P_res;
+                    break;
             }
+            for (int i = 0;i < resPerfAC[4][0];i++)
+            {
+                if (std::abs(resPerfAC[0][i]) > 10000000 || isnan<double>(resPerfAC[0][i]))
+                    v0[i] = 0;
+                else
+                    v0[i] = P[i];
+                if (std::abs(resPerfAC[1][i]) > 10000000 || isnan<double>(resPerfAC[1][i]))
+                    v1[i] = 0;
+                else
+                    v1[i] = resPerf[2][i];
+            }
+            Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\"");
+
+            gp << "set title 'Graph of x1 and x2 over iterations for SPSA with 2 theta'\n";
+            gp << "plot '-' with lines title 'x1',"
+                << "'-' with lines title 'x2'\n";
+            gp.send(v0);
+            gp.send(v1);
+
+            std::cin.get();
             return P_res;
         }
         default:
@@ -1329,7 +1368,7 @@ int main(int argc, char* argv[])
     Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\"");
     std::vector<double> v0, v1;
 
-    /*
+    
     // Step 1: Calculate using Finite Differences with 2 theta and m=c=k=1
     sel = FD2;
     res = gradientDescent(x0, theta, temp_sysParameters, "step1", sel);
@@ -1344,7 +1383,7 @@ int main(int argc, char* argv[])
 
     std::cin.get();
     
-    
+    /*
     std::array<double, 10> constantParameters2 = { 0.01, 0.001, betta, gamma, alpha, A, a, p, gac, dt };
     // Step 2: Calculate using Finite Differences with 3 theta and m=c=k=1
     sel = FD3;
@@ -1359,7 +1398,7 @@ int main(int argc, char* argv[])
     gp.send(v0);
 
     std::cin.get();
-    */
+    
     
     // Step 3: Calculate using SPSA with 2 theta and m=c=k=1
     theta[0] = -0.1;
@@ -1378,26 +1417,28 @@ int main(int argc, char* argv[])
     gp.send(v0);
 
     std::cin.get();
-    
+    */
     /*
     // Step 4: Calculate using SPSA with 3 theta and m=c=k=1
-    theta[0] = -0.1;
-    theta[1] = 0.1;
+    std::array<double, 10> constantParameters4 = { hetta, dtheta, 2, 0.01, 0.09, 0.1, 0.2, 0.5, gac, dt };
+    theta[0] = 0.1;
+    theta[1] = 0.2;
     theta[2] = 1;
     sel = SPSA3;
-    res = gradientDescent(x0, theta, temp_sysParameters, "step4", sel);
+    res = gradientDescent(x0, theta, temp_sysParameters, "step4", sel,constantParameters4);
     std::cout << "Final Performance is P+ = " << res[0][MAX_REPEATS - 1] << " P- =  " << res[1][MAX_REPEATS - 1] << std::endl;
     for (int i = 0; i < MAX_REPEATS;i++)
     {
         v0.push_back(res[0][i]);
     }
-    gp << "set title 'Graph of Performance over iterations for FD with 3 theta'\n";
+    gp << "set title 'Graph of Performance over iterations for SPSA with 3 theta'\n";
     gp << "plot '-' with lines title 'v0'\n";
     gp.send(v0);
 
     std::cin.get();
     
 
+    
     // Step 5: Calculate using Finite Differences with 2 theta and (m,c,k) = sysParameters
     for (int i = 0;i < 8;i++)
     {
@@ -1409,9 +1450,9 @@ int main(int argc, char* argv[])
         res = gradientDescent(x0, theta, temp_sysParameters, "step5_" + std::to_string(i), sel);
         // Print the result
         std::cout << "Final Performance is " << res[0][MAX_REPEATS - 1] << std::endl;
-        for (int i = 0; i < MAX_REPEATS;i++)
+        for (int k = 0; k < MAX_REPEATS;k++)
         {
-            v0.push_back(res[0][i]);
+            v0.push_back(res[0][k]);
         }
         gp << "set title 'Graph of Performance over iterations for FD with 2 theta'\n";
         gp << "plot '-' with lines title 'v0'\n";
@@ -1420,6 +1461,7 @@ int main(int argc, char* argv[])
         std::cin.get();
     }
     
+
     // Step 6: Calculate using Finite Differences with 3 theta and (m,c,k) = sysParameters
     for (int i = 0;i < 8;i++)
     {
@@ -1430,9 +1472,9 @@ int main(int argc, char* argv[])
         sel = FD3;
         res = gradientDescent(x0, theta, temp_sysParameters, "step6_" + std::to_string(i), sel);
         std::cout << "Final Performance is " << res[0][MAX_REPEATS - 1] << std::endl;
-        for (int i = 0; i < MAX_REPEATS;i++)
+        for (int k = 0; k < MAX_REPEATS;k++)
         {
-            v0.push_back(res[0][i]);
+            v0.push_back(res[0][k]);
         }
         gp << "set title 'Graph of Performance over iterations for FD with 3 theta'\n";
         gp << "plot '-' with lines title 'v0'\n";
@@ -1440,6 +1482,8 @@ int main(int argc, char* argv[])
 
         std::cin.get();
     }
+    
+    
     // Step 7: Calculate using SPSA with 2 theta and (m,c,k) = sysParameters
     for (int i = 0;i < 8;i++)
     {
@@ -1450,9 +1494,9 @@ int main(int argc, char* argv[])
         sel = SPSA2;
         res = gradientDescent(x0, theta, temp_sysParameters, "step7_" + std::to_string(i), sel);
         std::cout << "Final Performance is P+ = " << res[0][MAX_REPEATS - 1] << " P- =  " << res[1][MAX_REPEATS - 1] << std::endl;
-        for (int i = 0; i < MAX_REPEATS;i++)
+        for (int k = 0; k < MAX_REPEATS;k++)
         {
-            v0.push_back(res[0][i]);
+            v0.push_back(res[0][k]);
         }
         gp << "set title 'Graph of Performance over iterations for SPSA with 2 theta'\n";
         gp << "plot '-' with lines title 'v0'\n";
@@ -1460,6 +1504,8 @@ int main(int argc, char* argv[])
 
         std::cin.get();
     }
+    
+
     // Step 8: Calculate using SPSA with 3 theta and (m,c,k) = sysParameters
     for (int i = 0;i < 8;i++)
     {
@@ -1470,9 +1516,9 @@ int main(int argc, char* argv[])
         sel = SPSA3;
         res = gradientDescent(x0, theta, temp_sysParameters, "step8_" + std::to_string(i), sel);
         std::cout << "Final Performance is P+ = " << res[0][MAX_REPEATS - 1] << " P- =  " << res[1][MAX_REPEATS - 1] << std::endl;
-        for (int i = 0; i < MAX_REPEATS;i++)
+        for (int k = 0; k < MAX_REPEATS;k++)
         {
-            v0.push_back(res[0][i]);
+            v0.push_back(res[0][k]);
         }
         gp << "set title 'Graph of Performance over iterations for SPSA with 3 theta'\n";
         gp << "plot '-' with lines title 'v0'\n";
@@ -1499,21 +1545,11 @@ int main(int argc, char* argv[])
 
     std::cin.get();
 
-    
+    */
     // Step 10: Calculate using Adaptive Control
     sel = AC;
     res = gradientDescent(x0, theta, temp_sysParameters, "step10", sel);
-    std::cout << "Final Performance is P0 = " << res[0][MAX_REPEATS - 1] << " P0 = " << res[1][MAX_REPEATS - 1] << std::endl;
-    for (int i = 0; i < MAX_REPEATS;i++)
-    {
-        v0.push_back(res[0][i]);
-    }
-    gp << "set title 'Graph of Performance over iterations for AC'\n";
-    gp << "plot '-' with lines title 'v0'\n";
-    gp.send(v0);
-
-    std::cin.get();
-
+    /*
     // Step 11: Calculate using Adaptive Control with (m,c,k) = sysParameters
     for (int i = 0;i < 8;i++)
     {
@@ -1524,9 +1560,9 @@ int main(int argc, char* argv[])
         sel = AC;
         res = gradientDescent(x0, theta, temp_sysParameters, "step10", sel);
         std::cout << "Final Performance is P0 = " << res[0][MAX_REPEATS - 1] << " P0 = " << res[1][MAX_REPEATS - 1] << std::endl;
-        for (int i = 0; i < MAX_REPEATS;i++)
+        for (int k = 0; k < MAX_REPEATS;k++)
         {
-            v0.push_back(res[0][i]);
+            v0.push_back(res[0][k]);
         }
         gp << "set title 'Graph of Performance over iterations for AC'\n";
         gp << "plot '-' with lines title 'v0'\n";
