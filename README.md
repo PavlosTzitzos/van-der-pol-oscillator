@@ -2,7 +2,12 @@
 
 ## ToDo List :
 - [ ] Write the report using latex. (check below)
-- [ ] make plot of position in 2d.
+- [ ] make plot of state variables x1 vs x2 using GnuPlot.
+- [ ] Implement the Sensitivity Analysis concept.
+- [ ] Correct LQR and Adaptive Control algorithms.
+- [ ] Make library.
+- [ ] Write Unit Tests of the library.
+- [ ] Does optimizating the code has any good result? If yes try it.
 
 ## Sensitivity Analysis
 - [ ] Keep constant all parameters except one (lets say parameter p) and each time give it random values ( p = rand() )
