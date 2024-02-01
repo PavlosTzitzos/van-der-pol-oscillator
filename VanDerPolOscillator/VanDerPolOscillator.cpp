@@ -1,9 +1,10 @@
+// THIS IS THE OLD VERSION 
 // VanDerPolOscillator.cpp : This file contains the 'main' function. Program execution begins and ends there.
 // LaTeX Comments Extension : https://github.com/kindermannhubert/VsTeXCommentsExtension
 // Doxygen Comments : https://www.doxygen.nl/manual/docblocks.html
 // GnuPlot : https://www.youtube.com/watch?v=gsLIUtmTs8Q
 
-
+/*
 #include <iostream>
 #include <random>
 #include <complex>
@@ -11,9 +12,9 @@
 #include <array>
 #include <numeric>
 #include <vector>
-#include "eigen/Eigen/Dense"
+//#include "eigen/Eigen/Dense"
 
-#include "gnuplot-iostream.h"
+//#include "gnuplot-iostream.h"
 
 #define timeFinal 1000   /* Stop Value of performance function and Value function of AC */
 
@@ -55,14 +56,15 @@
 /** An enum type.
 *   Choose available algorithms.
 */
+/*
 enum algorithms
 {
-    FD2,    /* Finite Differences with 2 theta */
-    FD3,    /* Finite Differences with 3 theta */
-    SPSA2,  /* Simultaneous Perturbation Stochastic Approximation with 2 theta */
-    SPSA3,  /* Simultaneous Perturbation Stochastic Approximation with 3 theta */
-    LQR,    /* Linear Quadratic Regulator */
-    AC      /* Adaptive Controller */
+    FD2,    // Finite Differences with 2 theta 
+    FD3,    // Finite Differences with 3 theta 
+    SPSA2,  // Simultaneous Perturbation Stochastic Approximation with 2 theta 
+    SPSA3,  // Simultaneous Perturbation Stochastic Approximation with 3 theta 
+    LQR,    // Linear Quadratic Regulator 
+    AC      // Adaptive Controller 
 };
 
 /** Van der Pol State Space System of equations. This is used for FD and SPSA.
@@ -73,7 +75,7 @@ enum algorithms
 * @param c : System parameter c default is 1
 * @return Array of derivatives of state space variables x
 */
-
+/*
 std::array<double, 2> f(std::array<double, 2> x, double u_local, double k = 1, double m = 1, double c = 1)
 {
 
@@ -97,6 +99,7 @@ std::array<double, 2> f(std::array<double, 2> x, double u_local, double k = 1, d
 * @param u : Control signal
 * @return Array of derivatives of state space variables x
 */
+/*
 /*
 std::array<double, 2> fLQR(std::array<double, 2> x, double u_local)
 {
@@ -123,7 +126,7 @@ std::array<double, 2> fLQR(std::array<double, 2> x, double u_local)
 * @param m : System parameter m default is 1
 * @return Array of derivatives of state space variables x
 */
-
+/*
 std::array<double, 2> fAC(std::array<double, 2> x, double u_local, std::array<double, 2> thetaR, double m = 1)
 {
 
@@ -147,7 +150,7 @@ std::array<double, 2> fAC(std::array<double, 2> x, double u_local, std::array<do
 * @param theta : Array of parameters(1,2,3)
 * @return The control signal to be applied
 */
-
+/*
 double u3(std::array<double,2> x, std::array<double,3> theta)
 {
     //tex:
@@ -163,7 +166,7 @@ double u3(std::array<double,2> x, std::array<double,3> theta)
 * @param theta : Array of parameters(1,2)
 * @return The control signal to be applied
 */
-
+/*
 double u2(std::array<double, 2> x, std::array<double, 3> theta)
 {
     //tex:
@@ -180,6 +183,7 @@ double u2(std::array<double, 2> x, std::array<double, 3> theta)
 * @return The control signal to be applied
 */
 /*
+/*
 double uLQR(std::array<double, 2> x, std::array<double, 2> K)
 {
     //tex:
@@ -195,6 +199,7 @@ double uLQR(std::array<double, 2> x, std::array<double, 2> K)
 * @param thetaApprox : Array of theta estimated parameters
 * @return The control signal to be applied
 */
+/*
 double uAC(std::array<double, 2> x, std::array<double, 2> thetaApprox, double m = 1)
 {
     //tex:
@@ -212,6 +217,7 @@ double uAC(std::array<double, 2> x, std::array<double, 2> thetaApprox, double m 
 * @param filename : File name to save data
 * @return Total performance
 */
+/*
 std::array<std::array<double, timeFinal+1>, 3> performance(std::array<double,2> x_old, std::array<double,3> theta, int theta_sel, std::array<double, 3> systemParameters = { 1,1,1 }, std::string filename = "dump.txt")
 {
     //std::ofstream results;
@@ -488,7 +494,7 @@ std::array<double, 2> lqr(std::array<double, 2>x_old, double q, double r)
 * @param m : System parameter default is 1
 * @return The thetaA derivative
 */
-
+/*
 std::array<std::array<double,timeFinal + 3>,2> value(std::array<double, 2> x, std::array<double, 2> thetaA, std::array<double, 2> thetaR, std::array<double, 2> dThetaE, double m = 1)
 {
     std::array<std::array<double, timeFinal + 3>, 2> res;
@@ -634,6 +640,7 @@ std::array<double, timeFinalLQR + 1> lqrTop(std::array<double, 2> x0, std::array
 * @param constantParameters : Parameters that are constant during the execution of the function defaults can be setted in line 17 - Used for Sensitivity Analysis
 * @return Array of performances
 */
+/*
 std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double, 2> x0, std::array<double, 3> theta, std::array<double, 3> systemParameters = { 1,1,1 }, std::string st = "", algorithms algo_sel = FD2, std::array<double, 10> constantParameters = { hetta, dtheta, betta, gamma, alpha, A, a, p, gac, dt})
 {
     double local_hetta  = constantParameters[0];
@@ -660,7 +667,7 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
     * column 3: A2
     * column 4: only one element a counter (how many iterations the value function made)
     */
-
+/*
     std::array<std::array<double, timeFinal + 3>, 2> resPerfAC;
 
     for (int i = 0;i < 2;i++)
@@ -1209,6 +1216,7 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
 * @param step : Step the parameters (default is 1)
 * @param min : Minimum value of the parameters - Starting value (default is 0)
 */
+/*
 void sensitivityAnalysis(std::array<double, 2> xInit = { 1,1 }, std::array<double, 3> theta = {1,1,0}, std::array<double, 3> sysPar = { 1,1,1 }, double max = 1, double step = 1, double min = 0)
 {
     std::array<std::array<double, MAX_REPEATS>, 2> res; //the performances
@@ -1618,7 +1626,7 @@ int main(int argc, char* argv[])
     }
     */
     // Step 10: Sensitivity Analysis
-    sensitivityAnalysis();
+    //sensitivityAnalysis();
     /*
     // Step 11: Plots
     Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\"");
@@ -1635,7 +1643,8 @@ int main(int argc, char* argv[])
 
     std::cin.get();
     */
-
+/*
     std::cout << "End of program ... \n" << std::endl;
     return 0;
 }
+*/

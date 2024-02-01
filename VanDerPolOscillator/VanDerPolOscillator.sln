@@ -5,6 +5,10 @@ VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VanDerPolOscillator", "VanDerPolOscillator.vcxproj", "{40AFBFAB-2939-4157-933B-FAEE82EB2924}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VanDerPolOscillatorTests", "..\VanDerPolOscillatorTests\VanDerPolOscillatorTests.vcxproj", "{B3C84001-6DD0-4702-A1F5-A4B2407F7662}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VanDerPolOscillatorAPI", "..\VanDerPolOscillatorAPI\VanDerPolOscillatorAPI.vcxproj", "{A451DB41-68D5-45E9-BEDF-608446A90BA1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +25,22 @@ Global
 		{40AFBFAB-2939-4157-933B-FAEE82EB2924}.Release|x64.Build.0 = Release|x64
 		{40AFBFAB-2939-4157-933B-FAEE82EB2924}.Release|x86.ActiveCfg = Release|Win32
 		{40AFBFAB-2939-4157-933B-FAEE82EB2924}.Release|x86.Build.0 = Release|Win32
+		{B3C84001-6DD0-4702-A1F5-A4B2407F7662}.Debug|x64.ActiveCfg = Debug|x64
+		{B3C84001-6DD0-4702-A1F5-A4B2407F7662}.Debug|x64.Build.0 = Debug|x64
+		{B3C84001-6DD0-4702-A1F5-A4B2407F7662}.Debug|x86.ActiveCfg = Debug|Win32
+		{B3C84001-6DD0-4702-A1F5-A4B2407F7662}.Debug|x86.Build.0 = Debug|Win32
+		{B3C84001-6DD0-4702-A1F5-A4B2407F7662}.Release|x64.ActiveCfg = Release|x64
+		{B3C84001-6DD0-4702-A1F5-A4B2407F7662}.Release|x64.Build.0 = Release|x64
+		{B3C84001-6DD0-4702-A1F5-A4B2407F7662}.Release|x86.ActiveCfg = Release|Win32
+		{B3C84001-6DD0-4702-A1F5-A4B2407F7662}.Release|x86.Build.0 = Release|Win32
+		{A451DB41-68D5-45E9-BEDF-608446A90BA1}.Debug|x64.ActiveCfg = Debug|x64
+		{A451DB41-68D5-45E9-BEDF-608446A90BA1}.Debug|x64.Build.0 = Debug|x64
+		{A451DB41-68D5-45E9-BEDF-608446A90BA1}.Debug|x86.ActiveCfg = Debug|Win32
+		{A451DB41-68D5-45E9-BEDF-608446A90BA1}.Debug|x86.Build.0 = Debug|Win32
+		{A451DB41-68D5-45E9-BEDF-608446A90BA1}.Release|x64.ActiveCfg = Release|x64
+		{A451DB41-68D5-45E9-BEDF-608446A90BA1}.Release|x64.Build.0 = Release|x64
+		{A451DB41-68D5-45E9-BEDF-608446A90BA1}.Release|x86.ActiveCfg = Release|Win32
+		{A451DB41-68D5-45E9-BEDF-608446A90BA1}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

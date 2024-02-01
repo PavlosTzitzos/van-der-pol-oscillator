@@ -29,3 +29,28 @@
 
 - [Best Image Merger](https://www.onlineconverter.com/merge-images)
 
+- [C++ Project Structure](https://medium.com/swlh/c-project-structure-for-cmake-67d60135f6f5)
+
+
+## Project Structure in VS
+
+1. Header Files (.h | #include "libName.h")
+
+2. Source Files (.cpp)
+
+3. Resource Files (.ico , .rc)
+
+4. External Dependencies (third party libraries | managed by IntelliSense)
+
+5. References (reference other projects/files in the same solution)
+    * use case: if tests are in a different project in the same solution, to access the code to be tested references are used
+
+## Project Structure with CMake
+
+1. include (.h | #include <libName.h> | Public)
+
+2. src (.h , .m , .cpp | #include "libName.h" | Private | libName.cpp)
+
+3. libs (third party libraries)
+
+4. tests (.cpp | libNameTests.cpp)

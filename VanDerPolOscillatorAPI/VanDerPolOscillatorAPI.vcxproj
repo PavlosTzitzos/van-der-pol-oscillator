@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{40afbfab-2939-4157-933b-faee82eb2924}</ProjectGuid>
-    <RootNamespace>VanDerPolOscillator</RootNamespace>
+    <ProjectGuid>{a451db41-68d5-45e9-bedf-608446a90ba1}</ProjectGuid>
+    <RootNamespace>VanDerPolOscillatorAPI</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -76,7 +76,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -91,7 +90,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -106,7 +104,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -121,7 +118,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,14 +127,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="VanDerPolOscillator.cpp" />
+    <ClCompile Include="bigNumberHandler.cpp" />
+    <ClCompile Include="controlAlgorithm.cpp" />
+    <ClCompile Include="displayData.cpp" />
+    <ClCompile Include="enumerators.cpp" />
+    <ClCompile Include="plant.cpp" />
+    <ClCompile Include="sensitivityAnalyzer.cpp" />
+    <ClCompile Include="systemModel.cpp" />
+    <ClCompile Include="VanDerPolOscillatorAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bigNumberHandler.h" />
+    <ClInclude Include="controlAlgorithm.h" />
+    <ClInclude Include="displayData.h" />
+    <ClInclude Include="enumerators.h" />
     <ClInclude Include="gnuplot-iostream.h" />
-    <ClInclude Include="resource.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="eigen\Eigen\Dense" />
+    <ClInclude Include="plant.h" />
+    <ClInclude Include="sensitivityAnalyzer.h" />
+    <ClInclude Include="systemModel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
