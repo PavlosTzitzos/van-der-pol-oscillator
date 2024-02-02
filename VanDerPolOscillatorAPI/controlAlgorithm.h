@@ -6,56 +6,109 @@
 //#define CONTROL_ALGORITHM_INCLUDE
 
 #include "enumerators.h"
+#include "systemModel.h"
 
 namespace vdpo {
 
     /*
-    * The available Algorithms to control the system
+    * The available Algorithms to control the system.
+    * Contains Time Accessors.
     */
     class controlAlgorithm
     {
     public:
-        
-        vdpo::algorithm selectedAlgorithm;
+        double x[2];
+        double thetaVar[3];
         int numberOfThetaLocal;
+        theta numberOfThetaType;
         bool sensitivityAnalysis;
-        // Constructor
-        
+
+        // Create an Algorithm instance. Choose algorithm and Number of theta parameters. Run the Sensitivity Analysis ?
         controlAlgorithm(algorithm selectAlgorithm = vdpo::algorithm::FD, theta numberOfTheta = vdpo::theta::two, bool sensitivity = false);
 
-        void setStartTime(int setValue);
-        void setStepTime(double setValue);
-        void setFinalTime(int setValue);
-        void setMaxIterations(int setValue);
+        // Time Parameters Accessors
 
+        // Set the time the simulation begins.
+        void setStartTime(int setValue);
+        // Set the time step of the simulation.
+        void setStepTime(double setValue);
+        // Set the time the simulation stops.
+        void setFinalTime(int setValue);
+        // Set the maximum iterations of the algorithm - A stop condition of the algorithm.
+        void setMaxIterations(int setValue);
+        // The time the simulation starts.
         int     getStartTime();
+        // The time step of the simulation.
         double  getStepTime();
+        // The time the simulation will stop.
         int     getFinalTime();
+        // The maximum number of iterations - The stop condition of the algorithm.
         int     getMaxIterations();
+
+        // Special Accessor
+        // Set from the outside a system to use
+        void setSystemModel(vdpo::systemModel explicitModel)
+        {
+            useExplicitModel = true;
+
+            localModel.setSysParK(explicitModel.getSysParK());
+            localModel.setSysParM(explicitModel.getSysParM());
+            localModel.setSysParC(explicitModel.getSysParC());
+            localModel.setThetaNumber1(explicitModel.getThetaNumber());
+        }
+
     private:
+        vdpo::algorithm selectedAlgorithm;
+    protected:
+        // system model to be used by the algorithms
+        vdpo::systemModel localModel = vdpo::systemModel::systemModel(1.0,1.0,1.0,theta::two);
+
+        // Setted by setSystemModel - whether to use user-instatiated model or let the program instatiate it
+        bool useExplicitModel = false;
+
+        // The STOP condition
         int maxRepeats = 100;
+
+        // Simulation Start
         int startTime = 0;
+
+        // Simulation Step
         double stepTime = 0.01;
+
+        // Simulation Stop
         int finalTime = 1000;
     };
 
+    // Finite Differences Algorithm
     class FD :public controlAlgorithm
     {
     public:
         // Access Methods
+        
+        // Get slope
         double  getHetta();
+
+        // Get theta change (Delta Theta)
         double  getDtheta();
+
+        // Set slope
         void    setHetta(double setValue);
+
+        // Set theta change (Delta Theta)
         void    setDtheta(double setValue);
     protected:
         // Algorithm Parameters
+
+        // The slope value of the algorithm        
         double hetta = 0.01;
+
+        // The theta change (Delta Theta)
         double dtheta = 0.001;
     private:
         // Algorithm Implementation
-        template<int thPar>
         void finiteDifferences();
-        // Calculate Performance
+
+        // Calculate Performance - Simulation
         void performance();
     };
 
@@ -63,18 +116,41 @@ namespace vdpo {
     {
     public:
         // Access Methods
+
+        // Set betta value - used for ck
         void setBetta(double setValue);
+
+        // Set gamma value - used for ck
         void setGamma(double setValue);
+
+        // set A value - used for ak
         void setAlpha(double setValue);
+
+        // Set the A value - used for ak
         void setABig(double setValue);
+
+        // Set the a value - used for ak
         void setASmall(double setValue);
+
+        // Set the probability of Delta k
         void setProbability(double setValue);
 
+        // The betta value - used for ck
         double getBetta();
+
+        // The gamma value - used for ck
         double getGamma();
+
+        // The alpha value - used for ak
         double getAlpha();
+
+        // The A value - used for ak
         double getABig();
+
+        // The a value - used for ak
         double getASmall();
+
+        // The probability p - used for Deltak
         double getProbability();
     protected:
         // Algorithm Parameters
@@ -90,8 +166,8 @@ namespace vdpo {
         double Dk3[3] = { 0,0,0 };
     private:
         // Algorithm Implementation
-        template<int thPar>
         void spsa();
+
         // Calculate Performance
         void performance();
     };
@@ -104,8 +180,8 @@ namespace vdpo {
         // Algorithm Parameters
     private:
         // Algorithm Implementation
-        template<int thPar>
         void lqr();
+
         // Calculate Performance
         void cost();
     };
@@ -115,8 +191,8 @@ namespace vdpo {
     public:
         // Access Methods
         void setGamma(double setValue);
-        void setk1(double setValue);
-        void setk2(double setValue);
+        void setK1(double setValue);
+        void setK2(double setValue);
 
         double getGamma();
         double getk1();
@@ -128,8 +204,8 @@ namespace vdpo {
         double k2 = 0.5;
     private:
         // Algorithm Implementation
-        template<int thPar>
         void adaptiveControl();
+
         // Calculate Performance
         void value();
     };

@@ -1,5 +1,15 @@
 # van-der-pol-oscillator
 
+## In this Repository
+
+Report Folder: The report of the initial version.
+
+VanDerPolOscillator: The initial version (functions only)
+
+VanDerPolOscillatorAPI: The version with classes (an attempt)
+
+VanDerPolOscillatorTests: Tests for the API.
+
 ## ToDo List :
 - [ ] Write the report using latex. (check below)
 - [ ] make plot of state variables x1 vs x2 using GnuPlot.
@@ -32,7 +42,8 @@
 - [C++ Project Structure](https://medium.com/swlh/c-project-structure-for-cmake-67d60135f6f5)
 
 
-## Project Structure in VS
+
+## Reference: C++ Project Structure in VS
 
 1. Header Files (.h | #include "libName.h")
 
@@ -45,7 +56,7 @@
 5. References (reference other projects/files in the same solution)
     * use case: if tests are in a different project in the same solution, to access the code to be tested references are used
 
-## Project Structure with CMake
+## Reference: C++ Project Structure with CMake
 
 1. include (.h | #include <libName.h> | Public)
 

@@ -19,27 +19,57 @@ namespace vdpo {
 	*/
 	class plant
 	{
-	public:
-		// x0, theta0
-		double x0[2] = { 0,0 };
-		// k,m,c
-		double k = 0;
-		double m = 0;
-		double c = 0;
-		// number of theta
-		theta numOfTheta = theta::two;
-		// algorithm select
-		algorithm selAlgo = algorithm::FD;
-		// if you want sensitivity analysis
-		bool sensAnal = false;
+	protected:
+		// Initial value of SSV x1,x2
+		double x0[2] = { 1,1 };
 
-		// Constructor
+		// Initial estimate of theta parameters
+		double theta0[3] = { 0,0,0 };
+
+		// System Parameters (check notes for more explaination)
+
+		// k system parameter (k = spring constant or k = 1/capacitance(C) )
+		double k = 0;
+
+		// m system parameter (m = mass or k = inductance(L) )
+		double m = 0;
+
+		// c system parameter (c = damping factor or c = resistance(R) )
+		double c = 0;
+
+		// number of theta
+		theta numberOfTheta = theta::two;
+
+		// algorithm select
+		algorithm selectedAlgorithm = algorithm::FD;
+
+		// if you want sensitivity analysis
+		bool sensitivityAnalysis = false;
+	public:
+		// Accessors
+
+		// Set initial value of SSVs
+		void setInitialX(double setValue[2]);
+
+		// Set initial value of SSVs
+		void setInitialTheta2(double setValue[2]);
+
+		// Set initial value of SSVs
+		void setInitialTheta3(double setValue[3]);
+
+		// Constructors
+		
+		// Empty Constructor
 		plant();
+		
+		// Use if you need only sensitivity analysis
 		plant(bool sensitivityAnalysis = true);
-		plant(double x0[2], double theta0[2], double k, double m, double c, algorithm selectAlgorithm = algorithm::FD, bool sensitivityAnalysis = false);
-		plant(double x0[2], double theta0[3], double k, double m, double c, algorithm selectAlgorithm = algorithm::FD, bool sensitivityAnalysis = false);
-		plant(double x0[2], double theta0[2], double systemParameters[3], algorithm selectAlgorithm = algorithm::FD, bool sensitivityAnalysis = false);
-		plant(double x0[2], double theta0[3], double systemParameters[3], algorithm selectAlgorithm = algorithm::FD, bool sensitivityAnalysis = false);
+		
+		// For k,m,c seperate variables
+		plant(double k, double m, double c, algorithm selectAlgorithm = algorithm::FD, bool sensitivityAnalysis = false);
+		
+		// For [k,m,c] vector
+		plant(double systemParameters[3], algorithm selectAlgorithm = algorithm::FD, bool sensitivityAnalysis = false);
 
 		// Execute-Run
 		void simulatePlant();
