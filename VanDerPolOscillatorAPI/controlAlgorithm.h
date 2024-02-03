@@ -47,15 +47,7 @@ namespace vdpo {
 
         // Special Accessor
         // Set from the outside a system to use
-        void setSystemModel(vdpo::systemModel explicitModel)
-        {
-            useExplicitModel = true;
-
-            localModel.setSysParK(explicitModel.getSysParK());
-            localModel.setSysParM(explicitModel.getSysParM());
-            localModel.setSysParC(explicitModel.getSysParC());
-            localModel.setThetaNumber1(explicitModel.getThetaNumber());
-        }
+        void setSystemModel(vdpo::systemModel explicitModel);
 
     private:
         vdpo::algorithm selectedAlgorithm;
@@ -110,6 +102,8 @@ namespace vdpo {
 
         // Calculate Performance - Simulation
         void performance();
+
+        void sensitivityAnalyzer();
     };
 
     class SPSA :public controlAlgorithm

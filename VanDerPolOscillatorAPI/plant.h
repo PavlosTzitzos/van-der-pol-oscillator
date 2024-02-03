@@ -9,9 +9,8 @@
 //#include "bigNumberHandler.h"
 #include "enumerators.h"
 #include "systemModel.h"
-//#include "displayData.h"
 #include "controlAlgorithm.h"
-//#include "sensitivityAnalyzer.h"
+#include "displayData.h"
 
 namespace vdpo {
 	/*
@@ -74,6 +73,8 @@ namespace vdpo {
 		// Execute-Run
 		void simulatePlant();
 		
+		void help();
+
 		// Destructor
 		~plant();
 	};

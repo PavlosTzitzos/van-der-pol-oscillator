@@ -7,7 +7,7 @@ double  vdpo::systemModel::getSysParC()			{ return c; }
 //-----------------------------------------------------------//
 // Please fix this section to return either pointers or arrays
 
-int* vdpo::systemModel::getSSV()				{ return x; }
+int* vdpo::systemModel::getSSV()			{ return x; }
 int* vdpo::systemModel::getTheta2()			{ return thetaVar; }
 int* vdpo::systemModel::getTheta3()			{ return thetaVar; }
 int* vdpo::systemModel::getDx()				{ return dx; }

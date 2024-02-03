@@ -14,6 +14,15 @@ void vdpo::controlAlgorithm::setStartTime(int setValue)     { this->startTime = 
 void vdpo::controlAlgorithm::setStepTime(double setValue)   { this->stepTime = setValue; }
 void vdpo::controlAlgorithm::setFinalTime(int setValue)     { this->finalTime = setValue; }
 void vdpo::controlAlgorithm::setMaxIterations(int setValue) { this->maxRepeats = setValue; }
+void vdpo::controlAlgorithm::setSystemModel(vdpo::systemModel explicitModel)
+{
+    useExplicitModel = true;
+
+    localModel.setSysParK(explicitModel.getSysParK());
+    localModel.setSysParM(explicitModel.getSysParM());
+    localModel.setSysParC(explicitModel.getSysParC());
+    localModel.setThetaNumber1(explicitModel.getThetaNumber());
+}
 
 int     vdpo::controlAlgorithm::getStartTime()      { return this->startTime; }
 double  vdpo::controlAlgorithm::getStepTime()       { return this->stepTime; }
@@ -45,6 +54,21 @@ void vdpo::FD::performance ()
         currentModel.dxCalculate();
         x[0] = x[0] - stepTime * (*currentModel.getDx()); // please fix this line to make it work
     }
+}
+
+void vdpo::FD::sensitivityAnalyzer()
+{
+    double min = 0;
+    double step = 1;
+    double max = 10;
+    double ll = hetta;
+    // Vary hetta only
+    for (double i = min; i < max; i+= step)  { hetta = i; }
+    hetta = ll;
+    ll = dtheta;
+    // Vary dtheta only
+    for (double i = min; i < max; i += step) { dtheta = i; }
+    dtheta = ll;
 }
 
 // Access parameters of SPSA

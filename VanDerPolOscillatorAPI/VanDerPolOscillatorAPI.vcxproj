@@ -132,7 +132,6 @@
     <ClCompile Include="displayData.cpp" />
     <ClCompile Include="enumerators.cpp" />
     <ClCompile Include="plant.cpp" />
-    <ClCompile Include="sensitivityAnalyzer.cpp" />
     <ClCompile Include="systemModel.cpp" />
     <ClCompile Include="VanDerPolOscillatorAPI.cpp" />
   </ItemGroup>
@@ -143,7 +142,6 @@
     <ClInclude Include="enumerators.h" />
     <ClInclude Include="gnuplot-iostream.h" />
     <ClInclude Include="plant.h" />
-    <ClInclude Include="sensitivityAnalyzer.h" />
     <ClInclude Include="systemModel.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
