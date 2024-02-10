@@ -35,7 +35,7 @@ VanDerPolOscillatorTests: Tests for the API.
 
 - [Plotting Library - official](http://www.gnuplot.info/)
 
-- [Plotting Library - tutorial](https://youtu.be/gsLIUtmTs8Q)
+- [Plotting Library - installation and tutorial](https://www.youtube.com/watch?v=gsLIUtmTs8Q)
 
 - [Best Image Merger](https://www.onlineconverter.com/merge-images)
 
