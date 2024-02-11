@@ -19,38 +19,38 @@
 #define timeFinal 1000   /* Stop Value of performance function and Value function of AC */
 
 /* FD and GD */
-#define dtheta 0.001    /* Rate of change of theta angle between -0.1 <= dtheta <= -0.01 and 0.1 <= dtheta <= 0.01 */
-#define hetta 0.01      /* Rate of change of the gradient descend */
-#define timeStep 0.01   /* Time Step (must approach zero: dt->0) */
-#define MAX_REPEATS 100 /* Maximum number of iterations for Gradient Descent Top algorithm */
-#define version 1       /* Choose version of code: 1 for FD, 2 for SPSA, 3 will be added */
+//#define dtheta 0.001    /* Rate of change of theta angle between -0.1 <= dtheta <= -0.01 and 0.1 <= dtheta <= 0.01 */
+//#define hetta 0.01      /* Rate of change of the gradient descend */
+//#define timeStep 0.01   /* Time Step (must approach zero: dt->0) */
+//#define MAX_REPEATS 100 /* Maximum number of iterations for Gradient Descent Top algorithm */
+//#define version 1       /* Choose version of code: 1 for FD, 2 for SPSA, 3 will be added */
 
 /* LQR */
-#define N 100           /* Riccati number of iterations */
-#define timeFinalLQR 5000 /* Final time for LQR performance */
+//#define N 100           /* Riccati number of iterations */
+//#define timeFinalLQR 5000 /* Final time for LQR performance */
 
 /* Adaptive Control Parameters */
-#define dt 0.01         /* Step parameter for AC */
-#define gac 0.01        /* Step parameter gamma for AC */
-#define k1 0.5          /* Parameter for AC between 0 < k1 < 1 */
-#define k2 0.5          /* Parameter for Adaptive Control between 0 < k2 < 1 */
+//#define dt 0.01         /* Step parameter for AC */
+//#define gac 0.01        /* Step parameter gamma for AC */
+//#define k1 0.5          /* Parameter for AC between 0 < k1 < 1 */
+//#define k2 0.5          /* Parameter for Adaptive Control between 0 < k2 < 1 */
 
-#define AC_END 1000     /* Creteria value for AC termination should be big enough */
+//#define AC_END 1000     /* Creteria value for AC termination should be big enough */
 
 /* SPSA Parameters */
 /* c_k : */
-#define betta 2.1       /* non-negative coefficient for SPSA */
-#define gamma 0.1       /* non-negative coefficient for SPSA */
+//#define betta 2.1       /* non-negative coefficient for SPSA */
+//#define gamma 0.1       /* non-negative coefficient for SPSA */
 
 /* a_k : */
-#define a 0.1           /* non-negative coefficient for SPSA */
-#define A 0.1           /* non-negative coefficient for SPSA */
-#define alpha 0.1       /* non-negative coefficient for SPSA */
+//#define a 0.1           /* non-negative coefficient for SPSA */
+//#define A 0.1           /* non-negative coefficient for SPSA */
+//#define alpha 0.1       /* non-negative coefficient for SPSA */
 
 /* D_k : */
-#define p 0.5           /* propability for Delta_k bernoulli distribution for SPSA*/
+//#define p 0.5           /* propability for Delta_k bernoulli distribution for SPSA*/
 
-#define SPSA_END 0.01   /* Creteria value for SPSA termination should be small enough */
+//#define SPSA_END 0.01   /* Creteria value for SPSA termination should be small enough */
 
 
 /** An enum type.

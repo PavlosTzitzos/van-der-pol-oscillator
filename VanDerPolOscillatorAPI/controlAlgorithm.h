@@ -7,6 +7,7 @@
 
 #include "enumerators.h"
 #include "systemModel.h"
+#include <vector>
 
 namespace vdpo {
 
@@ -17,14 +18,17 @@ namespace vdpo {
     class controlAlgorithm
     {
     public:
+        //std::array<double,2> x;
         double x[2];
         double thetaVar[3];
         int numberOfThetaLocal;
         theta numberOfThetaType;
         bool sensitivityAnalysis;
 
+        controlAlgorithm();
+
         // Create an Algorithm instance. Choose algorithm and Number of theta parameters. Run the Sensitivity Analysis ?
-        controlAlgorithm(algorithm selectAlgorithm = vdpo::algorithm::FD, theta numberOfTheta = vdpo::theta::two, bool sensitivity = false);
+        controlAlgorithm(algorithm selectAlgorithm, theta numberOfTheta, bool sensitivity);
 
         // Time Parameters Accessors
 
@@ -76,7 +80,7 @@ namespace vdpo {
     {
     public:
         // Access Methods
-        
+        //std::array<double,3> performanceValues;
         // Get slope
         double  getHetta();
 
@@ -91,7 +95,7 @@ namespace vdpo {
     protected:
         // Algorithm Parameters
 
-        // The slope value of the algorithm        
+        // The slope value of the algorithm
         double hetta = 0.01;
 
         // The theta change (Delta Theta)

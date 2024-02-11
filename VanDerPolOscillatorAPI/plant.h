@@ -62,13 +62,13 @@ namespace vdpo {
 		plant();
 		
 		// Use if you need only sensitivity analysis
-		plant(bool sensitivityAnalysis = true);
+		plant(bool sensitivityAnalysis);
 		
 		// For k,m,c seperate variables
-		plant(double k, double m, double c, algorithm selectAlgorithm = algorithm::FD, bool sensitivityAnalysis = false);
+		plant(double k, double m, double c, algorithm selectAlgorithm, bool sensitivityAnalysis);
 		
 		// For [k,m,c] vector
-		plant(double systemParameters[3], algorithm selectAlgorithm = algorithm::FD, bool sensitivityAnalysis = false);
+		plant(double systemParameters[3], algorithm selectAlgorithm, bool sensitivityAnalysis);
 
 		// Execute-Run
 		void simulatePlant();

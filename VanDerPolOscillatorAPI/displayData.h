@@ -10,9 +10,7 @@
 #include "gnuplot-iostream.h"
 
 namespace vdpo {
-	/*
-	* Can plot data on gnuplot window and can print on console data
-	*/
+	// Can plot data on gnuplot window and can print on console data
 	class displayData : protected systemModel, controlAlgorithm
 	{
 	public:
@@ -28,15 +26,32 @@ namespace vdpo {
 		
 		displayData(std::string title, std::string labelA, std::string labelB, std::string resultsFileName);
 
+		//Load Data on Vector
+		void setVector1(double v);
+		void setVector2(double v);
+		
+		template<int N>
+		void setVector1(double v[N]);
+		template<int N>
+		void setVector2(double v[N]);
+		
+		void setVector1(std::vector<double> v);
+		void setVector2(std::vector<double> v);
+
 		// Prints data on console.
 		void thetaTypes();
 
+		// A helper method to display the available algorithms
 		void availableAlgorithms();
 
+		// A helper method to display the values of system parameters
 		void systemParameters();
 
-		template<typename T>
-		void printData(T var);
+		// Prints all data of the vector1
+		void consoleWrite1();
+
+		// Prints all data of the vector2
+		void consoleWrite2();
 
 		// Plots data on GNU window.
 		void plotData1();

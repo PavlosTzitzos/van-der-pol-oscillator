@@ -13,7 +13,7 @@ vdpo::plant::plant()
 	this->selectedAlgorithm = algorithm::FD;
 	this->sensitivityAnalysis = false;
 }
-vdpo::plant::plant(bool sensitivityAnalysis = true)
+vdpo::plant::plant(bool sensitivityAnalysis)
 {
 	this->x0[0] = 1;
 	this->x0[1] = 1;
@@ -24,7 +24,7 @@ vdpo::plant::plant(bool sensitivityAnalysis = true)
 	this->selectedAlgorithm = algorithm::FD;
 	this->sensitivityAnalysis = sensitivityAnalysis;
 }
-vdpo::plant::plant(double kValue, double mValue, double cValue, algorithm selectAlgorithm = algorithm::FD, bool sensitivityAnalysis = false)
+vdpo::plant::plant(double kValue, double mValue, double cValue, algorithm selectAlgorithm, bool sensitivityAnalysis)
 {
 	this->x0[0] = 1;
 	this->x0[1] = 1;
@@ -35,7 +35,7 @@ vdpo::plant::plant(double kValue, double mValue, double cValue, algorithm select
 	this->selectedAlgorithm = selectAlgorithm;
 	this->sensitivityAnalysis = sensitivityAnalysis;
 }
-vdpo::plant::plant(double systemParameters[3], algorithm selectAlgorithm = algorithm::FD, bool sensitivityAnalysis = false)
+vdpo::plant::plant(double systemParameters[3], algorithm selectAlgorithm, bool sensitivityAnalysis)
 {
 	this->x0[0] = 1;
 	this->x0[1] = 1;

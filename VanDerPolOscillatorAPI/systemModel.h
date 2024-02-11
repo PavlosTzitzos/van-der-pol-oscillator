@@ -8,30 +8,34 @@
 #include "enumerators.cpp"
 
 namespace vdpo {
-	/*
-	* The Van der Pol System model
-	* 
-	*/
+	
+	// The Van der Pol System model
 	class systemModel
 	{
 	protected:
 		// System Parameters
 		double k = 1; // System Parameter k
+
 		double m = 1; // System Parameter m
+
 		double c = 1; // System Parameter c
+
 		// State Space Variables
 		double x[2] = { 0,0 };
+
 		// Derivative of State Space Variables
 		double dx[2] = { 0,0 };
+
 		// Model Parameters
 		double thetaVar[3] = { 0,0,0 }; // Parameters
+
 		// Theta Parameters Number
 		theta numTheta = theta::two;
 	public:
 		// Accessors
 
 		// Gets dx data
-		int* getDx(); // ???? please FIX this to return either the array or a pointer
+		double* getDx(); // ???? please FIX this to return either the array or a pointer
 
 		// Gets system parameter k value
 		double getSysParK();
@@ -79,7 +83,7 @@ namespace vdpo {
 		void setThetaNumber1(theta setValue);
 
 		// Set theta value using number (2 or 3)
-		void setThetaNumber2(int setValue = 2);
+		void setThetaNumber2(int setValue);
 
 		// Default Constructor
 		systemModel();

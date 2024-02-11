@@ -1,13 +1,32 @@
 #include "controlAlgorithm.h"
+#include <array>
 
 // Base class functions
 
-vdpo::controlAlgorithm::controlAlgorithm(algorithm selectAlgorithm = vdpo::algorithm::FD, theta numberOfTheta = vdpo::theta::two, bool sensitivity = false)
+vdpo::controlAlgorithm::controlAlgorithm()
+{
+    selectedAlgorithm = algorithm::FD;
+    numberOfThetaLocal = 2;
+    numberOfThetaType = theta::two;
+    sensitivityAnalysis = false;
+    thetaVar[0] = 0.0;
+    thetaVar[1] = 0.0;
+    thetaVar[2] = 0.0;
+    x[0] = 0.0;
+    x[1] = 0.0;
+}
+
+vdpo::controlAlgorithm::controlAlgorithm(algorithm selectAlgorithm, theta numberOfTheta, bool sensitivity)
 {
     selectedAlgorithm = selectAlgorithm;
     numberOfThetaLocal = (numberOfTheta == theta::two ? 2 : (numberOfTheta == theta::three ? 3 : 0));
     numberOfThetaType = numberOfTheta;
     sensitivityAnalysis = sensitivity;
+    thetaVar[0] = 0.0;
+    thetaVar[1] = 0.0;
+    thetaVar[2] = 0.0;
+    x[0] = 0.0;
+    x[1] = 0.0;
 }
 
 void vdpo::controlAlgorithm::setStartTime(int setValue)     { this->startTime = setValue; }
@@ -37,22 +56,48 @@ void   vdpo::FD::setHetta(double setValue)  { this->hetta = setValue; }
 void   vdpo::FD::setDtheta(double setValue) { this->dtheta = setValue; }
 
 void vdpo::FD::finiteDifferences() 
-{ 
-    // Add implementation here
+{
+    // Local Variables
+    double local_performance = 100;
+
+    std::array<double, 3> local_theta;
+    local_theta[0] = thetaVar[0];
+    local_theta[1] = thetaVar[1];
+    local_theta[2] = (numberOfThetaLocal==2)?0:thetaVar[2];
+
+    for (int i = 0; i < maxRepeats; i++)
+    {
+        // Calculate performance
+        //performanceValues[0][i] = performance();
+        local_theta[0] = thetaVar[0] + dtheta;
+
+        //performanceValues[1][i] = performance();
+        local_theta[0] = thetaVar[0];
+        local_theta[1] = thetaVar[1] + dtheta;
+
+        //performanceValues[2][i] = performance();
+        local_theta[1] = thetaVar[1];
+
+        //thetaVar[0] = thetaVar[0] - hetta * (performanceValues[1][i] - performanceValues[0][i]) / dtheta;
+        //thetaVar[1] = thetaVar[1] - hetta * (performanceValues[2][i] - performanceValues[0][i]) / dtheta;
+
+        // Check End Creteria
+        //if (std::abs(performanceValue) > 10)
+            break;
+    }
 }
 
 void vdpo::FD::performance () 
-{ 
-    //
-    vdpo::systemModel currentModel = vdpo::systemModel::systemModel(1.0,1.1,1.1,theta::two);
-
+{
+    int i = 0;
     for (double t = startTime; t < finalTime; t += stepTime)
     {
+        i++;
+        this->localModel.setSSV(this->x);
+        this->localModel.setTheta2(this->thetaVar);
+        this->localModel.dxCalculate();
+        //x[0][i] = x[0][i] - stepTime * (localModel.getDx()); // please fix this line to make it work
         
-        currentModel.setSSV(this->x);
-        currentModel.setTheta2(this->thetaVar);
-        currentModel.dxCalculate();
-        x[0] = x[0] - stepTime * (*currentModel.getDx()); // please fix this line to make it work
     }
 }
 
@@ -63,7 +108,10 @@ void vdpo::FD::sensitivityAnalyzer()
     double max = 10;
     double ll = hetta;
     // Vary hetta only
-    for (double i = min; i < max; i+= step)  { hetta = i; }
+    for (double i = min; i < max; i+= step)
+    { 
+        hetta = i; 
+    }
     hetta = ll;
     ll = dtheta;
     // Vary dtheta only
