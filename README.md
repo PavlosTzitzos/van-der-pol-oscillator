@@ -1,16 +1,30 @@
 # van-der-pol-oscillator
 
-Description.
+This is a project to get some hands-on experience with basic C++ syntax, OOP.
+
+Do not expect to find good and quality code here. There are many functions and features just to try different implementations of the same functionality.
+
+However it is a good walkthrough from mathematics and some basics of Control Theory to actual code.
+
+The initial version contains only functions.
+
+The API version is an attempt to make a library and one entry point.
+
+The Tests where necessary since there was no easy way to test all this methods.
+
+The HDL version is an attempt to implement this controller this controller into actual hardware using SystemC.
 
 ## In this Repository
 
 Report Folder: The report of the initial version.
 
-VanDerPolOscillator(C++11): The initial version (functions only)
+VanDerPolOscillator(C++11): The initial version (functions only).
 
-VanDerPolOscillatorAPI(C++14): The version with classes (an attempt)
+VanDerPolOscillatorAPI(C++14): The version with classes (an attempt).
 
 VanDerPolOscillatorTests(C++14): Tests for the API.
+
+VanDerPolOscillatorHDL(): The version of actual hardware using systemC (an attempt).
 
 ## ToDo List :
 - [ ] Write the report using latex. (check below)
@@ -67,3 +81,6 @@ VanDerPolOscillatorTests(C++14): Tests for the API.
 3. libs (third party libraries)
 
 4. tests (.cpp | libNameTests.cpp)
+
+## Structure of the Plant
+

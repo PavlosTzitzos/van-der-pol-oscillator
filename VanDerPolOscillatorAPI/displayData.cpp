@@ -4,22 +4,22 @@
 
 vdpo::displayData::displayData()
 {
-	graphTitle = "default";
-	label1 = "label1";
-	label2 = "label2";
-	filename = "deault.txt";
-	vector1.push_back(0.0);
-	vector2.push_back(0.0);
+	this->graphTitle = "default";
+	this->label1 = "label1";
+	this->label2 = "label2";
+	this->filename = "deault.txt";
+	this->vector1.push_back(0.0);
+	this->vector2.push_back(0.0);
 }
 
 vdpo::displayData::displayData(std::string title, std::string labelA, std::string labelB, std::string resultsFileName)
 {
-	graphTitle = title;
-	label1 = labelA;
-	label2 = labelB;
-	filename = resultsFileName;
-	vector1.push_back(0.0);
-	vector2.push_back(0.0);
+	this->graphTitle = title;
+	this->label1 = labelA;
+	this->label2 = labelB;
+	this->filename = resultsFileName;
+	this->vector1.push_back(0.0);
+	this->vector2.push_back(0.0);
 }
 
 void vdpo::displayData::setVector1(double v)
@@ -45,19 +45,19 @@ void vdpo::displayData::setVector2(double v[N])
 	// Another way to implement the logic of:
 	// "take the elements of v and push them in the vector"
 	// is to use the insert method :
-	vector1.insert(std::end(v), std::begin(v), std::end(v));
+	this->vector1.insert(std::end(v), std::begin(v), std::end(v));
 }
 
 void vdpo::displayData::setVector1(std::vector<double> v)
 {
 	// Same thing as setVector2 but using vector methods
 	// The above uses std methods which are more generic and allow to handle the array
-	vector1.insert(v.end(), v.begin(), v.end());
+	this->vector1.insert(v.end(), v.begin(), v.end());
 }
 
 void vdpo::displayData::setVector2(std::vector<double> v)
 {
-	vector1.insert(v.end(), v.begin(), v.end());
+	this->vector1.insert(v.end(), v.begin(), v.end());
 }
 
 void vdpo::displayData::thetaTypes()
@@ -161,21 +161,21 @@ void vdpo::displayData::exportData()
 	results.open(this->filename);
 	results << "\n" << this->label1 << " " << this->label2 << std::endl;
 	results << "-----------------------------------------" << std::endl;
-	if (vector1.size() > vector2.size())
+	if (this->vector1.size() > this->vector2.size())
 	{
-		for (int i = 0; i < vector1.size(); i++)
+		for (int i = 0; i < this->vector1.size(); i++)
 		{
-			if(i >= vector2.size())
+			if(i >= this->vector2.size())
 				results << "\n" << this->vector1[i] << " " << "0.0" << std::endl;
 			else
 				results << "\n" << this->vector1[i] << " " << this->vector2[i] << std::endl;
 		}
 	}
-	else if (vector1.size() < vector2.size())
+	else if (this->vector1.size() < this->vector2.size())
 	{
-		for (int i = 0; i < vector2.size(); i++)
+		for (int i = 0; i < this->vector2.size(); i++)
 		{
-			if (i >= vector1.size())
+			if (i >= this->vector1.size())
 				results << "\n" << "0.0" << " " << this->vector2[i] << std::endl;
 			else
 				results << "\n" << this->vector1[i] << " " << this->vector2[i] << std::endl;
@@ -183,7 +183,7 @@ void vdpo::displayData::exportData()
 	}
 	else 
 	{
-		for (int i = 0; i < vector2.size(); i++)
+		for (int i = 0; i < this->vector2.size(); i++)
 		{
 			results << "\n" << this->vector1[i] << " " << this->vector2[i] << std::endl;
 		}

@@ -19,10 +19,15 @@ namespace vdpo {
     {
     public:
         //std::array<double,2> x;
+
         double x[2];
+
         double thetaVar[3];
+
         int numberOfThetaLocal;
+
         theta numberOfThetaType;
+
         bool sensitivityAnalysis;
 
         controlAlgorithm();
@@ -34,18 +39,25 @@ namespace vdpo {
 
         // Set the time the simulation begins.
         void setStartTime(int setValue);
+
         // Set the time step of the simulation.
         void setStepTime(double setValue);
+
         // Set the time the simulation stops.
         void setFinalTime(int setValue);
+
         // Set the maximum iterations of the algorithm - A stop condition of the algorithm.
         void setMaxIterations(int setValue);
+
         // The time the simulation starts.
         int     getStartTime();
+
         // The time step of the simulation.
         double  getStepTime();
+
         // The time the simulation will stop.
         int     getFinalTime();
+
         // The maximum number of iterations - The stop condition of the algorithm.
         int     getMaxIterations();
 
@@ -76,11 +88,19 @@ namespace vdpo {
     };
 
     // Finite Differences Algorithm
-    class FD :public controlAlgorithm
+    class FD : public controlAlgorithm
     {
     public:
+        // Constructor
+
+        FD();
+
+        FD(theta numberOfTheta, bool sensitivity);
+
         // Access Methods
+        
         //std::array<double,3> performanceValues;
+        
         // Get slope
         double  getHetta();
 
@@ -92,7 +112,17 @@ namespace vdpo {
 
         // Set theta change (Delta Theta)
         void    setDtheta(double setValue);
+
+        double P = 0;
+
+        void iterationsCalculate();
+
+        int simulationIterations = 0;
+
+        void runAlgorithm();
+
     protected:
+
         // Algorithm Parameters
 
         // The slope value of the algorithm
@@ -107,12 +137,14 @@ namespace vdpo {
         // Calculate Performance - Simulation
         void performance();
 
+        // Sensitivity Analysis Implementation
         void sensitivityAnalyzer();
     };
 
-    class SPSA :public controlAlgorithm
+    class SPSA : public controlAlgorithm
     {
     public:
+        void runAlgorithm();
         // Access Methods
 
         // Set betta value - used for ck
@@ -168,11 +200,15 @@ namespace vdpo {
 
         // Calculate Performance
         void performance();
+
+        // Sensitivity Analysis Implementation
+        void sensitivityAnalyzer();
     };
 
-    class LQR :public controlAlgorithm
+    class LQR : public controlAlgorithm
     {
     public:
+        void runAlgorithm();
         // Access Methods
     protected:
         // Algorithm Parameters
@@ -187,6 +223,7 @@ namespace vdpo {
     class AC :public controlAlgorithm
     {
     public:
+        void runAlgorithm();
         // Access Methods
         void setGamma(double setValue);
         void setK1(double setValue);
@@ -206,6 +243,9 @@ namespace vdpo {
 
         // Calculate Performance
         void value();
+
+        // Sensitivity Analysis Implementation
+        void sensitivityAnalyzer();
     };
 }
 

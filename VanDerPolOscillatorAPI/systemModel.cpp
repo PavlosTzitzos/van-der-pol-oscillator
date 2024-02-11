@@ -1,28 +1,24 @@
 #include "systemModel.h"
 
-double  vdpo::systemModel::getSysParK()			{ return k; }
-double  vdpo::systemModel::getSysParM()			{ return m; }
-double  vdpo::systemModel::getSysParC()			{ return c; }
+double  vdpo::systemModel::getSysParK()			{ return this->k; }
+double  vdpo::systemModel::getSysParM()			{ return this->m; }
+double  vdpo::systemModel::getSysParC()			{ return this->c; }
 
-//-----------------------------------------------------------//
-// Please fix this section to return either pointers or arrays
+double* vdpo::systemModel::getSSV()				{ return this->x; }
+double* vdpo::systemModel::getTheta2()			{ return this->thetaVar; }
+double* vdpo::systemModel::getTheta3()			{ return this->thetaVar; }
+double* vdpo::systemModel::getDx()				{ return this->dx; }
 
-double* vdpo::systemModel::getSSV()				{ return &x; }
-double* vdpo::systemModel::getTheta2()			{ return thetaVar; }
-double* vdpo::systemModel::getTheta3()			{ return thetaVar; }
-double* vdpo::systemModel::getDx()				{ return dx; }
-//-----------------------------------------------------------//
+vdpo::theta vdpo::systemModel::getThetaNumber() { return this->numTheta; }
 
-vdpo::theta vdpo::systemModel::getThetaNumber() { return numTheta; }
-
-void	vdpo::systemModel::setSysParK(double setValue) { k = setValue; }
-void	vdpo::systemModel::setSysParM(double setValue) { m = setValue; }
-void	vdpo::systemModel::setSysParC(double setValue) { c = setValue; }
+void	vdpo::systemModel::setSysParK(double setValue) { this->k = setValue; }
+void	vdpo::systemModel::setSysParM(double setValue) { this->m = setValue; }
+void	vdpo::systemModel::setSysParC(double setValue) { this->c = setValue; }
 void	vdpo::systemModel::setSysParKMC(double setValues[3])
 {
-	k = setValues[0];
-	m = setValues[1];
-	c = setValues[2];
+	this->k = setValues[0];
+	this->m = setValues[1];
+	this->c = setValues[2];
 }
 void vdpo::systemModel::setSSV(double setValues[2])
 {
@@ -43,11 +39,11 @@ void vdpo::systemModel::setTheta3(double setValues[3])
 }
 void vdpo::systemModel::setThetaNumber1(theta setValue)
 {
-	numTheta = setValue;
+	this->numTheta = setValue;
 }
 void vdpo::systemModel::setThetaNumber2(int setValue)
 {
-	numTheta = (setValue == 2 ? theta::two : theta::three);
+	this->numTheta = (setValue == 2 ? theta::two : theta::three);
 }
 
 vdpo::systemModel::systemModel()
@@ -84,25 +80,20 @@ vdpo::systemModel::systemModel(double systemParameters[3], theta numOfTheta)
 
 void vdpo::systemModel::dxCalculate()
 {
-	vdpo::u uSignal;
-	double uLocal = (this->numTheta == theta::two ? uSignal.u2() : (this->numTheta == theta::three ? uSignal.u3() : 0.0));
+	double uLocal = (this->numTheta == theta::two ? u2() : (this->numTheta == theta::three ? u3() : 0.0));
 	this->dx[0] = this->x[1];
-	this->dx[1] = (-(this->c / this->m) * (std::pow(this->x[0], 2) - 1) * this->x[1] - (this->k / this->m) * this->x[0] + (uLocal / this->m));
+	this->dx[1] = -(this->c / this->m) * (std::pow(this->x[0], 2) - 1) * this->x[1] - (this->k / this->m) * this->x[0] + (uLocal / this->m);
+
+	this->uTest = uLocal; // for debugging
 }
 vdpo::systemModel::~systemModel() { }
 
-vdpo::u::u(theta numTheta)
-{
-	this->thetaVar[2] = (numTheta == theta::two ? 0 : thetaVar[2]);
-}
-double vdpo::u::u2()
+double vdpo::systemModel::u2()
 {
 	return this->thetaVar[0] * this->x[0] + this->thetaVar[1] * this->x[1];
 }
-double vdpo::u::u3()
+double vdpo::systemModel::u3()
 {
 	return this->thetaVar[0] * this->x[0] + this->thetaVar[1] * this->x[1] - thetaVar[2] * this->x[1] * (std::pow(this->x[0], 2) - 1);
 }
-vdpo::u::~u() { }
-
 

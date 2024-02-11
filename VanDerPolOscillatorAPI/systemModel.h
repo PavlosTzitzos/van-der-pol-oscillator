@@ -31,7 +31,11 @@ namespace vdpo {
 
 		// Theta Parameters Number
 		theta numTheta = theta::two;
+
 	public:
+
+		double uTest = 0; // for debugging
+
 		// Accessors
 
 		// Gets dx data
@@ -94,23 +98,16 @@ namespace vdpo {
 		// Parametrized Constructor with [k,m,c] system parameters as array
 		systemModel(double systemParameters[3], theta numOfTheta);
 
-		// Calculate dx
-		void dxCalculate();
-
-		virtual ~systemModel();
-	};
-	// Control Signal u
-	class u : private systemModel
-	{
-	public:
-		u(theta num = theta::two);
-
 		// Control Signal using 2 theta parameters
 		double u2();
 
 		// Control Signal using 3 theta parameters
 		double u3();
-		~u();
+
+		// Calculate dx
+		void dxCalculate();
+
+		virtual ~systemModel();
 	};
 }
 //#endif
