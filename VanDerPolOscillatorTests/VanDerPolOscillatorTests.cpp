@@ -14,6 +14,8 @@ namespace VanDerPolOscillatorTests
 	TEST_CLASS(VanDerPolOscillatorTests)
 	{
 	public:
+		//-------------------------------------------------------------------------------------------//
+		// Test initial functions only
 		TEST_METHOD(TestFunctionControlSignal2)
 		{
 			std::array<double,2> x = { 1, 0.5 };
@@ -67,6 +69,7 @@ namespace VanDerPolOscillatorTests
 			Assert::AreEqual(dxTest[1], dx[1], L"FAILED - Derivative is not calculated correctly for x1");
 		}
 		//-------------------------------------------------------------------------------------------//
+		// Test Classes only
 		TEST_METHOD(TestEnumerators)
 		{
 			Logger::WriteMessage("In TestEnumerators");
@@ -290,6 +293,7 @@ namespace VanDerPolOscillatorTests
 			Assert::AreEqual(P, testFD.P, L"FAILED - Should not fail - Performance is not correct");
 		}
 		//-------------------------------------------------------------------------------------------//
+		// Compare results from functions and Classes
 		TEST_METHOD(FunctionVsApiProjectsDerivativeXu2)
 		{
 			Logger::WriteMessage("In FunctionVsApiProjectsDerivativeXu2");
