@@ -76,14 +76,6 @@ void vdpo::displayData::availableAlgorithms()
 	std::cout << "AC   - Indirect Adaptive Control" << std::endl;
 }
 
-void vdpo::displayData::systemParameters()
-{
-	std::cout << "The system has 3 constant (over time) which are:" << std::endl;
-	std::cout << "m = " << this->m << std::endl;
-	std::cout << "c = " << this->c << std::endl;
-	std::cout << "k = " << this->k << std::endl;
-}
-
 void vdpo::displayData::consoleWrite1()
 {
 	// Using indexing to print the last element seperately

@@ -5,13 +5,11 @@
 
 #include <vector> // required for gnuplot's method send
 #include "enumerators.h"
-#include "systemModel.h"
-#include "controlAlgorithm.h"
 #include "gnuplot-iostream.h"
 
 namespace vdpo {
 	// Can plot data on gnuplot window and can print on console data
-	class displayData : protected systemModel, controlAlgorithm
+	class displayData
 	{
 	public:
 		std::string graphTitle;
@@ -43,9 +41,6 @@ namespace vdpo {
 
 		// A helper method to display the available algorithms
 		void availableAlgorithms();
-
-		// A helper method to display the values of system parameters
-		void systemParameters();
 
 		// Prints all data of the vector1
 		void consoleWrite1();

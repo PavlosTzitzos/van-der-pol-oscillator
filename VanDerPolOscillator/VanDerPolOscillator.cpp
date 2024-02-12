@@ -4,7 +4,7 @@
 // Doxygen Comments : https://www.doxygen.nl/manual/docblocks.html
 // GnuPlot : https://www.youtube.com/watch?v=gsLIUtmTs8Q
 
-/*
+
 #include <iostream>
 #include <random>
 #include <complex>
@@ -14,49 +14,49 @@
 #include <vector>
 //#include "eigen/Eigen/Dense"
 
-//#include "gnuplot-iostream.h"
+#include "gnuplot-iostream.h"
 
 #define timeFinal 1000   /* Stop Value of performance function and Value function of AC */
 
 /* FD and GD */
-//#define dtheta 0.001    /* Rate of change of theta angle between -0.1 <= dtheta <= -0.01 and 0.1 <= dtheta <= 0.01 */
-//#define hetta 0.01      /* Rate of change of the gradient descend */
-//#define timeStep 0.01   /* Time Step (must approach zero: dt->0) */
-//#define MAX_REPEATS 100 /* Maximum number of iterations for Gradient Descent Top algorithm */
-//#define version 1       /* Choose version of code: 1 for FD, 2 for SPSA, 3 will be added */
+#define dtheta 0.001    /* Rate of change of theta angle between -0.1 <= dtheta <= -0.01 and 0.1 <= dtheta <= 0.01 */
+#define hetta 0.01      /* Rate of change of the gradient descend */
+#define timeStep 0.01   /* Time Step (must approach zero: dt->0) */
+#define MAX_REPEATS 100 /* Maximum number of iterations for Gradient Descent Top algorithm */
+#define version 1       /* Choose version of code: 1 for FD, 2 for SPSA, 3 will be added */
 
 /* LQR */
-//#define N 100           /* Riccati number of iterations */
-//#define timeFinalLQR 5000 /* Final time for LQR performance */
+#define N 100           /* Riccati number of iterations */
+#define timeFinalLQR 5000 /* Final time for LQR performance */
 
 /* Adaptive Control Parameters */
-//#define dt 0.01         /* Step parameter for AC */
-//#define gac 0.01        /* Step parameter gamma for AC */
-//#define k1 0.5          /* Parameter for AC between 0 < k1 < 1 */
-//#define k2 0.5          /* Parameter for Adaptive Control between 0 < k2 < 1 */
+#define dt 0.01         /* Step parameter for AC */
+#define gac 0.01        /* Step parameter gamma for AC */
+#define k1 0.5          /* Parameter for AC between 0 < k1 < 1 */
+#define k2 0.5          /* Parameter for Adaptive Control between 0 < k2 < 1 */
 
-//#define AC_END 1000     /* Creteria value for AC termination should be big enough */
+#define AC_END 1000     /* Creteria value for AC termination should be big enough */
 
 /* SPSA Parameters */
 /* c_k : */
-//#define betta 2.1       /* non-negative coefficient for SPSA */
-//#define gamma 0.1       /* non-negative coefficient for SPSA */
+#define betta 2.1       /* non-negative coefficient for SPSA */
+#define gamma 0.1       /* non-negative coefficient for SPSA */
 
 /* a_k : */
-//#define a 0.1           /* non-negative coefficient for SPSA */
-//#define A 0.1           /* non-negative coefficient for SPSA */
-//#define alpha 0.1       /* non-negative coefficient for SPSA */
+#define a 0.1           /* non-negative coefficient for SPSA */
+#define A 0.1           /* non-negative coefficient for SPSA */
+#define alpha 0.1       /* non-negative coefficient for SPSA */
 
 /* D_k : */
-//#define p 0.5           /* propability for Delta_k bernoulli distribution for SPSA*/
+#define p 0.5           /* propability for Delta_k bernoulli distribution for SPSA*/
 
-//#define SPSA_END 0.01   /* Creteria value for SPSA termination should be small enough */
+#define SPSA_END 0.01   /* Creteria value for SPSA termination should be small enough */
 
 
 /** An enum type.
 *   Choose available algorithms.
 */
-/*
+
 enum algorithms
 {
     FD2,    // Finite Differences with 2 theta 
@@ -75,7 +75,6 @@ enum algorithms
 * @param c : System parameter c default is 1
 * @return Array of derivatives of state space variables x
 */
-/*
 std::array<double, 2> f(std::array<double, 2> x, double u_local, double k = 1, double m = 1, double c = 1)
 {
 
@@ -99,8 +98,6 @@ std::array<double, 2> f(std::array<double, 2> x, double u_local, double k = 1, d
 * @param u : Control signal
 * @return Array of derivatives of state space variables x
 */
-/*
-/*
 std::array<double, 2> fLQR(std::array<double, 2> x, double u_local)
 {
 
@@ -118,7 +115,7 @@ std::array<double, 2> fLQR(std::array<double, 2> x, double u_local)
 
     return d_x;
 }
-*/
+
 /** Van der Pol State Space System of equations. This is used for Adaptive Control only.
 * @param x : Array of state space variables x
 * @param u_local : Control signal
@@ -126,7 +123,6 @@ std::array<double, 2> fLQR(std::array<double, 2> x, double u_local)
 * @param m : System parameter m default is 1
 * @return Array of derivatives of state space variables x
 */
-/*
 std::array<double, 2> fAC(std::array<double, 2> x, double u_local, std::array<double, 2> thetaR, double m = 1)
 {
 
@@ -150,7 +146,6 @@ std::array<double, 2> fAC(std::array<double, 2> x, double u_local, std::array<do
 * @param theta : Array of parameters(1,2,3)
 * @return The control signal to be applied
 */
-/*
 double u3(std::array<double,2> x, std::array<double,3> theta)
 {
     //tex:
@@ -166,7 +161,6 @@ double u3(std::array<double,2> x, std::array<double,3> theta)
 * @param theta : Array of parameters(1,2)
 * @return The control signal to be applied
 */
-/*
 double u2(std::array<double, 2> x, std::array<double, 3> theta)
 {
     //tex:
@@ -182,8 +176,6 @@ double u2(std::array<double, 2> x, std::array<double, 3> theta)
 * @param K : Array of parameters(1,2)
 * @return The control signal to be applied
 */
-/*
-/*
 double uLQR(std::array<double, 2> x, std::array<double, 2> K)
 {
     //tex:
@@ -193,13 +185,12 @@ double uLQR(std::array<double, 2> x, std::array<double, 2> K)
 
     return u;
 }
-*/
+
 /** This is the control signal we apply to our system to guide it to our desired state. This is used for Adaptive Control.
 * @param x : Array of state space variables x
 * @param thetaApprox : Array of theta estimated parameters
 * @return The control signal to be applied
 */
-/*
 double uAC(std::array<double, 2> x, std::array<double, 2> thetaApprox, double m = 1)
 {
     //tex:
@@ -217,7 +208,6 @@ double uAC(std::array<double, 2> x, std::array<double, 2> thetaApprox, double m 
 * @param filename : File name to save data
 * @return Total performance
 */
-/*
 std::array<std::array<double, timeFinal+1>, 3> performance(std::array<double,2> x_old, std::array<double,3> theta, int theta_sel, std::array<double, 3> systemParameters = { 1,1,1 }, std::string filename = "dump.txt")
 {
     //std::ofstream results;
@@ -293,7 +283,6 @@ std::array<std::array<double, timeFinal+1>, 3> performance(std::array<double,2> 
 * @param filename : File name to save data
 * @return Total performance
 */
-/*
 std::array<std::array<double, timeFinalLQR + 1>, 3> performanceLQR(std::array<double, 2> x_old, std::array<double, 2> K, std::string filename = "dump.txt")
 {
     std::ofstream results;
@@ -352,7 +341,6 @@ std::array<std::array<double, timeFinalLQR + 1>, 3> performanceLQR(std::array<do
     }
     return res;
 }
-*/
 /** Algebraic Riccati Equation Solver. Solved for a 2x2 matrices or a system of 4 equations.
 * @param matA : A matrix (2x2)
 * @param matB : B matrix (1x2)
@@ -361,7 +349,6 @@ std::array<std::array<double, timeFinalLQR + 1>, 3> performanceLQR(std::array<do
 * @param R : R value difault is 1
 * @return The final time P=P(N) matrix
 */
-/*
 std::array<double, 4> riccati2(std::array<double, 4> matA, std::array<double, 2> matB, std::array<double, 4> matQ, std::array<double, 4> matPold, double R = 1 )
 {
     
@@ -430,14 +417,13 @@ std::array<double, 4> riccati2(std::array<double, 4> matA, std::array<double, 2>
     //std::cout << "]\n";
     return matPnew;
 }
-*/
+
 /** LQR method using Algebraic Riccati Equation.
 * @param x_old : Initial state
 * @param q : Diagonal elements of Q 2x2 matrix
 * @param r : R element
 * @return The calculated parameters k1, k2
 */
-/*
 std::array<double, 2> lqr(std::array<double, 2>x_old, double q, double r)
 {
     double matR = r;
@@ -485,7 +471,6 @@ std::array<double, 2> lqr(std::array<double, 2>x_old, double q, double r)
 
     return matK;
 }
-*/
 /** This is the Value function, which gives the minimum LQR cost-to-go.
 * @param x : Initial state
 * @param thetaA :Theta Approximation(Estimated) (theta hat)
@@ -494,7 +479,6 @@ std::array<double, 2> lqr(std::array<double, 2>x_old, double q, double r)
 * @param m : System parameter default is 1
 * @return The thetaA derivative
 */
-/*
 std::array<std::array<double,timeFinal + 3>,2> value(std::array<double, 2> x, std::array<double, 2> thetaA, std::array<double, 2> thetaR, std::array<double, 2> dThetaE, double m = 1)
 {
     std::array<std::array<double, timeFinal + 3>, 2> res;
@@ -568,7 +552,7 @@ std::array<std::array<double,timeFinal + 3>,2> value(std::array<double, 2> x, st
     return res;
 }
 
-/*
+
 std::array<double, timeFinalLQR + 1> lqrTop(std::array<double, 2> x0, std::array<double, 3> theta, std::array<double, 3> systemParameters = { 1,1,1 }, std::string st = "", algorithms algo_sel = FD2, std::array<double, 10> constantParameters = { hetta, dtheta, betta, gamma, alpha, A, a, p, gac, dt })
 {
 
@@ -632,7 +616,7 @@ std::array<double, timeFinalLQR + 1> lqrTop(std::array<double, 2> x0, std::array
     std::cin.get();
     return ret;
 }
-*/
+
 /** Gradient Descent with Algorithm selection.
 * @param x0 : Initial state
 * @param theta :Theta theta
@@ -640,7 +624,6 @@ std::array<double, timeFinalLQR + 1> lqrTop(std::array<double, 2> x0, std::array
 * @param constantParameters : Parameters that are constant during the execution of the function defaults can be setted in line 17 - Used for Sensitivity Analysis
 * @return Array of performances
 */
-/*
 std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double, 2> x0, std::array<double, 3> theta, std::array<double, 3> systemParameters = { 1,1,1 }, std::string st = "", algorithms algo_sel = FD2, std::array<double, 10> constantParameters = { hetta, dtheta, betta, gamma, alpha, A, a, p, gac, dt})
 {
     double local_hetta  = constantParameters[0];
@@ -667,7 +650,7 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
     * column 3: A2
     * column 4: only one element a counter (how many iterations the value function made)
     */
-/*
+
     std::array<std::array<double, timeFinal + 3>, 2> resPerfAC;
 
     for (int i = 0;i < 2;i++)
@@ -1216,7 +1199,7 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
 * @param step : Step the parameters (default is 1)
 * @param min : Minimum value of the parameters - Starting value (default is 0)
 */
-/*
+
 void sensitivityAnalysis(std::array<double, 2> xInit = { 1,1 }, std::array<double, 3> theta = {1,1,0}, std::array<double, 3> sysPar = { 1,1,1 }, double max = 1, double step = 1, double min = 0)
 {
     std::array<std::array<double, MAX_REPEATS>, 2> res; //the performances
@@ -1643,8 +1626,6 @@ int main(int argc, char* argv[])
 
     std::cin.get();
     */
-/*
     std::cout << "End of program ... \n" << std::endl;
     return 0;
 }
-*/

@@ -7,6 +7,7 @@
 
 #include "enumerators.h"
 #include "systemModel.h"
+#include "displayData.h"
 #include <vector>
 
 namespace vdpo {
@@ -68,6 +69,10 @@ namespace vdpo {
     private:
         vdpo::algorithm selectedAlgorithm;
     protected:
+        // a plot object with default parameters
+        vdpo::displayData plotSSV = vdpo::displayData::displayData();
+        vdpo::displayData plotPerformance = vdpo::displayData::displayData();
+
         // system model to be used by the algorithms
         vdpo::systemModel localModel = vdpo::systemModel::systemModel(1.0,1.0,1.0,theta::two);
 
@@ -99,8 +104,12 @@ namespace vdpo {
 
         // Access Methods
         
-        //std::array<double,3> performanceValues;
-        
+        // Perfomrance Storage - Used for diagrams only
+        std::vector<double> performanceValue0;
+        std::vector<double> performanceValue1;
+        std::vector<double> performanceValue2;
+        std::vector<double> performanceValue3;
+
         // Get slope
         double  getHetta();
 
@@ -122,7 +131,7 @@ namespace vdpo {
         void runAlgorithm();
 
     protected:
-
+        double performanceThreshold = 1;
         // Algorithm Parameters
 
         // The slope value of the algorithm

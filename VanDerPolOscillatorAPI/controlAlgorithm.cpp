@@ -1,5 +1,6 @@
 #include "controlAlgorithm.h"
 #include <array>
+#include <stdexcept>
 
 // Base class functions
 
@@ -98,33 +99,102 @@ void vdpo::FD::runAlgorithm()
 void vdpo::FD::finiteDifferences() 
 {
     // Local Variables
+
+    bool plotFlag = false;
+
     double local_performance = 100;
 
     std::array<double, 3> local_theta;
-    local_theta[0] = this->thetaVar[0];
-    local_theta[1] = this->thetaVar[1];
-    local_theta[2] = (this->numberOfThetaLocal==2)?0: this->thetaVar[2];
 
     for (int i = 0; i < maxRepeats; i++)
     {
-        // Calculate performance
-        //performanceValues[0][i] = performance();
-        local_theta[0] = this->thetaVar[0] + this->dtheta;
+        try
+        {
+            local_theta[0] = this->thetaVar[0];
+            local_theta[1] = this->thetaVar[1];
+            local_theta[2] = (this->numberOfThetaLocal == 2) ? 0 : this->thetaVar[2];
+            // Calculate performance
+            performance();
+            performanceValue0.push_back(this->P);
+            this->thetaVar[0] = local_theta[0] + this->dtheta;
 
-        //performanceValues[1][i] = performance();
-        local_theta[0] = this->thetaVar[0];
-        local_theta[1] = this->thetaVar[1] + this->dtheta;
+            performance();
+            performanceValue1.push_back(this->P);
+            this->thetaVar[0] = local_theta[0];
+            this->thetaVar[1] = local_theta[1] + this->dtheta;
 
-        //performanceValues[2][i] = performance();
-        local_theta[1] = this->thetaVar[1];
+            performance();
+            performanceValue2.push_back(this->P);
+            this->thetaVar[1] = local_theta[1];
+            this->thetaVar[2] = local_theta[2] + this->dtheta;
 
-        //thetaVar[0] = thetaVar[0] - hetta * (performanceValues[1][i] - performanceValues[0][i]) / dtheta;
-        //thetaVar[1] = thetaVar[1] - hetta * (performanceValues[2][i] - performanceValues[0][i]) / dtheta;
+            performance();
+            performanceValue2.push_back(this->P);
+            this->thetaVar[2] = local_theta[2];
 
-        // Check End Creteria
-        //if (std::abs(this->performanceValue) > 10)
-            break;
-        // Do something when NaN or inf appears
+            this->thetaVar[0] = this->thetaVar[0] - this->hetta * (performanceValue1.back() - performanceValue0.back()) / dtheta;
+            this->thetaVar[1] = this->thetaVar[1] - this->hetta * (performanceValue2.back() - performanceValue0.back()) / dtheta;
+            this->thetaVar[2] = this->thetaVar[2] - this->hetta * (performanceValue3.back() - performanceValue0.back()) / dtheta;
+
+            // Do something when NaN or inf appears - Exception and Error handling
+            if (isnan(performanceValue0.back()) || isnan(performanceValue1.back()) || isnan(performanceValue2.back()) || isnan(performanceValue3.back()))
+            {
+                // Remove the last element
+                performanceValue0.pop_back();
+                performanceValue1.pop_back();
+                performanceValue2.pop_back();
+                performanceValue3.pop_back();
+                throw std::runtime_error("101 - Calculated Performance is NaN!");
+            }
+            if (isinf(performanceValue0.back()) || isinf(performanceValue1.back()) || isinf(performanceValue2.back()) || isinf(performanceValue3.back()))
+            {
+                // Remove the last element
+                performanceValue0.pop_back();
+                performanceValue1.pop_back();
+                performanceValue2.pop_back();
+                performanceValue3.pop_back();
+                throw std::runtime_error("102 - Calculated Performance is infinity!");
+            }
+            if (performanceValue0.back() > 1e7 || performanceValue1.back() > 1e7 || performanceValue2.back() > 1e7 || performanceValue3.back() > 1e7)
+            {
+                // Remove the last element
+                performanceValue0.pop_back();
+                performanceValue1.pop_back();
+                performanceValue2.pop_back();
+                performanceValue3.pop_back();
+                throw std::overflow_error("105 - Calculated Performance is too big!");
+            }
+            // Check End Creteria
+            if (std::abs(this->performanceValue0[i] - this->performanceValue0[i - 1]) < this->performanceThreshold)
+            {
+                // Plot 
+                plotFlag = true;
+                // Stop Iterations
+                break;
+            }
+            // Plot last x0,x1 (ie at i before break or end for-loop)
+            if (i == maxRepeats - 1)
+                plotFlag = true;
+        }
+        catch (const std::exception& e)
+        {
+            std::cout << "Inside Finite Differencies method at iteration: "<< i << " an exception occured. More details are shown below: " << std::endl;
+            std::cout << "Exception " << e.what() << std::endl;
+            std::cout << "Stoping execution..." << std::endl;
+            exit(100);
+        }
+        catch (const std::overflow_error& e)
+        {
+            std::cout << "Inside Finite Differencies method at iteration: " << i << " an overflow has occured. More details are shown below: " << std::endl;
+            std::cout << "Exception " << e.what() << std::endl;
+            std::cout << "Stoping execution..." << std::endl;
+            exit(100);
+        }
+    }
+    if (plotFlag)
+    {
+        this->plotSSV.setVector1(performanceValue0);
+        this->plotSSV.plotData1();
     }
 }
 
@@ -134,18 +204,44 @@ void vdpo::FD::performance()
     int i = 0;
     for (double t = this->startTime; t < this->finalTime; t += this->stepTime)
     {
-        i++;
-        this->localModel.setSSV(this->x);
-        this->localModel.setTheta2(this->thetaVar);
-        this->localModel.dxCalculate();
-        x[0] = x[0] - stepTime * (localModel.getDx()[0]);
-        x[1] = x[1] - stepTime * (localModel.getDx()[1]);
-
-        norm = std::sqrt(x[0] * x[0] + x[1] * x[1]);
-
-        this->P += norm;
-
-        // Do something when a NaN or inf appears.
+        try
+        {
+            i++;
+            this->localModel.setSSV(this->x);
+            this->localModel.setTheta2(this->thetaVar);
+            this->localModel.dxCalculate();
+            x[0] = x[0] - stepTime * (localModel.getDx()[0]);
+            x[1] = x[1] - stepTime * (localModel.getDx()[1]);
+            // Do something when NaN or inf appears - Exception and Error handling
+            if (isnan(x[0]) || isnan(x[1]))
+            {
+                throw std::runtime_error("103 - Calculated x is NaN!");
+            }
+            if (isinf(x[0]) || isinf(x[1]))
+            {
+                throw std::runtime_error("104 - Calculated x is infinity!");
+            }
+            if (x[0] > 1e7 || x[1] > 1e7)
+            {
+                throw std::runtime_error("104 - Calculated x is infinity!");
+            }
+            norm = std::sqrt(x[0] * x[0] + x[1] * x[1]);
+            this->P += norm;
+        }
+        catch (const std::exception& e)
+        {
+            std::cout << "Inside Finite Differencies Performance method at iteration: " << i << " an excetion occured. More details are shown below: " << std::endl;
+            std::cout << "Exception " << e.what() << std::endl;
+            std::cout << "Stoping execution..." << std::endl;
+            exit(100);
+        }
+        catch (const std::overflow_error& e)
+        {
+            std::cout << "Inside Finite Differencies Performance method at iteration: " << i << " an overflow has occured. More details are shown below: " << std::endl;
+            std::cout << "Exception " << e.what() << std::endl;
+            std::cout << "Stoping execution..." << std::endl;
+            exit(100);
+        }
     }
 }
 
