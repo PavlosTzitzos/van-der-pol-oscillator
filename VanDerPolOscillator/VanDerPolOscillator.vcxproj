@@ -132,10 +132,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="VanDerPolOscillator.cpp" />
+    <ClCompile Include="VanDerPolOscillatorFunctions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gnuplot-iostream.h" />
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="VanDerPolOscillatorFunctions.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="eigen\Eigen\Dense" />

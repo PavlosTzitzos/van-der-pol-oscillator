@@ -18,12 +18,15 @@
     <ClCompile Include="VanDerPolOscillator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="VanDerPolOscillatorFunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gnuplot-iostream.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="VanDerPolOscillatorFunctions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
