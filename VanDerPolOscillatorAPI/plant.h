@@ -1,16 +1,13 @@
+// About header guards: https://learn.microsoft.com/en-us/cpp/cpp/header-files-cpp?view=msvc-170#include-guards
+
 #pragma once
 
-//#ifndef PLANT_INCLUDE
-//#define PLANT_INCLUDE
-
 #include <iostream>
-//#include "gnuplot-iostream.h"
 
-//#include "bigNumberHandler.h"
 #include "enumerators.h"
 #include "systemModel.h"
-#include "controlAlgorithm.h"
 #include "displayData.h"
+#include "controlAlgorithm.h"
 
 namespace vdpo {
 	/*
@@ -79,5 +76,3 @@ namespace vdpo {
 		~plant();
 	};
 }
-
-//#endif

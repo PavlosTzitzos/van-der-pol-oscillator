@@ -1,30 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="vdpo::plant" Collapsed="true">
-    <Position X="7.25" Y="4.5" Width="1.5" />
+    <Position X="3.75" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AwAAAAgAACACABhAAAAAAAAAAABAEACAigAAAAAAEAA=</HashCode>
       <FileName>plant.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vdpo::systemModel" Collapsed="true">
-    <Position X="7.25" Y="2.5" Width="1.5" />
+    <Position X="2.75" Y="5.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAQAIAACDAAAAJQQAAAFAAAACABEAGCggVFQAAABEA=</HashCode>
+      <HashCode>AAAQAIAAADAAAAJQQAAAFAAAACABEEGCggVFQIAABEA=</HashCode>
       <FileName>systemModel.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vdpo::controlAlgorithm" Collapsed="true">
     <Position X="3.75" Y="2.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AQAAAgBCIAAgAAgAABggVAEQAAACEDAAAABCggAAEAA=</HashCode>
+      <HashCode>AQAQAgRCIAAoAAgAADggVIEQAQACEDGAAABCggAAMAA=</HashCode>
       <FileName>controlAlgorithm.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="vdpo::FD" Collapsed="true">
     <Position X="2.75" Y="4.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAQAAQAIAAIAgAhBCAAAIBAAAAAAAAAAEAQAARIACA=</HashCode>
+      <HashCode>AAAAAAAAIAAAAgAhBAAAAABAAAAAAAAAAEAQAARIACA=</HashCode>
       <FileName>controlAlgorithm.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -38,7 +38,7 @@
   <Class Name="vdpo::LQR" Collapsed="true">
     <Position X="4.75" Y="3.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAIAAAAAAAAAAAAAAACAAQAAAAAAAIAAABAAA=</HashCode>
+      <HashCode>AAAAAAAAIAAAAAAAAAAAEgAAAAAQAAAAACAZAIBhgUE=</HashCode>
       <FileName>controlAlgorithm.h</FileName>
     </TypeIdentifier>
   </Class>
@@ -50,7 +50,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="vdpo::displayData" Collapsed="true">
-    <Position X="7.25" Y="3.5" Width="1.5" />
+    <Position X="4.75" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAANAIABAAhAAAAAAAAAIgAECAAMAAAAAACAAAAA=</HashCode>
       <FileName>displayData.h</FileName>

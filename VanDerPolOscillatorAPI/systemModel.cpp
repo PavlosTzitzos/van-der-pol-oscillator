@@ -11,10 +11,10 @@ double* vdpo::systemModel::getDx()				{ return this->dx; }
 
 vdpo::theta vdpo::systemModel::getThetaNumber() { return this->numTheta; }
 
-void	vdpo::systemModel::setSysParK(double setValue) { this->k = setValue; }
-void	vdpo::systemModel::setSysParM(double setValue) { this->m = setValue; }
-void	vdpo::systemModel::setSysParC(double setValue) { this->c = setValue; }
-void	vdpo::systemModel::setSysParKMC(double setValues[3])
+void vdpo::systemModel::setSysParK(double setValue) { this->k = setValue; }
+void vdpo::systemModel::setSysParM(double setValue) { this->m = setValue; }
+void vdpo::systemModel::setSysParC(double setValue) { this->c = setValue; }
+void vdpo::systemModel::setSysParKMC(double setValues[3])
 {
 	this->k = setValues[0];
 	this->m = setValues[1];

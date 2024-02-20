@@ -6,6 +6,7 @@
 #include "systemModel.h"
 #include "displayData.h"
 #include <vector>
+#include <random>
 
 namespace vdpo {
 
@@ -16,7 +17,7 @@ namespace vdpo {
     class controlAlgorithm
     {
     public:
-        //std::array<double,2> x;
+        bool displayGraphs = false;
 
         double x[2];
 
@@ -102,8 +103,11 @@ namespace vdpo {
         std::vector<double> performanceValue1;
         std::vector<double> performanceValue2;
         std::vector<double> performanceValue3;
+        std::vector<double> performanceValue4;
+        std::vector<double> performanceValue5;
 
         std::vector<double> costValue;
+
         // SSV Storage - Used for diagrams only
         std::vector<double> x1;
         std::vector<double> x2;
@@ -217,8 +221,7 @@ namespace vdpo {
         double p = 0.5;
         double ck = 0;
         double ak = 0;
-        double Dk2[2] = { 0,0 };
-        double Dk3[3] = { 0,0,0 };
+        double Dk[3] = { 0,0,0 };
     private:
         // Algorithm Implementation
         void spsa();

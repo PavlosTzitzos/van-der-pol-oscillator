@@ -131,7 +131,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="bigNum.cpp" />
     <ClCompile Include="controlAlgorithm.cpp" />
     <ClCompile Include="displayData.cpp" />
     <ClCompile Include="enumerators.cpp" />
@@ -140,7 +139,6 @@
     <ClCompile Include="VanDerPolOscillatorAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="bigNum.h" />
     <ClInclude Include="controlAlgorithm.h" />
     <ClInclude Include="displayData.h" />
     <ClInclude Include="enumerators.h" />

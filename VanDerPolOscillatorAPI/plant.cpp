@@ -99,12 +99,9 @@ void vdpo::plant::simulatePlant()
 	}
 	else if (this->selectedAlgorithm == algorithm::LQR)
 	{
-		vdpo::LQR MyAlgorithm = vdpo::LQR::LQR(this->numberOfTheta, this->sensitivityAnalysis);
+		vdpo::LQR MyAlgorithm = vdpo::LQR::LQR();
 		MyAlgorithm.x[0] = this->x0[0];
 		MyAlgorithm.x[1] = this->x0[1];
-		MyAlgorithm.thetaVar[0] = this->theta0[0];
-		MyAlgorithm.thetaVar[1] = this->theta0[1];
-		MyAlgorithm.thetaVar[2] = this->theta0[2];
 		MyAlgorithm.setSystemModel(MySystem);
 		MyAlgorithm.runAlgorithm();
 	}

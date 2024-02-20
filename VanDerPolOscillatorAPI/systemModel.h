@@ -5,7 +5,7 @@
 //#ifndef SYSTEM_MODEL_INCLUDE
 //#define SYSTEM_MODEL_INCLUDE
 
-#include "enumerators.cpp"
+#include "enumerators.h"
 
 namespace vdpo {
 	

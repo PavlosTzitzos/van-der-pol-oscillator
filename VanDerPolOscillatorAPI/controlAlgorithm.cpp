@@ -84,18 +84,27 @@ void   vdpo::FD::setDtheta(double setValue) { this->dtheta = setValue; }
 void vdpo::FD::runAlgorithm()
 {
     if (this->sensitivityAnalysis)
-        sensitivityAnalyzer();
+        this->sensitivityAnalyzer();
     else
-        performance();
+        this->performance();
         //finiteDifferences();
 }
 void vdpo::FD::finiteDifferences() 
 {
+    if (!this->performanceValue0.empty())
+        this->performanceValue0.clear();
+    if (!this->performanceValue1.empty())
+        this->performanceValue1.clear();
+    if (!this->performanceValue2.empty())
+        this->performanceValue2.clear();
+    if (!this->performanceValue3.empty())
+        this->performanceValue3.clear();
+
     bool plotFlag = false;
 
     std::array<double, 3> localTheta;
 
-    for (int i = 0; i < maxRepeats; i++)
+    for (int i = 0; i < this->maxRepeats; i++)
     {
         try
         {
@@ -104,53 +113,53 @@ void vdpo::FD::finiteDifferences()
             localTheta[2] = (this->numberOfThetaLocal == 2) ? 0 : this->thetaVar[2];
             // Calculate performance
             performance();
-            performanceValue0.push_back(this->P);
+            this->performanceValue0.push_back(this->P);
             this->thetaVar[0] = localTheta[0] + this->dtheta;
 
             performance();
-            performanceValue1.push_back(this->P);
+            this->performanceValue1.push_back(this->P);
             this->thetaVar[0] = localTheta[0];
             this->thetaVar[1] = localTheta[1] + this->dtheta;
 
             performance();
-            performanceValue2.push_back(this->P);
+            this->performanceValue2.push_back(this->P);
             this->thetaVar[1] = localTheta[1];
             this->thetaVar[2] = localTheta[2] + this->dtheta;
 
             performance();
-            performanceValue2.push_back(this->P);
+            this->performanceValue3.push_back(this->P);
             this->thetaVar[2] = localTheta[2];
 
-            this->thetaVar[0] = this->thetaVar[0] - this->hetta * (performanceValue1.back() - performanceValue0.back()) / dtheta;
-            this->thetaVar[1] = this->thetaVar[1] - this->hetta * (performanceValue2.back() - performanceValue0.back()) / dtheta;
-            this->thetaVar[2] = this->thetaVar[2] - this->hetta * (performanceValue3.back() - performanceValue0.back()) / dtheta;
+            this->thetaVar[0] = this->thetaVar[0] - this->hetta * (this->performanceValue1.back() - this->performanceValue0.back()) / this->dtheta;
+            this->thetaVar[1] = this->thetaVar[1] - this->hetta * (this->performanceValue2.back() - this->performanceValue0.back()) / this->dtheta;
+            this->thetaVar[2] = this->thetaVar[2] - this->hetta * (this->performanceValue3.back() - this->performanceValue0.back()) / this->dtheta;
 
             // Do something when NaN or inf appears - Exception and Error handling
-            if (isnan(performanceValue0.back()) || isnan(performanceValue1.back()) || isnan(performanceValue2.back()) || isnan(performanceValue3.back()))
+            if (isnan(this->performanceValue0.back()) || isnan(this->performanceValue1.back()) || isnan(this->performanceValue2.back()) || isnan(this->performanceValue3.back()))
             {
                 // Remove the last element
-                performanceValue0.pop_back();
-                performanceValue1.pop_back();
-                performanceValue2.pop_back();
-                performanceValue3.pop_back();
+                this->performanceValue0.pop_back();
+                this->performanceValue1.pop_back();
+                this->performanceValue2.pop_back();
+                this->performanceValue3.pop_back();
                 throw std::runtime_error("101 - Calculated Performance is NaN!");
             }
-            if (isinf(performanceValue0.back()) || isinf(performanceValue1.back()) || isinf(performanceValue2.back()) || isinf(performanceValue3.back()))
+            if (isinf(this->performanceValue0.back()) || isinf(this->performanceValue1.back()) || isinf(this->performanceValue2.back()) || isinf(this->performanceValue3.back()))
             {
                 // Remove the last element
-                performanceValue0.pop_back();
-                performanceValue1.pop_back();
-                performanceValue2.pop_back();
-                performanceValue3.pop_back();
+                this->performanceValue0.pop_back();
+                this->performanceValue1.pop_back();
+                this->performanceValue2.pop_back();
+                this->performanceValue3.pop_back();
                 throw std::runtime_error("102 - Calculated Performance is infinity!");
             }
-            if (performanceValue0.back() > 1e7 || performanceValue1.back() > 1e7 || performanceValue2.back() > 1e7 || performanceValue3.back() > 1e7)
+            if (this->performanceValue0.back() > 1e7 || this->performanceValue1.back() > 1e7 || this->performanceValue2.back() > 1e7 || this->performanceValue3.back() > 1e7)
             {
                 // Remove the last element
-                performanceValue0.pop_back();
-                performanceValue1.pop_back();
-                performanceValue2.pop_back();
-                performanceValue3.pop_back();
+                this->performanceValue0.pop_back();
+                this->performanceValue1.pop_back();
+                this->performanceValue2.pop_back();
+                this->performanceValue3.pop_back();
                 throw std::overflow_error("105 - Calculated Performance is too big!");
             }
             // Check End Creteria
@@ -165,7 +174,7 @@ void vdpo::FD::finiteDifferences()
                 }
             }
             // Plot last x0,x1 (ie at i before break or end for-loop)
-            if (i == maxRepeats - 1)
+            if (i == this->maxRepeats - 1)
                 plotFlag = true;
         }
         catch (const std::exception& e)
@@ -178,8 +187,12 @@ void vdpo::FD::finiteDifferences()
     }
     if (plotFlag)
     {
-        this->plotSSV.setVector1(performanceValue0);
-        this->plotSSV.plotData1();
+        this->plotPerformance.setVector1(this->costValue);
+        this->plotPerformance.plotData1();
+
+        this->plotSSV.setVector1(this->x1);
+        this->plotSSV.setVector2(this->x2);
+        this->plotSSV.plotData2();
     }
 }
 void vdpo::FD::performance() 
@@ -187,6 +200,9 @@ void vdpo::FD::performance()
     double norm = 0;
     int i = 0;
     double localX[2] = { this->x[0],this->x[1] };
+    this->x1.clear();
+    this->x2.clear();
+
     this->x1.push_back(localX[0]);
     this->x2.push_back(localX[1]);
     for (double t = this->startTime; t < this->finalTime; t += this->stepTime)
@@ -237,7 +253,7 @@ void vdpo::FD::sensitivityAnalyzer()
     double min = 0;
     double step = 1;
     double max = 10;
-    double local_var = this->hetta;
+    double localVar = this->hetta;
     // Vary hetta only
     for (double i = min; i < max; i+= step)
     { 
@@ -247,9 +263,9 @@ void vdpo::FD::sensitivityAnalyzer()
         this->finiteDifferences();
         // Save results
     }
-    this->hetta = local_var;
+    this->hetta = localVar;
 
-    local_var = this->dtheta;
+    localVar = this->dtheta;
     // Vary dtheta only
     for (double i = min; i < max; i += step)
     {
@@ -259,18 +275,32 @@ void vdpo::FD::sensitivityAnalyzer()
         this->finiteDifferences();
         // Save the results
     }
-    this->dtheta = local_var;
+    this->dtheta = localVar;
 }
 
 // SPSA Constructors
 
 vdpo::SPSA::SPSA()
 {
-    //
+    this->numberOfThetaLocal = 2;
+    this->numberOfThetaType = theta::two;
+    this->sensitivityAnalysis = false;
+    this->thetaVar[0] = 0.0;
+    this->thetaVar[1] = 0.0;
+    this->thetaVar[2] = 0.0;
+    this->x[0] = 0.0;
+    this->x[1] = 0.0;
 }
 vdpo::SPSA::SPSA(theta numberOfTheta, bool sensitivity)
 {
-    //
+    this->numberOfThetaLocal = (numberOfTheta == theta::two ? 2 : (numberOfTheta == theta::three ? 3 : 0));;
+    this->numberOfThetaType = numberOfTheta;
+    this->sensitivityAnalysis = sensitivity;
+    this->thetaVar[0] = 0.0;
+    this->thetaVar[1] = 0.0;
+    this->thetaVar[2] = 0.0;
+    this->x[0] = 0.0;
+    this->x[1] = 0.0;
 }
 
 // Access parameters of SPSA
@@ -299,16 +329,276 @@ void vdpo::SPSA::runAlgorithm()
 
 void vdpo::SPSA::spsa()
 {
-    // Add implementation here
+    // make sure the vectors are empty
+    if (!this->performanceValue0.empty())
+        this->performanceValue0.clear();
+    if (!this->performanceValue1.empty())
+        this->performanceValue1.clear();
+    if (!this->performanceValue2.empty())
+        this->performanceValue2.clear();
+    if (!this->performanceValue3.empty())
+        this->performanceValue3.clear();
+    if (!this->performanceValue4.empty())
+        this->performanceValue4.clear();
+    if (!this->performanceValue5.empty())
+        this->performanceValue5.clear();
+
+    bool plotFlag = false;
+
+    std::array<double, 3> localTheta;
+
+    for (int i = 0; i < this->maxRepeats; i++)
+    {
+        try
+        {
+            localTheta[0] = this->thetaVar[0];
+            localTheta[1] = this->thetaVar[1];
+            localTheta[2] = (this->numberOfThetaLocal == 2) ? 0 : this->thetaVar[2];
+
+            this->ck = this->betta / powl(i + 1, this->gamma);
+            this->ak = this->a / powl(this->A + i + 1, this->alpha);
+            std::random_device rd;
+            std::mt19937 gen(rd());
+            std::bernoulli_distribution d(this->p);
+            for (int i = 0; i < 3; i++)
+                this->Dk[i] = d(gen);
+
+            // Calculate performance
+            // positive P
+            this->thetaVar[0] = localTheta[0] + this->ck * this->Dk[0];
+            performance();
+            this->performanceValue0.push_back(this->P);
+            this->thetaVar[0] = localTheta[0];
+
+            this->thetaVar[1] = localTheta[1] + this->ck * this->Dk[1];
+            performance();
+            this->performanceValue1.push_back(this->P);
+            this->thetaVar[1] = localTheta[1];
+            
+            this->thetaVar[2] = localTheta[2] + this->ck * this->Dk[2];
+            performance();
+            this->performanceValue2.push_back(this->P);
+            this->thetaVar[2] = localTheta[2];
+
+            // negative P
+            this->thetaVar[0] = localTheta[0] - this->ck * this->Dk[0];
+            performance();
+            this->performanceValue3.push_back(this->P);
+            this->thetaVar[0] = localTheta[0];
+
+            this->thetaVar[1] = localTheta[1] - this->ck * this->Dk[1];
+            performance();
+            this->performanceValue4.push_back(this->P);
+            this->thetaVar[1] = localTheta[1];
+
+            this->thetaVar[2] = localTheta[2] - this->ck * this->Dk[2];
+            performance();
+            this->performanceValue5.push_back(this->P);
+            this->thetaVar[2] = localTheta[2];
+
+            this->thetaVar[0] = this->thetaVar[0] - this->ak * (this->performanceValue0.back() - this->performanceValue3.back()) / (2 * this->ck * this->Dk[0]);
+            this->thetaVar[1] = this->thetaVar[1] - this->ak * (this->performanceValue1.back() - this->performanceValue4.back()) / (2 * this->ck * this->Dk[1]);
+            this->thetaVar[2] = this->thetaVar[2] - this->ak * (this->performanceValue2.back() - this->performanceValue5.back()) / (2 * this->ck * this->Dk[2]);
+
+            // Do something when NaN or inf appears - Exception and Error handling
+            if (isnan(this->performanceValue0.back()) || isnan(this->performanceValue1.back()) || isnan(this->performanceValue2.back()) || isnan(this->performanceValue3.back()) || isnan(this->performanceValue4.back()) || isnan(this->performanceValue5.back()))
+            {
+                // Remove the last element
+                this->performanceValue0.pop_back();
+                this->performanceValue1.pop_back();
+                this->performanceValue2.pop_back();
+                this->performanceValue3.pop_back();
+                this->performanceValue4.pop_back();
+                this->performanceValue5.pop_back();
+                throw std::runtime_error("101 - Calculated Performance is NaN!");
+            }
+            if (isinf(this->performanceValue0.back()) || isinf(this->performanceValue1.back()) || isinf(this->performanceValue2.back()) || isinf(this->performanceValue3.back()) || isinf(this->performanceValue4.back()) || isinf(this->performanceValue5.back()))
+            {
+                // Remove the last element
+                this->performanceValue0.pop_back();
+                this->performanceValue1.pop_back();
+                this->performanceValue2.pop_back();
+                this->performanceValue3.pop_back();
+                this->performanceValue4.pop_back();
+                this->performanceValue5.pop_back();
+                throw std::runtime_error("102 - Calculated Performance is infinity!");
+            }
+            if (this->performanceValue0.back() > 1e7 || this->performanceValue1.back() > 1e7 || this->performanceValue2.back() > 1e7 || this->performanceValue3.back() > 1e7 || this->performanceValue4.back() > 1e7 || this->performanceValue5.back() > 1e7)
+            {
+                // Remove the last element
+                this->performanceValue0.pop_back();
+                this->performanceValue1.pop_back();
+                this->performanceValue2.pop_back();
+                this->performanceValue3.pop_back();
+                this->performanceValue4.pop_back();
+                this->performanceValue5.pop_back();
+                throw std::overflow_error("105 - Calculated Performance is too big!");
+            }
+            // Check End Creteria
+            if (i > 0)
+            {
+                if (std::abs(this->performanceValue0[i] - this->performanceValue0[i - 1]) < this->performanceThreshold || std::abs(this->performanceValue3[i] - this->performanceValue3[i - 1]) < this->performanceThreshold)
+                {
+                    // Plot 
+                    plotFlag = true;
+                    // Stop Iterations
+                    break;
+                }
+            }
+            // Plot last x0,x1 (ie at i before break or end for-loop)
+            if (i == this->maxRepeats - 1)
+                plotFlag = true;
+        }
+        catch (const std::exception& e)
+        {
+            std::cout << "Inside Finite Differencies method at iteration: " << i << " an exception occured. More details are shown below: " << std::endl;
+            std::cout << "Exception " << e.what() << std::endl;
+            std::cout << "Stoping execution..." << std::endl;
+            exit(100);
+        }
+    }
+    if (plotFlag && this->displayGraphs)
+    {
+        this->plotPerformance.setVector1(this->performanceValue0);
+        this->plotPerformance.setVector2(this->performanceValue1);
+        this->plotPerformance.plotData2();
+
+        this->plotSSV.setVector1(this->x1);
+        this->plotSSV.setVector2(this->x2);
+        this->plotSSV.plotData2();
+    }
 }
 void vdpo::SPSA::performance()
 {
     // Add implementation here
+    double norm = 0;
+    int i = 0;
+    double localX[2] = { this->x[0],this->x[1] };
+    this->x1.clear();
+    this->x2.clear();
+
+    this->x1.push_back(localX[0]);
+    this->x2.push_back(localX[1]);
+    for (double t = this->startTime; t < this->finalTime; t += this->stepTime)
+    {
+        try
+        {
+            i++;
+            this->localModel.setSSV(localX);
+            this->localModel.setTheta2(this->thetaVar);
+            this->localModel.dxCalculate();
+            localX[0] = localX[0] - this->stepTime * (this->localModel.getDx()[0]);
+            localX[1] = localX[1] - this->stepTime * (this->localModel.getDx()[1]);
+
+            this->x1.push_back(localX[0]);
+            this->x2.push_back(localX[1]);
+            // Do something when NaN or inf appears - Exception and Error handling
+            if (isnan(localX[0]) || isnan(localX[1]))
+            {
+                throw std::runtime_error("103 - Calculated x is NaN!");
+            }
+            if (isinf(localX[0]) || isinf(localX[1]))
+            {
+                throw std::runtime_error("104 - Calculated x is infinity!");
+            }
+            if (std::abs(localX[0]) > 1e7 || std::abs(localX[1]) > 1e7)
+            {
+                throw std::runtime_error("104 - Calculated x is infinity!");
+            }
+            if (std::abs(localX[0]) < 1e-7 || std::abs(localX[1]) < 1e-7)
+            {
+                std::cout << "Zero reached successfully at time " << t << " with performance P = " << this->P << std::endl;
+                break;
+            }
+            norm = std::sqrt(localX[0] * localX[0] + localX[1] * localX[1]);
+            this->P += norm;
+        }
+        catch (const std::overflow_error& e)
+        {
+            std::cout << "Inside Finite Differencies Performance method at iteration: " << i << " an overflow has occured. More details are shown below: " << std::endl;
+            std::cout << "Exception " << e.what() << std::endl;
+            std::cout << "Stoping execution..." << std::endl;
+            exit(100);
+        }
+    }
 }
 
 void vdpo::SPSA::sensitivityAnalyzer()
 {
-    //
+    double min = 0.01;
+    double step = 0.01;
+    double max = 1;
+    double localVar = this->betta;
+    // Vary betta only
+    for (double i = min; i < max; i += step)
+    {
+        // Step the parameter
+        this->betta = i;
+        // Calculate
+        this->spsa();
+        // Save results
+    }
+    this->betta = localVar;
+
+    localVar = this->gamma;
+    // Vary gamma only
+    for (double i = min; i < max; i += step)
+    {
+        // Step the parameter
+        this->gamma = i;
+        // Calculate
+        this->spsa();
+        // Save the results
+    }
+    this->gamma = localVar;
+
+    localVar = this->alpha;
+    // Vary alpha only
+    for (double i = min; i < max; i += step)
+    {
+        // Step the parameter
+        this->alpha = i;
+        // Calculate
+        this->spsa();
+        // Save the results
+    }
+    this->alpha = localVar;
+
+    localVar = this->A;
+    // Vary A only
+    for (double i = min; i < max; i += step)
+    {
+        // Step the parameter
+        this->A = i;
+        // Calculate
+        this->spsa();
+        // Save the results
+    }
+    this->A = localVar;
+
+    localVar = this->a;
+    // Vary a only
+    for (double i = min; i < max; i += step)
+    {
+        // Step the parameter
+        this->a = i;
+        // Calculate
+        this->spsa();
+        // Save the results
+    }
+    this->a = localVar;
+
+    localVar = this->p;
+    // Vary p only
+    for (double i = min; i < max; i += step)
+    {
+        // Step the parameter
+        this->p = i;
+        // Calculate
+        this->spsa();
+        // Save the results
+    }
+    this->p = localVar;
 }
 
 // LQR
@@ -342,11 +632,11 @@ void vdpo::LQR::runAlgorithm()
 }
 void vdpo::LQR::riccati()
 {
+    this->costValue.clear();
     bool plotFlag = false;
 
-    for (int i = 0; i < maxRepeats; i++)
+    for (int i = 0; i < this->maxRepeats; i++)
     {
-        //
         try
         {
             // Solve the DARE equation
@@ -399,7 +689,7 @@ void vdpo::LQR::riccati()
             mat4[0] = (transB[0] * tempP[0] + transB[1] * tempP[2]) * matA[0] + (transB[0] * tempP[1] + transB[1] * tempP[3]) * matA[1];
             mat4[1] = (transB[0] * tempP[0] + transB[1] * tempP[2]) * matA[2] + (transB[0] * tempP[1] + transB[1] * tempP[3]) * matA[3];
 
-            invMat3 = 1 / (mat3 + R);
+            invMat3 = 1 / (mat3 + this->R);
 
             mat5[0] = mat2[0] * invMat3 * mat4[0];
             mat5[1] = mat2[0] * invMat3 * mat4[1];
@@ -419,25 +709,25 @@ void vdpo::LQR::riccati()
             this->K[1] = invR * (transB[0] * matP[1] + transB[1] * matP[3]);
 
             // Calculate Cost (Performance)
-            cost();
+            this->cost();
 
             // Do something when NaN or inf appears - Exception and Error handling
-            if (isnan(costValue.back()) )
+            if (isnan(this->costValue.back()) )
             {
                 // Remove the last element
-                costValue.pop_back();
+                this->costValue.pop_back();
                 throw std::runtime_error("101 - Calculated Performance is NaN!");
             }
-            if (isinf(costValue.back()) )
+            if (isinf(this->costValue.back()) )
             {
                 // Remove the last element
-                costValue.pop_back();
+                this->costValue.pop_back();
                 throw std::runtime_error("102 - Calculated Performance is infinity!");
             }
-            if (costValue.back() > 1e7  )
+            if (this->costValue.back() > 1e7  )
             {
                 // Remove the last element
-                costValue.pop_back();
+                this->costValue.pop_back();
                 throw std::overflow_error("105 - Calculated Performance is too big!");
             }
             // Check End Creteria
@@ -452,7 +742,7 @@ void vdpo::LQR::riccati()
                 }
             }
             // Plot last x0,x1 (ie at i before break or end for-loop)
-            if (i == maxRepeats - 1)
+            if (i == this->maxRepeats - 1)
                 plotFlag = true;
         }
         catch (const std::overflow_error& e)
@@ -463,13 +753,13 @@ void vdpo::LQR::riccati()
             exit(100);
         }
     }
-    if (plotFlag)
+    if (plotFlag && this->displayGraphs)
     {
-        this->plotPerformance.setVector1(costValue);
+        this->plotPerformance.setVector1(this->costValue);
         this->plotPerformance.plotData1();
 
-        this->plotSSV.setVector1(x1);
-        this->plotSSV.setVector2(x2);
+        this->plotSSV.setVector1(this->x1);
+        this->plotSSV.setVector2(this->x2);
         this->plotSSV.plotData2();
     }
 }
@@ -478,6 +768,9 @@ void vdpo::LQR::performance()
     double norm = 0;
     int i = 0;
     double localX[2] = { this->x[0],this->x[1] };
+    this->x1.clear();
+    this->x2.clear();
+
     this->x1.push_back(localX[0]);
     this->x2.push_back(localX[1]);
     for (double t = this->startTime; t < this->finalTime; t += this->stepTime)
@@ -530,6 +823,9 @@ void vdpo::LQR::cost()
     double sum = 0;
     int i = 0;
     double localX[2] = {this->x[0],this->x[1]};
+    this->x1.clear();
+    this->x2.clear();
+
     this->x1.push_back(localX[0]);
     this->x2.push_back(localX[1]);
     for (double t = this->startTime; t < this->finalTime; t += this->stepTime)
