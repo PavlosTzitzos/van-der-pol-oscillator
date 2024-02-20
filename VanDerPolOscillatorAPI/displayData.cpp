@@ -110,16 +110,9 @@ void vdpo::displayData::consoleWrite2()
 	std::cout << this->vector2[i + 1] << " ] " << std::endl;
 }
 
-void vdpo::FDParameters::parameters()
-{
-	std::cout << "The parameters of the FD algorithm are:" << std::endl;
-	std::cout << "h " << std::endl;
-	std::cout << "dtheta " << std::endl;
-}
-
 void vdpo::displayData::plotData1()
 {
-	Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\""); // DO NOT TOUCH THIS
+	Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\""); // DO NOT TOUCH THIS LINE
 	
 	gp << "set title '" << this->graphTitle << "'\n";
 	if (!this->vector1.empty())
@@ -137,7 +130,7 @@ void vdpo::displayData::plotData1()
 
 void vdpo::displayData::plotData2()
 {
-	Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\""); // DO NOT TOUCH THIS
+	Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\""); // DO NOT TOUCH THIS LINE
 
 	gp << "set title '" << this->graphTitle << "'\n";
 	gp << "plot '-' with lines title '" << this->label1 << "',"

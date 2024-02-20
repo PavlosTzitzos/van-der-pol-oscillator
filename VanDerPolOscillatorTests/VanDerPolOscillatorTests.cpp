@@ -220,7 +220,7 @@ namespace VanDerPolOscillatorTests
 			testFD.setStepTime(0.5);
 			testFD.setFinalTime(10);
 			testFD.iterationsCalculate();
-			Assert::AreEqual(21,testFD.simulationIterations, L"FAILED - (should not fail) time iterations are not correctly  calculated");
+			Assert::AreEqual(21.0,testFD.simulationIterations, L"FAILED - (should not fail) time iterations are not correctly  calculated");
 
 			testFD.setMaxIterations(100);
 
@@ -274,7 +274,7 @@ namespace VanDerPolOscillatorTests
 			testFD.setStepTime(0.5);
 			testFD.setFinalTime(10);
 			testFD.iterationsCalculate();
-			Assert::AreEqual(21, testFD.simulationIterations, L"FAILED - (should not fail) time iterations are not correctly  calculated");
+			Assert::AreEqual(21.0, testFD.simulationIterations, L"FAILED - (should not fail) time iterations are not correctly  calculated");
 
 			testFD.setMaxIterations(100);
 
@@ -289,7 +289,7 @@ namespace VanDerPolOscillatorTests
 			testFD.setSystemModel(testModel);
 			testFD.runAlgorithm();
 			double P = 0;
-			
+			// add implementation
 			Assert::AreEqual(P, testFD.P, L"FAILED - Should not fail - Performance is not correct");
 		}
 		//-------------------------------------------------------------------------------------------//

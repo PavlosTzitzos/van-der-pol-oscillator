@@ -29,6 +29,9 @@ namespace vdpo {
 		// Model Parameters
 		double thetaVar[3] = { 0,0,0 }; // Parameters
 
+		// For LQR 
+		double K[2] = { 0,0 }; // Parameters
+
 		// Theta Parameters Number
 		theta numTheta = theta::two;
 
@@ -104,10 +107,12 @@ namespace vdpo {
 		// Control Signal using 3 theta parameters
 		double u3();
 
+		double uK();
+
 		// Calculate dx
 		void dxCalculate();
 
-		virtual ~systemModel();
+		//virtual ~systemModel();
 	};
 }
 //#endif

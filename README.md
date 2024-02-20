@@ -26,6 +26,8 @@ VanDerPolOscillatorTests(C++14): Tests for the API.
 
 VanDerPolOscillatorHDL(): The version of actual hardware using systemC (an attempt).
 
+To View Classes in a Visual way you can use the VS Tool [Class Designer](https://learn.microsoft.com/en-us/visualstudio/ide/class-designer/designing-and-viewing-classes-and-types?view=vs-2022).
+
 ## ToDo List :
 - [ ] Write the report using latex. (check below)
 - [ ] make plot of state variables x1 vs x2 using GnuPlot.

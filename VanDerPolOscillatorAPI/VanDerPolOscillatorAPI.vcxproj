@@ -131,7 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="bigNumberHandler.cpp" />
+    <ClCompile Include="bigNum.cpp" />
     <ClCompile Include="controlAlgorithm.cpp" />
     <ClCompile Include="displayData.cpp" />
     <ClCompile Include="enumerators.cpp" />
@@ -140,13 +140,16 @@
     <ClCompile Include="VanDerPolOscillatorAPI.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="bigNumberHandler.h" />
+    <ClInclude Include="bigNum.h" />
     <ClInclude Include="controlAlgorithm.h" />
     <ClInclude Include="displayData.h" />
     <ClInclude Include="enumerators.h" />
     <ClInclude Include="gnuplot-iostream.h" />
     <ClInclude Include="plant.h" />
     <ClInclude Include="systemModel.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -74,13 +74,64 @@ void vdpo::plant::setInitialTheta3(double setValue[3])
 void vdpo::plant::simulatePlant()
 {
 	std::cout << "\n Simulation Started ... \n" << std::endl;
-	vdpo::systemModel MySystem = vdpo::systemModel::systemModel(this->k,this->m,this->c,this->numberOfTheta);
-	vdpo::controlAlgorithm MyAlgorithm = vdpo::controlAlgorithm::controlAlgorithm(this->selectedAlgorithm, this->numberOfTheta, this->sensitivityAnalysis);
-	MyAlgorithm.x[0] = this->x0[0];
-	MyAlgorithm.x[1] = this->x0[1];
-	MyAlgorithm.thetaVar[0] = this->theta0[0];
-	MyAlgorithm.thetaVar[1] = this->theta0[1];
-	MyAlgorithm.thetaVar[2] = this->theta0[2];
+	vdpo::systemModel MySystem = vdpo::systemModel::systemModel(this->k, this->m, this->c, this->numberOfTheta);
+	if(this->selectedAlgorithm == algorithm::FD)
+	{
+		vdpo::FD MyAlgorithm = vdpo::FD::FD(this->numberOfTheta,this->sensitivityAnalysis);
+		MyAlgorithm.x[0] = this->x0[0];
+		MyAlgorithm.x[1] = this->x0[1];
+		MyAlgorithm.thetaVar[0] = this->theta0[0];
+		MyAlgorithm.thetaVar[1] = this->theta0[1];
+		MyAlgorithm.thetaVar[2] = this->theta0[2];
+		MyAlgorithm.setSystemModel(MySystem);
+		MyAlgorithm.runAlgorithm();
+	}
+	else if (this->selectedAlgorithm == algorithm::SPSA)
+	{
+		vdpo::SPSA MyAlgorithm = vdpo::SPSA::SPSA(this->numberOfTheta, this->sensitivityAnalysis);
+		MyAlgorithm.x[0] = this->x0[0];
+		MyAlgorithm.x[1] = this->x0[1];
+		MyAlgorithm.thetaVar[0] = this->theta0[0];
+		MyAlgorithm.thetaVar[1] = this->theta0[1];
+		MyAlgorithm.thetaVar[2] = this->theta0[2];
+		MyAlgorithm.setSystemModel(MySystem);
+		MyAlgorithm.runAlgorithm();
+	}
+	else if (this->selectedAlgorithm == algorithm::LQR)
+	{
+		vdpo::LQR MyAlgorithm = vdpo::LQR::LQR(this->numberOfTheta, this->sensitivityAnalysis);
+		MyAlgorithm.x[0] = this->x0[0];
+		MyAlgorithm.x[1] = this->x0[1];
+		MyAlgorithm.thetaVar[0] = this->theta0[0];
+		MyAlgorithm.thetaVar[1] = this->theta0[1];
+		MyAlgorithm.thetaVar[2] = this->theta0[2];
+		MyAlgorithm.setSystemModel(MySystem);
+		MyAlgorithm.runAlgorithm();
+	}
+	else if (this->selectedAlgorithm == algorithm::AC)
+	{
+		vdpo::AC MyAlgorithm = vdpo::AC::AC(this->numberOfTheta, this->sensitivityAnalysis);
+		MyAlgorithm.x[0] = this->x0[0];
+		MyAlgorithm.x[1] = this->x0[1];
+		MyAlgorithm.thetaVar[0] = this->theta0[0];
+		MyAlgorithm.thetaVar[1] = this->theta0[1];
+		MyAlgorithm.thetaVar[2] = this->theta0[2];
+		MyAlgorithm.setSystemModel(MySystem);
+		MyAlgorithm.runAlgorithm();
+	}
+	else
+	{
+		// Default FD
+		std::cout << "... Default simulation ..." << std::endl;
+		vdpo::FD MyAlgorithm = vdpo::FD::FD(this->numberOfTheta, this->sensitivityAnalysis);
+		MyAlgorithm.x[0] = this->x0[0];
+		MyAlgorithm.x[1] = this->x0[1];
+		MyAlgorithm.thetaVar[0] = this->theta0[0];
+		MyAlgorithm.thetaVar[1] = this->theta0[1];
+		MyAlgorithm.thetaVar[2] = this->theta0[2];
+		MyAlgorithm.setSystemModel(MySystem);
+		MyAlgorithm.runAlgorithm();
+	}
 	std::cout << "\n Simulation Finished ... \n" << std::endl;
 }
 

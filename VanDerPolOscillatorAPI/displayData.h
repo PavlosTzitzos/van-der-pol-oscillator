@@ -59,33 +59,6 @@ namespace vdpo {
 
 		//~displayData();
 	};
-
-	//-------------------------------------------//
-	// About the following code
-	// Please fix it or delete it
-	// It will be too comblicated if this stays here
-
-	class FDParameters : public displayData
-	{
-	public:
-		void parameters();
-	};
-	class SPSAParameters : public displayData
-	{
-		//
-		void parameters();
-	};
-	class LQRParameters : public displayData
-	{
-		//
-		void parameters();
-	};
-	class ACParameters : public displayData
-	{
-		//
-		void parameters();
-	};
-
 }
 
 //#endif

@@ -22,10 +22,10 @@ std::array<double, 2> f(std::array<double, 2> x, double u_local, double k = 1, d
 std::array<double, 2> fLQR(std::array<double, 2> x, double u_local)
 {
 
-    //tex
+    //tex:
     //$\begin{align*} \dot{\vec{x}} = f(\vec{x},u) \end{align*}$
 
-    //tex
+    //tex:
     //$\begin{align*} \left[ \begin{matrix} \dot{x_1} \\ \dot{x_2} \end{matrix} \right] = \bar{A} \cdot \vec{x} + \bar{B} \cdot \bar{u} = \left[ \begin{matrix} 0 && 1 \\ 0 && 0 \end{matrix} \right] \cdot \left[ \begin{matrix} x_1 \\ x_2 \end{matrix} \right] + \left[ \begin{matrix} 0 \\ 1 \end{matrix} \right] \cdot \bar{u} \end{align*}$
 
 
@@ -228,8 +228,8 @@ std::array<double, 4> riccati2(std::array<double, 4> matA, std::array<double, 2>
 
     std::array<double, 4> transA;
     transA[0] = matA[0];
-    transA[1] = matA[1];
-    transA[2] = matA[2];
+    transA[1] = matA[2];
+    transA[2] = matA[1];
     transA[3] = matA[3];
 
     std::array<double, 2> transB;
@@ -246,6 +246,9 @@ std::array<double, 4> riccati2(std::array<double, 4> matA, std::array<double, 2>
     std::array<double, 4> mat5;
 
     // Step 1: Calculate A^T x Pold x A (2x2 * 2x2 * 2x2 = 2x2)
+    //tex:
+    //$\begin{align*} A^T \cdot P_{old} \cdot A \end{align*}$
+
     temp[0] = transA[0] * matPold[0] + transA[1] * matPold[1];
     temp[1] = transA[0] * matPold[2] + transA[1] * matPold[3];
     temp[2] = transA[2] * matPold[0] + transA[3] * matPold[1];

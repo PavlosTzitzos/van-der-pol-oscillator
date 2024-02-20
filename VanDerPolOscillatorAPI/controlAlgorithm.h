@@ -2,9 +2,6 @@
 // About header guards: https://learn.microsoft.com/en-us/cpp/cpp/header-files-cpp?view=msvc-170#include-guards
 #pragma once
 
-//#ifndef CONTROL_ALGORITHM_INCLUDE
-//#define CONTROL_ALGORITHM_INCLUDE
-
 #include "enumerators.h"
 #include "systemModel.h"
 #include "displayData.h"
@@ -30,6 +27,8 @@ namespace vdpo {
         theta numberOfThetaType;
 
         bool sensitivityAnalysis;
+
+        double simulationIterations = 0;
 
         controlAlgorithm();
 
@@ -62,6 +61,9 @@ namespace vdpo {
         // The maximum number of iterations - The stop condition of the algorithm.
         int     getMaxIterations();
 
+        // The iterations of the simulation
+        void iterationsCalculate();
+
         // Special Accessor
         // Set from the outside a system to use
         void setSystemModel(vdpo::systemModel explicitModel);
@@ -90,26 +92,34 @@ namespace vdpo {
 
         // Simulation Stop
         int finalTime = 1000;
-    };
 
-    // Finite Differences Algorithm
-    class FD : public controlAlgorithm
-    {
-    public:
-        // Constructor
+        // Used for End Creteria inside the algorithms
+        double performanceThreshold = 1;
+        double costThreshold = 1;
 
-        FD();
-
-        FD(theta numberOfTheta, bool sensitivity);
-
-        // Access Methods
-        
         // Perfomrance Storage - Used for diagrams only
         std::vector<double> performanceValue0;
         std::vector<double> performanceValue1;
         std::vector<double> performanceValue2;
         std::vector<double> performanceValue3;
 
+        std::vector<double> costValue;
+        // SSV Storage - Used for diagrams only
+        std::vector<double> x1;
+        std::vector<double> x2;
+    };
+
+    // Finite Differences Algorithm
+    class FD : public controlAlgorithm
+    {
+    public:
+        // Constructors
+
+        FD();
+
+        FD(theta numberOfTheta, bool sensitivity);
+
+        // Access Methods
         // Get slope
         double  getHetta();
 
@@ -122,16 +132,12 @@ namespace vdpo {
         // Set theta change (Delta Theta)
         void    setDtheta(double setValue);
 
+        // Performance Result
         double P = 0;
-
-        void iterationsCalculate();
-
-        int simulationIterations = 0;
 
         void runAlgorithm();
 
     protected:
-        double performanceThreshold = 1;
         // Algorithm Parameters
 
         // The slope value of the algorithm
@@ -153,7 +159,12 @@ namespace vdpo {
     class SPSA : public controlAlgorithm
     {
     public:
-        void runAlgorithm();
+        // Constructors
+
+        SPSA();
+
+        SPSA(theta numberOfTheta, bool sensitivity);
+
         // Access Methods
 
         // Set betta value - used for ck
@@ -191,6 +202,11 @@ namespace vdpo {
 
         // The probability p - used for Deltak
         double getProbability();
+
+        // Performance result
+        double P = 0;
+
+        void runAlgorithm();
     protected:
         // Algorithm Parameters
         double betta = 2.1;
@@ -217,22 +233,78 @@ namespace vdpo {
     class LQR : public controlAlgorithm
     {
     public:
+        // Constructors
+
+        LQR();
+
+        LQR(double Q[4], double R);
+
+        // NOTE:
+        // 
+        // Due to already known dimensions of the system dx = Ax+Bu we can omit the 
+        // difficulty of general DARE and general LQR as well as NxM matrices.
+        // In this way the code is simpler and more straight forward.
+        // Therefore the getters and setters are limited to support this system.
+        // The R matrix is only one element.
+        // The Q matrix is 4 elements.
+        // Neither of them have the flexibility to change to higher dimensions.
+        // Additionally, the riccati function is already solved and the calculations
+        // are made explicity. 
+        //
+        
+        // Access Methods - Getters
+
+        double* getQ();
+        double* getR();
+        double* getK();
+        
+        double getJ(); // Final Calculated Cost
+        double getP(); // Final Calculated Performance
+
+        // Access Methods - Setters
+
+        // Input Q matrix elements like: 
+        // Q11 = mat[0] , Q12 = mat[1] , Q21 = mat[2] , Q22 = mat[3] .
+        void setQ(double matrix[4]);
+        void setR(double val);
+
+        // Cost result
+        double J = 0;
+
+        // Performance result
+        double P = 0;
+
         void runAlgorithm();
-        // Access Methods
     protected:
         // Algorithm Parameters
     private:
+        // Matrices
+        double q = 1;
+        double r = 1;
+        double K[2];
+        double R = r;
+        double Q[4] = { q, 0, 0, q };
+
         // Algorithm Implementation
-        void lqr();
+        void riccati();
+
+        // Calculate Cost
+        void cost();
 
         // Calculate Performance
-        void cost();
+        void performance();
+
     };
 
     class AC :public controlAlgorithm
     {
     public:
-        void runAlgorithm();
+        // Constructors
+
+        AC();
+
+        AC(theta numberOfTheta, bool sensitivity);
+
         // Access Methods
         void setGamma(double setValue);
         void setK1(double setValue);
@@ -241,6 +313,11 @@ namespace vdpo {
         double getGamma();
         double getk1();
         double getk2();
+
+        // Value result
+        double V = 0;
+
+        void runAlgorithm();
     protected:
         // Algorithm Parameters
         double gamma = 0.01;
@@ -257,5 +334,3 @@ namespace vdpo {
         void sensitivityAnalyzer();
     };
 }
-
-//#endif

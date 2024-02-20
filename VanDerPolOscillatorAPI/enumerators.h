@@ -18,8 +18,9 @@ namespace vdpo
 
     enum class theta
     {
-        two,
-        three
+        none = 0,
+        two = 1,
+        three = 2
     };
 };
 
