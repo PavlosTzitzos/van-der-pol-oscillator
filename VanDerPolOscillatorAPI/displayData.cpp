@@ -1,6 +1,4 @@
 #include "displayData.h"
-#include <array>
-#include <vector>
 
 vdpo::displayData::displayData()
 {
@@ -10,6 +8,8 @@ vdpo::displayData::displayData()
 	this->filename = "deault.txt";
 	this->vector1.push_back(0.0);
 	this->vector2.push_back(0.0);
+	this->xRangeAuto = true;
+	this->yRangeAuto = true;
 }
 vdpo::displayData::displayData(std::string title, std::string labelA, std::string labelB, std::string resultsFileName)
 {
@@ -19,7 +19,22 @@ vdpo::displayData::displayData(std::string title, std::string labelA, std::strin
 	this->filename = resultsFileName;
 	this->vector1.push_back(0.0);
 	this->vector2.push_back(0.0);
+	this->xRangeAuto = true;
+	this->yRangeAuto = true;
 }
+void vdpo::displayData::setXRange(double min, double max)
+{
+	this->xRangeAuto = false;
+	this->xRange[0] = min;
+	this->xRange[1] = max;
+}
+void vdpo::displayData::setYRange(double min, double max)
+{
+	this->yRangeAuto = false;
+	this->yRange[0] = min;
+	this->yRange[1] = max;
+}
+
 void vdpo::displayData::setVector1(double v)
 {
 	this->vector1.push_back(v);
@@ -57,25 +72,31 @@ void vdpo::displayData::setVector5(double v[N]) { this->vector5.insert(std::end(
 template<int N>
 void vdpo::displayData::setVector6(double v[N]) { this->vector6.insert(std::end(v), std::begin(v), std::end(v)); }
 
-void vdpo::displayData::setVector1(std::vector<double> v)
+void vdpo::displayData::setVector1(std::vector<double> v) { this->vector1 = v; }
+void vdpo::displayData::setVector2(std::vector<double> v) { this->vector2 = v; }
+void vdpo::displayData::setVector3(std::vector<double> v) { this->vector3 = v; }
+void vdpo::displayData::setVector4(std::vector<double> v) { this->vector4 = v; }
+void vdpo::displayData::setVector5(std::vector<double> v) { this->vector5 = v; }
+void vdpo::displayData::setVector6(std::vector<double> v) { this->vector6 = v; }
+void vdpo::displayData::setPair(bool order12)
 {
-	// Same thing as setVector2 but using vector methods
-	// The above uses std methods which are more generic and allow to handle the array
-	this->vector1.insert(v.end(), v.begin(), v.end());
+	if (this->vector1.size() != this->vector2.size())
+		return;
+	if (order12)
+		for (int i = 0; i < this->vector1.size(); i++)
+			this->xyPair.push_back(std::make_pair(this->vector1[i], this->vector2[i]));
+	else if (!order12)
+		for (int i = 0; i < this->vector1.size(); i++)
+			this->xyPair.push_back(std::make_pair(this->vector2[i], this->vector1[i]));
+	else
+		return;
 }
-void vdpo::displayData::setVector2(std::vector<double> v) { this->vector2.insert(v.end(), v.begin(), v.end()); }
-void vdpo::displayData::setVector3(std::vector<double> v) { this->vector3.insert(v.end(), v.begin(), v.end()); }
-void vdpo::displayData::setVector4(std::vector<double> v) { this->vector4.insert(v.end(), v.begin(), v.end()); }
-void vdpo::displayData::setVector5(std::vector<double> v) { this->vector5.insert(v.end(), v.begin(), v.end()); }
-void vdpo::displayData::setVector6(std::vector<double> v) { this->vector6.insert(v.end(), v.begin(), v.end()); }
-
 void vdpo::displayData::thetaTypes()
 {
 	std::cout << "The number of theta parameters can be 2 or 3" << std::endl;
 	std::cout << "Example for 2 parameters: " << std::endl;
 	std::cout << "vdpo::theta::two " << std::endl;
 }
-
 void vdpo::displayData::availableAlgorithms()
 {
 	std::cout << "Currently available algorithms to control the van der pol system are:" << std::endl;
@@ -84,7 +105,6 @@ void vdpo::displayData::availableAlgorithms()
 	std::cout << "LQR  - Linear Quadratic Regulator using Riccati ODE" << std::endl;
 	std::cout << "AC   - Indirect Adaptive Control" << std::endl;
 }
-
 void vdpo::displayData::consoleWrite1()
 {
 	// Using indexing to print the last element seperately
@@ -145,7 +165,6 @@ void vdpo::displayData::consoleWrite1()
 		}
 	}
 }
-
 void vdpo::displayData::consoleWrite2()
 {
 	// Using indexing to print the last element seperately
@@ -167,6 +186,9 @@ void vdpo::displayData::plotData1()
 	Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\""); // DO NOT TOUCH THIS LINE
 	
 	gp << "set title '" << this->graphTitle << "'\n";
+	gp << "set xlabel '" << this->axisXlabel << "'\n";
+	gp << "set ylabel '" << this->axisYlabel << "'\n";
+
 	if (!this->vector1.empty())
 	{
 		gp << "plot '-' with lines title '" << this->label1 << "'\n";
@@ -177,25 +199,29 @@ void vdpo::displayData::plotData1()
 		gp << "plot '-' with lines title '" << this->label2 << "'\n";
 		gp.send(this->vector2);
 	}
-	std::cin.get();
+	gp << "pause mouse close \n";
 }
 void vdpo::displayData::plotData2()
 {
 	Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\""); // DO NOT TOUCH THIS LINE
 
 	gp << "set title '" << this->graphTitle << "'\n";
+	gp << "set xlabel '" << this->axisXlabel << "'\n";
+	gp << "set ylabel '" << this->axisYlabel << "'\n";
 	gp << "plot '-' with lines title '" << this->label1 << "',"
 		<< "'-' with lines title '" << this-> label2 << "'\n";
 	gp.send(this->vector1);
 	gp.send(this->vector2);
 
-	std::cin.get();
+	gp << "pause mouse close \n";
 }
 void vdpo::displayData::plotData3()
 {
 	Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\""); // DO NOT TOUCH THIS LINE
 
 	gp << "set title '" << this->graphTitle << "'\n";
+	gp << "set xlabel '" << this->axisXlabel << "'\n";
+	gp << "set ylabel '" << this->axisYlabel << "'\n";
 	gp << "plot '-' with lines title '" << this->label1 << "',"
 		<< "'-' with lines title '" << this->label2 << "',"
 		<< "'-' with lines title '" << this->label3 << "'\n";
@@ -203,13 +229,15 @@ void vdpo::displayData::plotData3()
 	gp.send(this->vector2);
 	gp.send(this->vector3);
 
-	std::cin.get();
+	gp << "pause mouse close \n";
 }
 void vdpo::displayData::plotData4()
 {
 	Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\""); // DO NOT TOUCH THIS LINE
 
 	gp << "set title '" << this->graphTitle << "'\n";
+	gp << "set xlabel '" << this->axisXlabel << "'\n";
+	gp << "set ylabel '" << this->axisYlabel << "'\n";
 	gp << "plot '-' with lines title '" << this->label1 << "',"
 		<< "'-' with lines title '" << this->label2 << "',"
 		<< "'-' with lines title '" << this->label3 << "',"
@@ -219,13 +247,15 @@ void vdpo::displayData::plotData4()
 	gp.send(this->vector3);
 	gp.send(this->vector4);
 
-	std::cin.get();
+	gp << "pause mouse close \n";
 }
 void vdpo::displayData::plotData5()
 {
 	Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\""); // DO NOT TOUCH THIS LINE
 
 	gp << "set title '" << this->graphTitle << "'\n";
+	gp << "set xlabel '" << this->axisXlabel << "'\n";
+	gp << "set ylabel '" << this->axisYlabel << "'\n";
 	gp << "plot '-' with lines title '" << this->label1 << "',"
 		<< "'-' with lines title '" << this->label2 << "',"
 		<< "'-' with lines title '" << this->label3 << "',"
@@ -237,13 +267,15 @@ void vdpo::displayData::plotData5()
 	gp.send(this->vector4);
 	gp.send(this->vector5);
 
-	std::cin.get();
+	gp << "pause mouse close \n";
 }
 void vdpo::displayData::plotData6()
 {
 	Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\""); // DO NOT TOUCH THIS LINE
 
 	gp << "set title '" << this->graphTitle << "'\n";
+	gp << "set xlabel '" << this->axisXlabel << "'\n";
+	gp << "set ylabel '" << this->axisYlabel << "'\n";
 	gp << "plot '-' with lines title '" << this->label1 << "',"
 		<< "'-' with lines title '" << this->label2 << "',"
 		<< "'-' with lines title '" << this->label3 << "',"
@@ -257,7 +289,42 @@ void vdpo::displayData::plotData6()
 	gp.send(this->vector5);
 	gp.send(this->vector6);
 
-	std::cin.get();
+	gp << "pause mouse close \n";
+}
+void vdpo::displayData::plotPair()
+{
+	double temp[2] = { 0.0, 0.0 };
+	if (this->xRangeAuto)
+	{
+		this->calcXRange(1);
+		temp[0] = this->xRange[0];
+		temp[1] = this->xRange[1];
+		this->calcXRange(2);
+		if (temp[0] < xRange[0]) xRange[0] = temp[0];
+		if (temp[1] > xRange[1]) xRange[1] = temp[1];
+	}
+	if (this->yRangeAuto)
+	{
+		this->calcYRange(1);
+		temp[0] = this->yRange[0];
+		temp[1] = this->yRange[1];
+		this->calcYRange(2);
+		if (temp[0] < yRange[0]) yRange[0] = temp[0];
+		if (temp[1] > yRange[1]) yRange[1] = temp[1];
+	}
+	Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\""); // DO NOT TOUCH THIS LINE
+
+	gp << "set xrange [" << this->xRange[0] << ":" << this->xRange[1] << "]\nset yrange [" << this->yRange[0] << ":" << this->yRange[1] << "]\n";
+
+	gp << "set xlabel '" << this->axisXlabel << "'\n";
+	
+	gp << "set ylabel '" << this->axisYlabel << "'\n";
+
+	gp << "set title '" << this->graphTitle << "'\n";
+
+	gp << "plot" << gp.file1d(this->xyPair) << "with lines title '" << this->labelPair << "'" << std::endl;
+
+	gp << "pause mouse close \n";
 }
 void vdpo::displayData::exportData()
 {
@@ -290,6 +357,101 @@ void vdpo::displayData::exportData()
 		for (int i = 0; i < this->vector2.size(); i++)
 		{
 			results << "\n" << this->vector1[i] << " " << this->vector2[i] << std::endl;
+		}
+	}
+}
+
+void vdpo::displayData::calcXRange(int id)
+{
+	switch (id)
+	{
+		case 0: return;
+		case 1: 
+		{
+			xRange[0] = *std::min_element(std::begin(this->vector1), std::end(this->vector1));
+			xRange[1] = *std::max_element(std::begin(this->vector1), std::end(this->vector1));
+			return;
+		}
+		case 2:
+		{
+			xRange[0] = *std::min_element(std::begin(this->vector2), std::end(this->vector2));
+			xRange[1] = *std::max_element(std::begin(this->vector2), std::end(this->vector2));
+			return;
+		}
+		case 3:
+		{
+			xRange[0] = *std::min_element(std::begin(this->vector3), std::end(this->vector3));
+			xRange[1] = *std::max_element(std::begin(this->vector3), std::end(this->vector3));
+			return;
+		}
+		case 4:
+		{
+			xRange[0] = *std::min_element(std::begin(this->vector4), std::end(this->vector4));
+			xRange[1] = *std::max_element(std::begin(this->vector4), std::end(this->vector4));
+			return;
+		}
+		case 5:
+		{
+			xRange[0] = *std::min_element(std::begin(this->vector5), std::end(this->vector5));
+			xRange[1] = *std::max_element(std::begin(this->vector5), std::end(this->vector5));
+			return;
+		}
+		case 6:
+		{
+			xRange[0] = *std::min_element(std::begin(this->vector6), std::end(this->vector6));
+			xRange[1] = *std::max_element(std::begin(this->vector6), std::end(this->vector6));
+			return;
+		}
+		default:
+		{
+			return;
+		}
+	}
+}
+void vdpo::displayData::calcYRange(int id)
+{
+	switch (id)
+	{
+		case 0: return;
+		case 1: 
+		{
+			yRange[0] = *std::min_element(std::begin(this->vector1), std::end(this->vector1));
+			yRange[1] = *std::max_element(std::begin(this->vector1), std::end(this->vector1));
+			return;
+		}
+		case 2:
+		{
+			yRange[0] = *std::min_element(std::begin(this->vector2), std::end(this->vector2));
+			yRange[1] = *std::max_element(std::begin(this->vector2), std::end(this->vector2));
+			return;
+		}
+		case 3:
+		{
+			yRange[0] = *std::min_element(std::begin(this->vector3), std::end(this->vector3));
+			yRange[1] = *std::max_element(std::begin(this->vector3), std::end(this->vector3));
+			return;
+		}
+		case 4:
+		{
+			yRange[0] = *std::min_element(std::begin(this->vector4), std::end(this->vector4));
+			yRange[1] = *std::max_element(std::begin(this->vector4), std::end(this->vector4));
+			return;
+		}
+		case 5:
+		{
+			yRange[0] = *std::min_element(std::begin(this->vector5), std::end(this->vector5));
+			yRange[1] = *std::max_element(std::begin(this->vector5), std::end(this->vector5));
+			return;
+		}
+		case 6:
+		{
+			yRange[0] = *std::min_element(std::begin(this->vector6), std::end(this->vector6));
+			yRange[1] = *std::max_element(std::begin(this->vector6), std::end(this->vector6));
+			return;
+		}
+		default:
+		{
+			return;
 		}
 	}
 }

@@ -68,6 +68,102 @@ namespace VanDerPolOscillatorTests
 			Assert::AreEqual(dxTest[0], dx[0], L"FAILED - Derivative is not calculated correctly for x0");
 			Assert::AreEqual(dxTest[1], dx[1], L"FAILED - Derivative is not calculated correctly for x1");
 		}
+		TEST_METHOD(TestFDAlgorithm2Theta)
+		{
+			//
+			double x[2] = { 1, 0.5 };
+			double x0[2] = { 1, 0.5 };
+			double theta[3] = { 0.1,0.1, 0.05 };
+			double dTheta = dtheta;
+			double dx[2] = { 0.0, 0.0 };
+			double k = 1;
+			double m = 3;
+			double c = 2;
+			double Perf = 100;
+			double P0;
+			double P1;
+			double P2;
+			// add implementation
+			int counter = 0;
+			double local_theta[3];
+			local_theta[0] = theta[0];
+			local_theta[1] = theta[1];
+			local_theta[2] = theta[2];
+			while (std::abs(Perf) > 1 && counter < 100)
+			{
+				//
+				P0 = 0;
+				for (double t = 0; t < 10; t += 0.5)
+				{
+					double u = local_theta[0] * x[0] + local_theta[1] * x[1];
+					dx[0] = x[1];
+					dx[1] = -(c / m) * (std::pow(x[0], 2) - 1) * x[1] - (k / m) * x[0] + u / m;
+
+					x[0] = x[0] - 0.5 * dx[0];
+					x[1] = x[1] - 0.5 * dx[1];
+
+					P0 += std::sqrt(x[0] * x[0] + x[1] * x[1]);
+				}
+				Perf = P0;
+				x[0] = x0[0];
+				x[1] = x0[1];
+				local_theta[0] += dtheta;
+				P1 = 0;
+				for (double t = 0; t < 10; t += 0.5)
+				{
+					double u = local_theta[0] * x[0] + local_theta[1] * x[1];
+					dx[0] = x[1];
+					dx[1] = -(c / m) * (std::pow(x[0], 2) - 1) * x[1] - (k / m) * x[0] + u / m;
+
+					x[0] = x[0] - 0.5 * dx[0];
+					x[1] = x[1] - 0.5 * dx[1];
+
+					P1 += std::sqrt(x[0] * x[0] + x[1] * x[1]);
+				}
+				x[0] = x0[0];
+				x[1] = x0[1];
+				local_theta[0] = theta[0];
+				local_theta[1] += dtheta;
+				P2 = 0;
+				for (double t = 0; t < 10; t += 0.5)
+				{
+					double u = local_theta[0] * x[0] + local_theta[1] * x[1];
+					dx[0] = x[1];
+					dx[1] = -(c / m) * (std::pow(x[0], 2) - 1) * x[1] - (k / m) * x[0] + u / m;
+
+					x[0] = x[0] - 0.5 * dx[0];
+					x[1] = x[1] - 0.5 * dx[1];
+
+					P2 += std::sqrt(x[0] * x[0] + x[1] * x[1]);
+				}
+				x[0] = x0[0];
+				x[1] = x0[1];
+				local_theta[1] = theta[1];
+
+				theta[0] = theta[0] - hetta * (P1 - P0) / dTheta;
+				theta[1] = theta[1] - hetta * (P2 - P0) / dTheta;
+
+				local_theta[0] = theta[0];
+				local_theta[1] = theta[1];
+
+				counter += 1;
+			}
+			
+			std::array<double, 2> X0 = { 1,0.5 };
+			std::array<double, 3> Theta = { 0.1,0.1,0.05 };
+			std::array<double, 3> temp_sysParameters = { k,m,c }; // system parameters (k,m,c)
+			std::array<std::array<double, MAX_REPEATS>, 2> res;
+			algorithms sel = FD2;
+			sel = FD2;
+			res = gradientDescent(X0, Theta, temp_sysParameters, "step1", sel);
+			double tempRes = 0.0;
+			for (int i = 0; i < MAX_REPEATS; i++)
+			{
+				if (res[0][i] > 0.0)
+					tempRes = res[0][i];
+			}
+			Assert::AreEqual(Perf, tempRes, L"FAILED - Final Performances do not match");
+		}
 		//-------------------------------------------------------------------------------------------//
 		// Test Classes only
 		TEST_METHOD(TestEnumerators)
@@ -195,7 +291,7 @@ namespace VanDerPolOscillatorTests
 			Assert::AreEqual(theta[1], testAlgorithm.thetaVar[1], L"FAILED - theta1 is not setted correctly");
 			Assert::AreEqual(theta[2], testAlgorithm.thetaVar[2], L"FAILED - (should fail) theta2 is not setted correctly");
 		}
-		TEST_METHOD(TestFDControlAlgorithm)
+		TEST_METHOD(TestFDPerformanceControlAlgorithm)
 		{
 			double x[2] = { 1, 0.5 };
 			double theta[3] = { 0.1,0.1, 0.05 };
@@ -233,7 +329,7 @@ namespace VanDerPolOscillatorTests
 			testFD.setHetta(1);
 
 			testFD.setSystemModel(testModel);
-			testFD.runAlgorithm();
+			//testFD.runAlgorithm();
 			double P = 0;
 			for (double t = 0; t < 10; t += 0.5)
 			{
@@ -247,12 +343,14 @@ namespace VanDerPolOscillatorTests
 				P += std::sqrt(x[0] * x[0] + x[1] * x[1]);
 			}
 
-			Assert::AreEqual(P, testFD.P, L"FAILED - Should not fail - Performance is not correct");
+			Assert::AreEqual(P, testFD.P, L"FAILED - Should fail - Performance is not correct");
 		}
 		TEST_METHOD(TestFDMethodControlAlgorithm)
 		{
 			double x[2] = { 1, 0.5 };
+			double x0[2] = { 1, 0.5 };
 			double theta[3] = { 0.1,0.1, 0.05 };
+			double dTheta = dtheta;
 			double dx[2] = { 0.0, 0.0 };
 			double k = 1;
 			double m = 3;
@@ -283,15 +381,227 @@ namespace VanDerPolOscillatorTests
 			Assert::AreEqual(theta[0], testFD.thetaVar[0], L"FAILED - theta0 is not setted correctly");
 			Assert::AreEqual(theta[1], testFD.thetaVar[1], L"FAILED - theta1 is not setted correctly");
 			//Assert::AreEqual(theta[2], testFD.thetaVar[2], L"FAILED - (should fail) theta2 is not setted correctly");
-			testFD.setDtheta(0.5);
-			testFD.setHetta(1);
+			//testFD.setDtheta(0.5);
+			//testFD.setHetta(1);
 
 			testFD.setSystemModel(testModel);
 			testFD.runAlgorithm();
-			double P = 0;
+			double Perf = 100;
+			double P0;
+			double P1;
+			double P2;
 			// add implementation
-			Assert::AreEqual(P, testFD.P, L"FAILED - Should not fail - Performance is not correct");
+			int counter = 0;
+			double local_theta[3];
+			local_theta[0] = theta[0];
+			local_theta[1] = theta[1];
+			local_theta[2] = theta[2];
+
+			while (std::abs(Perf) > 1 && counter < 100)
+			{
+				//
+				P0 = 0;
+				for (double t = 0; t < 10; t += 0.5)
+				{
+					double u = local_theta[0] * x[0] + local_theta[1] * x[1];
+					dx[0] = x[1];
+					dx[1] = -(c / m) * (std::pow(x[0], 2) - 1) * x[1] - (k / m) * x[0] + u / m;
+
+					x[0] = x[0] - 0.5 * dx[0];
+					x[1] = x[1] - 0.5 * dx[1];
+
+					P0 += std::sqrt(x[0] * x[0] + x[1] * x[1]);
+				}
+				Perf = P0;
+				x[0] = x0[0];
+				x[1] = x0[1];
+				local_theta[0] += dtheta;
+				P1 = 0;
+				for (double t = 0; t < 10; t += 0.5)
+				{
+					double u = local_theta[0] * x[0] + local_theta[1] * x[1];
+					dx[0] = x[1];
+					dx[1] = -(c / m) * (std::pow(x[0], 2) - 1) * x[1] - (k / m) * x[0] + u / m;
+
+					x[0] = x[0] - 0.5 * dx[0];
+					x[1] = x[1] - 0.5 * dx[1];
+
+					P1 += std::sqrt(x[0] * x[0] + x[1] * x[1]);
+				}
+				x[0] = x0[0];
+				x[1] = x0[1];
+				local_theta[0] = theta[0];
+				local_theta[1] += dtheta;
+				P2 = 0;
+				for (double t = 0; t < 10; t += 0.5)
+				{
+					double u = local_theta[0] * x[0] + local_theta[1] * x[1];
+					dx[0] = x[1];
+					dx[1] = -(c / m) * (std::pow(x[0], 2) - 1) * x[1] - (k / m) * x[0] + u / m;
+
+					x[0] = x[0] - 0.5 * dx[0];
+					x[1] = x[1] - 0.5 * dx[1];
+
+					P2 += std::sqrt(x[0] * x[0] + x[1] * x[1]);
+				}
+				x[0] = x0[0];
+				x[1] = x0[1];
+				local_theta[1] = theta[1];
+				
+				theta[0] = theta[0] - hetta * (P1 - P0) / dTheta;
+				theta[1] = theta[1] - hetta * (P2 - P0) / dTheta;
+
+				local_theta[0] = theta[0];
+				local_theta[1] = theta[1];
+
+				counter += 1;
+			}
+			Assert::AreEqual(Perf, testFD.P, L"FAILED - Should not fail - Performance is not correct");
+			Assert::AreEqual(theta[0], testFD.thetaVar[0], L"FAILED - Should not fail - Theta 0 is not correct");
+			Assert::AreEqual(theta[1], testFD.thetaVar[1], L"FAILED - Should not fail - Theta 1 is not correct");
 		}
+		TEST_METHOD(TestSPSAMethodControlAlgorithm)
+		{
+			double x[2] = { 0.5, 0.1 };
+			double x0[2] = { 0.5, 0.1 };
+			double theta[3] = { -0.1,0.1, 1 };
+			double dTheta = dtheta;
+			double dx[2] = { 0.0, 0.0 };
+			double k = 1;
+			double m = 3;
+			double c = 2;
+			vdpo::systemModel testModel = vdpo::systemModel::systemModel(k, m, c, vdpo::theta::two);
+
+			// Default constructor FD , 2 theta , no sensitivity analysis
+			vdpo::SPSA testSPSA = vdpo::SPSA::SPSA();
+
+			//pass the x and theta values
+			testSPSA.x[0] = x[0];
+			testSPSA.x[1] = x[1];
+			testSPSA.thetaVar[0] = theta[0];
+			testSPSA.thetaVar[1] = theta[1];
+			testSPSA.thetaVar[2] = theta[2];
+
+			// Set times for simulation (performance / value / cost functions)
+			testSPSA.setStartTime(0);
+			testSPSA.setStepTime(0.5);
+			testSPSA.setFinalTime(20);
+			testSPSA.iterationsCalculate();
+			Assert::AreEqual(41.0, testSPSA.simulationIterations, L"FAILED - (should not fail) time iterations are not correctly  calculated");
+
+			testSPSA.setMaxIterations(100);
+
+			testSPSA.thetaVar[0] = theta[0];
+			testSPSA.thetaVar[1] = theta[1];
+			Assert::AreEqual(theta[0], testSPSA.thetaVar[0], L"FAILED - theta0 is not setted correctly");
+			Assert::AreEqual(theta[1], testSPSA.thetaVar[1], L"FAILED - theta1 is not setted correctly");
+			//Assert::AreEqual(theta[2], testFD.thetaVar[2], L"FAILED - (should fail) theta2 is not setted correctly");
+			//testFD.setDtheta(0.5);
+			//testFD.setHetta(1);
+
+			testSPSA.setSystemModel(testModel);
+			testSPSA.runAlgorithm();
+			double Perf = 100;
+			double P0, P1, P2, P3;
+			// add implementation
+			int counter = 0;
+			double local_theta[3];
+			local_theta[0] = theta[0];
+			local_theta[1] = theta[1];
+			local_theta[2] = theta[2];
+
+			double ak, ck, Dk[2];
+
+			while (std::abs(Perf) > 1 && counter < 100)
+			{
+				// Calculate ak, ck, Dk
+				ck = betta / std::powl(counter + 1, gamma);
+				ak = a / std::powl(A + counter + 1, alpha);
+				std::random_device rd;
+				std::mt19937 gen(rd());
+				std::bernoulli_distribution d(p);
+				for (int i = 0; i < 2; i++)
+					Dk[i] = d(gen)?1.0:-1.0;
+				//
+				P0 = 0;
+				local_theta[0] += ck * Dk[0];
+				for (double t = 0; t < 20; t += 0.5)
+				{
+					double u = local_theta[0] * x[0] + local_theta[1] * x[1];
+					dx[0] = x[1];
+					dx[1] = -(c / m) * (std::pow(x[0], 2) - 1) * x[1] - (k / m) * x[0] + u / m;
+
+					x[0] = x[0] - 0.5 * dx[0];
+					x[1] = x[1] - 0.5 * dx[1];
+
+					P0 += std::sqrt(x[0] * x[0] + x[1] * x[1]);
+				}
+				Perf = P0;
+				x[0] = x0[0];
+				x[1] = x0[1];
+				local_theta[0] = theta[0];
+				local_theta[1] += ck * Dk[1];
+				P1 = 0;
+				for (double t = 0; t < 20; t += 0.5)
+				{
+					double u = local_theta[0] * x[0] + local_theta[1] * x[1];
+					dx[0] = x[1];
+					dx[1] = -(c / m) * (std::pow(x[0], 2) - 1) * x[1] - (k / m) * x[0] + u / m;
+
+					x[0] = x[0] - 0.5 * dx[0];
+					x[1] = x[1] - 0.5 * dx[1];
+
+					P1 += std::sqrt(x[0] * x[0] + x[1] * x[1]);
+				}
+				x[0] = x0[0];
+				x[1] = x0[1];
+				local_theta[1] = theta[1];
+				local_theta[0] -= ck * Dk[0];
+				P2 = 0;
+				for (double t = 0; t < 20; t += 0.5)
+				{
+					double u = local_theta[0] * x[0] + local_theta[1] * x[1];
+					dx[0] = x[1];
+					dx[1] = -(c / m) * (std::pow(x[0], 2) - 1) * x[1] - (k / m) * x[0] + u / m;
+
+					x[0] = x[0] - 0.5 * dx[0];
+					x[1] = x[1] - 0.5 * dx[1];
+
+					P2 += std::sqrt(x[0] * x[0] + x[1] * x[1]);
+				}
+				x[0] = x0[0];
+				x[1] = x0[1];
+				local_theta[0] = theta[0];
+				local_theta[1] -= ck * Dk[1];
+				P3 = 0;
+				for (double t = 0; t < 20; t += 0.5)
+				{
+					double u = local_theta[0] * x[0] + local_theta[1] * x[1];
+					dx[0] = x[1];
+					dx[1] = -(c / m) * (std::pow(x[0], 2) - 1) * x[1] - (k / m) * x[0] + u / m;
+
+					x[0] = x[0] - 0.5 * dx[0];
+					x[1] = x[1] - 0.5 * dx[1];
+
+					P2 += std::sqrt(x[0] * x[0] + x[1] * x[1]);
+				}
+				x[0] = x0[0];
+				x[1] = x0[1];
+				local_theta[1] = theta[1];
+				
+				theta[0] = theta[0] - ak * (P0 - P2) / (2 * ck * Dk[0]);
+				theta[1] = theta[1] - ak * (P1 - P3) / (2 * ck * Dk[1]);
+
+				local_theta[0] = theta[0];
+				local_theta[1] = theta[1];
+
+				counter += 1;
+			}
+			Assert::AreEqual(Perf, testSPSA.P, L"FAILED - Should not fail - Performance is not correct");
+			Assert::AreEqual(theta[0], testSPSA.thetaVar[0], L"FAILED - Should not fail - Theta 0 is not correct");
+			Assert::AreEqual(theta[1], testSPSA.thetaVar[1], L"FAILED - Should not fail - Theta 1 is not correct");
+		}
+
 		//-------------------------------------------------------------------------------------------//
 		// Compare results from functions and Classes
 		TEST_METHOD(FunctionVsApiProjectsDerivativeXu2)
@@ -335,6 +645,54 @@ namespace VanDerPolOscillatorTests
 			Assert::AreEqual(dxTest[0], testModel.getDx()[0], L"FAILED - Derivative x0 does not match please review implementation");
 			Assert::AreEqual(dxTest[1], testModel.getDx()[1], L"FAILED - Derivative x1 does not match please review implementation");
 
+		}
+		TEST_METHOD(CompareLQRMethods)
+		{
+			double x[2] = { 0.5, 0.1 };
+			double dx[2] = { 0.0, 0.0 };
+			double k = 1;
+			double m = 3;
+			double c = 2;
+			vdpo::systemModel testModel = vdpo::systemModel::systemModel(k, m, c, vdpo::theta::two);
+
+			// Default constructor FD , 2 theta , no sensitivity analysis
+			vdpo::LQR testLQR = vdpo::LQR::LQR();
+
+			//pass the x and theta values
+			testLQR.x[0] = x[0];
+			testLQR.x[1] = x[1];
+
+			// Set times for simulation (performance / value / cost functions)
+			testLQR.setStartTime(0);
+			testLQR.setStepTime(0.5);
+			testLQR.setFinalTime(20);
+			testLQR.iterationsCalculate();
+			Assert::AreEqual(41.0, testLQR.simulationIterations, L"FAILED - (should not fail) time iterations are not correctly  calculated");
+
+			testLQR.setMaxIterations(100);
+
+			testLQR.setSystemModel(testModel);
+			testLQR.runAlgorithm();
+			double Perf = 100;
+			// add implementation
+			std::array<double, 2> x0 = { 0.5, 0.1 };
+			std::array<double, 3> theta = { -0.1, 0.1, 1 }; // theta parameters
+			std::array<double, 3> temp_sysParameters = { 1, 1, 1 }; // system parameters (k,m,c)
+			std::array<std::array<double, 3>, 8> sysParameters{ { // system parameters (k,m,c)
+				{ 1, 1, 1},
+				{ 1, 1,-1},
+				{ 1,-1, 1},
+				{ 1,-1,-1},
+				{-1, 1, 1},
+				{-1, 1,-1},
+				{-1,-1, 1},
+				{-1,-1,-1}
+			} };
+			algorithms sel = LQR;
+			std::array<double, timeFinalLQR + 1> resLQR = lqrTop(x0, theta, temp_sysParameters, "step10", sel);
+
+			int counter = 0;
+			Assert::AreEqual(Perf, testLQR.J, L"FAILED - Should not fail - Performance is not correct");
 		}
 	};
 }

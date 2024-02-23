@@ -82,7 +82,7 @@ void vdpo::systemModel::dxCalculate()
 {
 	double uLocal = (this->numTheta == theta::two ? this->u2() : (this->numTheta == theta::three ? this->u3() : this->uK()));
 	this->dx[0] = this->x[1];
-	this->dx[1] = -(this->c / this->m) * (std::pow(this->x[0], 2) - 1) * this->x[1] - (this->k / this->m) * this->x[0] + (uLocal / this->m);
+	this->dx[1] = -(this->c / this->m) * (this->x[0] * this->x[0] - 1) * this->x[1] - (this->k / this->m) * this->x[0] + (uLocal / this->m);
 
 	this->uTest = uLocal; // for debugging
 }
@@ -94,7 +94,7 @@ double vdpo::systemModel::u2()
 }
 double vdpo::systemModel::u3()
 {
-	return this->thetaVar[0] * this->x[0] + this->thetaVar[1] * this->x[1] - thetaVar[2] * this->x[1] * (std::pow(this->x[0], 2) - 1);
+	return this->thetaVar[0] * this->x[0] + this->thetaVar[1] * this->x[1] - thetaVar[2] * this->x[1] * (this->x[0] * this->x[0] - 1);
 }
 double vdpo::systemModel::uK()
 {

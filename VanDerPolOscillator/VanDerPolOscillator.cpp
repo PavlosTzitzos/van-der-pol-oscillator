@@ -48,8 +48,9 @@ int main(int argc, char* argv[])
     gp << "set title 'Graph of Performance over iterations for FD with 2 theta'\n";
     gp << "plot '-' with lines title 'v0'\n";
     gp.send(v0);
+    gp << "pause mouse close \n";
 
-    std::cin.get();
+    //std::cin.get();
     
     
     std::array<double, 10> constantParameters2 = { 0.01, 0.001, betta, gamma, alpha, A, a, p, gac, dt };
@@ -64,8 +65,9 @@ int main(int argc, char* argv[])
     gp << "set title 'Graph of Performance over iterations for FD with 3 theta'\n";
     gp << "plot '-' with lines title 'v0'\n";
     gp.send(v0);
+    gp << "pause mouse close \n";
 
-    std::cin.get();
+    //std::cin.get();
     
     
     // Step 3: Calculate using SPSA with 2 theta and m=c=k=1
@@ -83,8 +85,9 @@ int main(int argc, char* argv[])
     gp << "set title 'Graph of Performance over iterations for SPSA with 2 theta'\n";
     gp << "plot '-' with lines title 'v0'\n";
     gp.send(v0);
+    gp << "pause mouse close \n";
 
-    std::cin.get();
+    //std::cin.get();
     */
     /*
     // Step 4: Calculate using SPSA with 3 theta and m=c=k=1
@@ -102,8 +105,9 @@ int main(int argc, char* argv[])
     gp << "set title 'Graph of Performance over iterations for SPSA with 3 theta'\n";
     gp << "plot '-' with lines title 'v0'\n";
     gp.send(v0);
+    gp << "pause mouse close \n";
 
-    std::cin.get();
+    //std::cin.get();
     
 
     
@@ -125,8 +129,9 @@ int main(int argc, char* argv[])
         gp << "set title 'Graph of Performance over iterations for FD with 2 theta'\n";
         gp << "plot '-' with lines title 'v0'\n";
         gp.send(v0);
+        gp << "pause mouse close \n";
 
-        std::cin.get();
+        //std::cin.get();
     }
     
 
@@ -147,8 +152,9 @@ int main(int argc, char* argv[])
         gp << "set title 'Graph of Performance over iterations for FD with 3 theta'\n";
         gp << "plot '-' with lines title 'v0'\n";
         gp.send(v0);
+        gp << "pause mouse close \n";
 
-        std::cin.get();
+        //std::cin.get();
     }
     
     
@@ -169,8 +175,9 @@ int main(int argc, char* argv[])
         gp << "set title 'Graph of Performance over iterations for SPSA with 2 theta'\n";
         gp << "plot '-' with lines title 'v0'\n";
         gp.send(v0);
+        gp << "pause mouse close \n";
 
-        std::cin.get();
+        //std::cin.get();
     }
     
 
@@ -191,8 +198,9 @@ int main(int argc, char* argv[])
         gp << "set title 'Graph of Performance over iterations for SPSA with 3 theta'\n";
         gp << "plot '-' with lines title 'v0'\n";
         gp.send(v0);
+        gp << "pause mouse close \n";
 
-        std::cin.get();
+        //std::cin.get();
     }
     */
     /*
@@ -211,8 +219,9 @@ int main(int argc, char* argv[])
     gp << "set title 'Graph of Performance over iterations for AC'\n";
     gp << "plot '-' with lines title 'v0'\n";
     gp.send(v0);
+    gp << "pause mouse close \n";
 
-    std::cin.get();
+    //std::cin.get();
     */
     // Step 10: Calculate using Linear Quandratic Control
     /*
@@ -225,8 +234,9 @@ int main(int argc, char* argv[])
     gp << "set title 'Graph of Performance over iterations for LQR'\n";
     gp << "plot '-' with lines title 'v0'\n";
     gp.send(v0);
+    gp << "pause mouse close \n";
 
-    std::cin.get();
+    //std::cin.get();
     */
     /*
     // Step 11: Calculate using Adaptive Control with (m,c,k) = sysParameters
@@ -246,8 +256,9 @@ int main(int argc, char* argv[])
         gp << "set title 'Graph of Performance over iterations for AC'\n";
         gp << "plot '-' with lines title 'v0'\n";
         gp.send(v0);
+        gp << "pause mouse close \n";
 
-        std::cin.get();
+        //std::cin.get();
     }
     */
     // Step 10: Sensitivity Analysis
@@ -265,8 +276,9 @@ int main(int argc, char* argv[])
     gp << "set title 'Graph of Performance over iterations'\n";
     gp << "plot '-' with lines title 'v0'\n";
     gp.send(v0);
+    gp << "pause mouse close \n";
 
-    std::cin.get();
+    //std::cin.get();
     */
     std::cout << "End of program ... \n" << std::endl;
     return 0;

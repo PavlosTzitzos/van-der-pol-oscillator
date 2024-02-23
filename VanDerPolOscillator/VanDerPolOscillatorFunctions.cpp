@@ -476,7 +476,8 @@ std::array<double, timeFinalLQR + 1> lqrTop(std::array<double, 2> x0, std::array
     gp.send(v0);
     gp.send(v1);
 
-    std::cin.get();
+    gp << "pause mouse close \n";
+    //std::cin.get();
     return ret;
 }
 
@@ -524,7 +525,7 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
         std::cout << "Initial Perf = [ " << P[0] << " , " << P[1] << " , " << P[2] << " , " << P[3] << " ]" << std::endl;
 
         int counter = 0;
-        while (std::abs(Perf) > 10 && counter < MAX_REPEATS)
+        while (std::abs(Perf) > 1 && counter < MAX_REPEATS)
         {
             std::ofstream results;
             std::string filename = "results_fd2_" + st + "_" + std::to_string(counter) + ".txt";
@@ -583,14 +584,23 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
             counter += 1;
         }
         Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\"");
-
         gp << "set title 'Graph of x1 and x2 over iterations for FD with 2 theta'\n";
         gp << "plot '-' with lines title 'x1',"
             << "'-' with lines title 'x2'\n";
         gp.send(v0);
-        gp.send(v1);
+        //gp.send(v1);
+        //gp.send1d(v0);
+        std::array<std::vector<double>,2> cc;
+        for (int k = 0; k < v0.size(); k++)
+        {
+            //
+            cc[0].push_back(v0[k]);
+            cc[1].push_back(v1[k]);
+        }
+        gp.send2d(cc);
+        gp << "pause mouse close \n";
 
-        std::cin.get();
+        //std::cin.get();
         return P_res;
     }
     case FD3: // Finite Differences Algorithm with 3 theta
@@ -674,8 +684,9 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
             << "'-' with lines title 'x2'\n";
         gp.send(v0);
         gp.send(v1);
+        gp << "pause mouse close \n";
 
-        std::cin.get();
+        //std::cin.get();
         return P_res;
     }
     case SPSA2: // Simultaneous Perturbation Stochastic Approximation Algorithm with 2 theta
@@ -805,8 +816,9 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
             << "'-' with lines title 'x2'\n";
         gp.send(v0);
         gp.send(v1);
+        gp << "pause mouse close \n";
 
-        std::cin.get();
+        //std::cin.get();
         return P_res;
     }
     case SPSA3: // Simultaneous Perturbation Stochastic Approximation Algorithm with 3 theta
@@ -947,8 +959,9 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
             << "'-' with lines title 'x2'\n";
         gp.send(v0);
         gp.send(v1);
+        gp << "pause mouse close \n";
 
-        std::cin.get();
+        //std::cin.get();
         return P_res;
     }
     case LQR: // Linear Quadratic Regulator Algorithm
@@ -1036,8 +1049,9 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
             << "'-' with lines title 'x2'\n";
         gp.send(v0);
         gp.send(v1);
+        gp << "pause mouse close \n";
 
-        std::cin.get();
+        //std::cin.get();
         return P_res;
     }
     default:

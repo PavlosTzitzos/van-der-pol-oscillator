@@ -11,12 +11,12 @@
 
 #include "gnuplot-iostream.h"
 
-#define timeFinal 1000   /* Stop Value of performance function and Value function of AC */
+#define timeFinal 100   /* Stop Value of performance function and Value function of AC */
 
 /* FD and GD */
 #define dtheta 0.001    /* Rate of change of theta angle between -0.1 <= dtheta <= -0.01 and 0.1 <= dtheta <= 0.01 */
 #define hetta 0.01      /* Rate of change of the gradient descend */
-#define timeStep 0.01   /* Time Step (must approach zero: dt->0) */
+#define timeStep 0.5    /* Time Step (must approach zero: dt->0) */
 #define MAX_REPEATS 100 /* Maximum number of iterations for Gradient Descent Top algorithm */
 #define version 1       /* Choose version of code: 1 for FD, 2 for SPSA, 3 will be added */
 
@@ -34,18 +34,18 @@
 
 /* SPSA Parameters */
 /* c_k : */
-#define betta 2.1       /* non-negative coefficient for SPSA */
+#define betta 1         /* non-negative coefficient for SPSA */
 #define gamma 0.1       /* non-negative coefficient for SPSA */
 
 /* a_k : */
 #define a 0.1           /* non-negative coefficient for SPSA */
 #define A 0.1           /* non-negative coefficient for SPSA */
-#define alpha 0.1       /* non-negative coefficient for SPSA */
+#define alpha 1         /* non-negative coefficient for SPSA */
 
 /* D_k : */
 #define p 0.5           /* propability for Delta_k bernoulli distribution for SPSA*/
 
-#define SPSA_END 0.01   /* Creteria value for SPSA termination should be small enough */
+#define SPSA_END 1      /* Creteria value for SPSA termination should be small enough */
 
 
 /** An enum type.
@@ -78,7 +78,7 @@ std::array<double, 2> f(std::array<double, 2> x, double u_local, double k, doubl
 */
 std::array<double, 2> fLQR(std::array<double, 2> x, double u_local);
 
-/** Van der Pol State Space System of equations. This is used for Adaptive Control only.
+/** Van der Pol State Space System of equations. This is the Reference Model for Adaptive Control only.
 * @param x : Array of state space variables x
 * @param u_local : Control signal
 * @param thetaR : real theta

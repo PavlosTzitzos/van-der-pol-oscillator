@@ -73,8 +73,10 @@ void vdpo::plant::setInitialTheta3(double setValue[3])
 
 void vdpo::plant::simulatePlant()
 {
+	std::chrono::high_resolution_clock::time_point t_start = std::chrono::high_resolution_clock::now();
 	std::cout << "\n Simulation Started ... \n" << std::endl;
 	vdpo::systemModel MySystem = vdpo::systemModel::systemModel(this->k, this->m, this->c, this->numberOfTheta);
+	MySystem.setSSV(this->x0);
 	if(this->selectedAlgorithm == algorithm::FD)
 	{
 		vdpo::FD MyAlgorithm = vdpo::FD::FD(this->numberOfTheta,this->sensitivityAnalysis);
@@ -129,7 +131,9 @@ void vdpo::plant::simulatePlant()
 		MyAlgorithm.setSystemModel(MySystem);
 		MyAlgorithm.runAlgorithm();
 	}
-	std::cout << "\n Simulation Finished ... \n" << std::endl;
+	std::chrono::high_resolution_clock::time_point t_end = std::chrono::high_resolution_clock::now();
+	std::cout << std::fixed << std::setprecision(2) << "\n Simulation Finished after " << std::chrono::duration<double, std::milli>(t_end - t_start).count() << " s. Press Enter to exit...";
+	std::cin.get();
 }
 
 vdpo::plant::~plant() { }

@@ -7,6 +7,7 @@
 #include "displayData.h"
 #include <vector>
 #include <random>
+#include <stdexcept>
 
 namespace vdpo {
 
@@ -17,7 +18,7 @@ namespace vdpo {
     class controlAlgorithm
     {
     public:
-        bool displayGraphs = false;
+        bool displayGraphs = true;
 
         double x[2];
 
@@ -89,10 +90,10 @@ namespace vdpo {
         int startTime = 0;
 
         // Simulation Step
-        double stepTime = 0.01;
+        double stepTime = 0.5;
 
         // Simulation Stop
-        int finalTime = 1000;
+        int finalTime = 100;
 
         // Used for End Creteria inside the algorithms
         double performanceThreshold = 1;
@@ -111,6 +112,7 @@ namespace vdpo {
         // SSV Storage - Used for diagrams only
         std::vector<double> x1;
         std::vector<double> x2;
+        std::vector<double> timeVector;
     };
 
     // Finite Differences Algorithm
@@ -123,12 +125,21 @@ namespace vdpo {
 
         FD(theta numberOfTheta, bool sensitivity);
 
-        // Access Methods
+        // Access Methods - Getters
+        
         // Get slope
         double  getHetta();
 
         // Get theta change (Delta Theta)
         double  getDtheta();
+
+        // Access Methods - Setters
+        
+        // set all parameters h , dtheta
+        void setParameters(double parHetta, double parDtheta);
+        
+        // set all parameters [h,dtheta]
+        void setParameters(double parameters[2]);
 
         // Set slope
         void    setHetta(double setValue);
@@ -189,6 +200,9 @@ namespace vdpo {
         // Set the probability of Delta k
         void setProbability(double setValue);
 
+        // set all parameters [betta,gamma,alpha,A,a,p]
+        void setParameters(double parameters[6]);
+
         // The betta value - used for ck
         double getBetta();
 
@@ -213,9 +227,9 @@ namespace vdpo {
         void runAlgorithm();
     protected:
         // Algorithm Parameters
-        double betta = 2.1;
+        double betta = 1;
         double gamma = 0.1;
-        double alpha = 0.1;
+        double alpha = 1;
         double A = 0.1;
         double a = 0.1;
         double p = 0.5;
@@ -258,18 +272,25 @@ namespace vdpo {
         // Access Methods - Getters
 
         double* getQ();
-        double* getR();
+        double  getR();
         double* getK();
-        
-        double getJ(); // Final Calculated Cost
-        double getP(); // Final Calculated Performance
+
+        // Final calculated cost
+        double getJ();
+
+        // Final calculated performance
+        double getP();
 
         // Access Methods - Setters
 
         // Input Q matrix elements like: 
         // Q11 = mat[0] , Q12 = mat[1] , Q21 = mat[2] , Q22 = mat[3] .
         void setQ(double matrix[4]);
+        
         void setR(double val);
+
+        // set both Q 2x2 and R element 
+        void setMatrices(double matQ[4], double rValue);
 
         // Cost result
         double J = 0;
@@ -277,16 +298,17 @@ namespace vdpo {
         // Performance result
         double P = 0;
 
+        // run the implementation
         void runAlgorithm();
     protected:
         // Algorithm Parameters
-    private:
         // Matrices
         double q = 1;
         double r = 1;
         double K[2];
         double R = r;
         double Q[4] = { q, 0, 0, q };
+    private:
 
         // Algorithm Implementation
         void riccati();
@@ -297,6 +319,8 @@ namespace vdpo {
         // Calculate Performance
         void performance();
 
+        // Sensitivity Analysis Implementation
+        void sensitivityAnalyzer();
     };
 
     class AC :public controlAlgorithm
