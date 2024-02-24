@@ -237,15 +237,15 @@ void    vdpo::FD::performance()
             // Do something when NaN or inf appears - Exception and Error handling
             if (isnan(localX[0]) || isnan(localX[1]))
             {
-                throw std::runtime_error("103 - Calculated x is NaN!");
+                throw std::runtime_error("201 - Calculated x is NaN!");
             }
             if (isinf(localX[0]) || isinf(localX[1]))
             {
-                throw std::runtime_error("104 - Calculated x is infinity!");
+                throw std::runtime_error("202 - Calculated x is infinity!");
             }
             if (std::abs(localX[0]) > 1e7 || std::abs(localX[1]) > 1e7)
             {
-                throw std::runtime_error("105 - Calculated x is infinity!");
+                throw std::runtime_error("203 - Calculated x is too big to represent!");
             }
             if (std::abs(localX[0]) < 1e-7 || std::abs(localX[1]) < 1e-7)
             {
@@ -483,7 +483,7 @@ void    vdpo::SPSA::spsa()
                     this->performanceValue1.pop_back();
                     this->performanceValue3.pop_back();
                     this->performanceValue4.pop_back();
-                    throw std::runtime_error("103 - Calculated Performance is NaN!");
+                    throw std::runtime_error("101 - Calculated Performance is NaN!");
                 }
                 if (isinf(this->performanceValue0.back()) || isinf(this->performanceValue1.back()) || isinf(this->performanceValue3.back()) || isinf(this->performanceValue4.back()) )
                 {
@@ -492,7 +492,7 @@ void    vdpo::SPSA::spsa()
                     this->performanceValue1.pop_back();
                     this->performanceValue3.pop_back();
                     this->performanceValue4.pop_back();
-                    throw std::runtime_error("104 - Calculated Performance is infinity!");
+                    throw std::runtime_error("102 - Calculated Performance is infinity!");
                 }
             }
             // Check End Creteria
@@ -577,15 +577,15 @@ void    vdpo::SPSA::performance()
             // Do something when NaN or inf appears - Exception and Error handling
             if (isnan(localX[0]) || isnan(localX[1]))
             {
-                throw std::runtime_error("103 - Calculated x is NaN!");
+                throw std::runtime_error("201 - Calculated x is NaN!");
             }
             if (isinf(localX[0]) || isinf(localX[1]))
             {
-                throw std::runtime_error("104 - Calculated x is infinity!");
+                throw std::runtime_error("202 - Calculated x is infinity!");
             }
             if (std::abs(localX[0]) > 1e7 || std::abs(localX[1]) > 1e7)
             {
-                throw std::runtime_error("104 - Calculated x is infinity!");
+                throw std::runtime_error("203 - Calculated x is too big to represent!");
             }
             if (std::abs(localX[0]) < 1e-7 || std::abs(localX[1]) < 1e-7)
             {
@@ -1010,15 +1010,15 @@ void    vdpo::LQR::cost()
             // Do something when NaN or inf appears - Exception and Error handling
             if (isnan(localX[0]) || isnan(localX[1]))
             {
-                throw std::runtime_error("103 - Calculated x is NaN!");
+                throw std::runtime_error("201 - Calculated x is NaN!");
             }
             if (isinf(localX[0]) || isinf(localX[1]))
             {
-                throw std::runtime_error("104 - Calculated x is infinity!");
+                throw std::runtime_error("202 - Calculated x is infinity!");
             }
             if (std::abs(localX[0]) > 1e7 || std::abs(localX[1]) > 1e7)
             {
-                throw std::runtime_error("104 - Calculated x is infinity!");
+                throw std::runtime_error("203 - Calculated x is too big to represent!");
             }
             if (std::abs(localX[0]) < 1e-7 || std::abs(localX[1]) < 1e-7)
             {
