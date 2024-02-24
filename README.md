@@ -22,13 +22,9 @@ The Tests where necessary since there was no easy way to test all this methods.
 
 - [LaTeX in Visual Studio - Setup](https://guillaumeblanchet.medium.com/using-latex-in-visual-studio-code-on-windows-121032043dad)
 
-- [LaTeX Report Template](https://www.overleaf.com/learn/latex/How_to_Write_a_Thesis_in_LaTeX_(Part_1)%3A_Basic_Structure)
-
 - [Plotting Library - official](http://www.gnuplot.info/)
 
 - [Plotting Library - installation and tutorial](https://www.youtube.com/watch?v=gsLIUtmTs8Q)
-
-- [Best Image Merger](https://www.onlineconverter.com/merge-images)
 
 - [An in depth guide on Overloading with examples - Microsoft Learn](https://learn.microsoft.com/en-us/cpp/cpp/function-overloading?view=msvc-170)
 
