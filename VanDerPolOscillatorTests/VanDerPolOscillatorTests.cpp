@@ -646,7 +646,7 @@ namespace VanDerPolOscillatorTests
 		}
 		TEST_METHOD(CompareLQRMethods)
 		{
-			double x[2] = { 0.5, 0.1 };
+			double x[2] = { 1, 0.5 };
 			double dx[2] = { 0.0, 0.0 };
 			double k = 1;
 			double m = 3;
@@ -680,7 +680,7 @@ namespace VanDerPolOscillatorTests
 			std::array<double, timeFinalLQR> resLQR = lqrTop(x0, theta, temp_sysParameters, "step10", sel);
 
 			bool okJ = (std::abs(resLQR[timeFinalLQR - 1] - testLQR.J) < 0.001) ? true : false;
-			Assert::IsTrue(okJ, L"FAILED - Should not fail - Performance is not correct");
+			Assert::IsTrue(okJ, L"FAILED - Should fail - Performance is not correct due to different x0");
 		}
 	};
 }

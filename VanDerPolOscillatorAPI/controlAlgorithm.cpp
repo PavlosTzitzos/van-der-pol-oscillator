@@ -500,18 +500,24 @@ void    vdpo::SPSA::spsa()
     if (plotFlag && this->displayGraphs)
     {
         this->plotPerformance.setVector1(this->performanceValue0);
+        this->plotPerformance.setVector2(this->performanceValue1);
+        this->plotPerformance.setVector3(this->performanceValue3);
+        this->plotPerformance.setVector4(this->performanceValue4);
+        this->plotPerformance.label1 = "Performance \\theta_{0,+} ";
+        this->plotPerformance.label2 = "Performance \\theta_{1,+} ";
+        this->plotPerformance.label3 = "Performance \\theta_{0,-} ";
+        this->plotPerformance.label4 = "Performance \\theta_{2,-} ";
         this->plotPerformance.graphTitle = "Performance over iterations";
         this->plotPerformance.axisYlabel = "Performance";
         this->plotPerformance.axisXlabel = "Iterations";
-        this->plotPerformance.label1 = "P";
-        this->plotPerformance.plotData1();
+        this->plotPerformance.plotData4();
 
         this->plotSSV.setVector1(this->x1);
         this->plotSSV.setVector2(this->x2);
         this->plotSSV.label1 = "x1";
         this->plotSSV.label2 = "x2";
         this->plotSSV.axisYlabel = "State Space Variables";
-        this->plotSSV.axisXlabel = "Time";
+        this->plotSSV.axisXlabel = "Iterations";
         this->plotSSV.plotData2();
         this->plotSSV.setPair(true);
         this->plotSSV.graphTitle = "x1 vs x2";
@@ -871,18 +877,22 @@ void    vdpo::LQR::riccati()
     if (plotFlag && this->displayGraphs)
     {
         this->plotPerformance.setVector1(this->costValue);
-        this->plotPerformance.graphTitle = "Cost over iterations";
+        this->plotPerformance.setVector2(this->timeVector);
+        this->plotPerformance.setPair(false);
+        this->plotPerformance.graphTitle = "Cost over time";
         this->plotPerformance.axisYlabel = "Cost";
-        this->plotPerformance.axisXlabel = "Iterations";
-        this->plotPerformance.label1 = "J";
-        this->plotPerformance.plotData1();
+        this->plotPerformance.axisXlabel = "Time";
+        this->plotPerformance.labelPair = "J(t)";
+        this->plotPerformance.setXRange(this->timeVector.front()-0.1, this->timeVector.back());
+        this->plotPerformance.setYRange(this->costValue.front(), this->costValue.back()+0.1);
+        this->plotPerformance.plotPair();
 
         this->plotSSV.setVector1(this->x1);
         this->plotSSV.setVector2(this->x2);
         this->plotSSV.label1 = "x1";
         this->plotSSV.label2 = "x2";
         this->plotSSV.axisYlabel = "State Space Variables";
-        this->plotSSV.axisXlabel = "Time";
+        this->plotSSV.axisXlabel = "Iterations";
         this->plotSSV.plotData2();
         this->plotSSV.setPair(true);
         this->plotSSV.graphTitle = "x1 vs x2";

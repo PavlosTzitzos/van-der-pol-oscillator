@@ -348,8 +348,8 @@ namespace vdpo {
     protected:
         // Algorithm Parameters
         double gamma = 0.01;
-        double k1 = 0.5;
-        double k2 = 0.5;
+        double k1 = 0.5; // Kx
+        double k2 = 0.5; // Kr
     private:
         // Algorithm Implementation
         void adaptiveControl();

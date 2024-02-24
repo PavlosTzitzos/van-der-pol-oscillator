@@ -15,12 +15,8 @@ The API version is an attempt to make a library and one entry point.
 The Tests where necessary since there was no easy way to test all this methods.
 
 ## ToDo List :
-- [ ] Fix report
-- [ ] fix comments and summaries of functions
-- [ ] Write the report using latex. (check below)
-- [ ] Correct Adaptive Control algorithm.
+- [ ] Fix Adaptive Control algorithm.
 - [ ] Does optimizating the code has any good result? If yes try it.
-- [ ] Add more tests
 
 # Sources :
 
