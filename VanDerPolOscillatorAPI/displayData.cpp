@@ -72,14 +72,39 @@ void vdpo::displayData::setVector5(double v[N]) { this->vector5.insert(std::end(
 template<int N>
 void vdpo::displayData::setVector6(double v[N]) { this->vector6.insert(std::end(v), std::begin(v), std::end(v)); }
 
-void vdpo::displayData::setVector1(std::vector<double> v) { this->vector1 = v; }
-void vdpo::displayData::setVector2(std::vector<double> v) { this->vector2 = v; }
-void vdpo::displayData::setVector3(std::vector<double> v) { this->vector3 = v; }
-void vdpo::displayData::setVector4(std::vector<double> v) { this->vector4 = v; }
-void vdpo::displayData::setVector5(std::vector<double> v) { this->vector5 = v; }
-void vdpo::displayData::setVector6(std::vector<double> v) { this->vector6 = v; }
+void vdpo::displayData::setVector1(std::vector<double> v)
+{
+	if(!this->vector1.empty()) this->vector1.clear();
+	this->vector1 = v;
+}
+void vdpo::displayData::setVector2(std::vector<double> v)
+{
+	if (!this->vector2.empty()) this->vector2.clear();
+	this->vector2 = v;
+}
+void vdpo::displayData::setVector3(std::vector<double> v)
+{
+	if (!this->vector3.empty()) this->vector3.clear();
+	this->vector3 = v;
+}
+void vdpo::displayData::setVector4(std::vector<double> v)
+{
+	if (!this->vector4.empty()) this->vector4.clear();
+	this->vector4 = v;
+}
+void vdpo::displayData::setVector5(std::vector<double> v)
+{
+	if (!this->vector5.empty()) this->vector5.clear();
+	this->vector5 = v;
+}
+void vdpo::displayData::setVector6(std::vector<double> v)
+{
+	if (!this->vector6.empty()) this->vector6.clear();
+	this->vector6 = v;
+}
 void vdpo::displayData::setPair(bool order12)
 {
+	if (!this->xyPair.empty()) this->xyPair.clear();
 	if (this->vector1.size() != this->vector2.size())
 		return;
 	if (order12)

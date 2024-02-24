@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "CppUnitTest.h"
 #include "../VanDerPolOscillatorAPI/gnuplot-iostream.h"
+
+// include cpp files only to test the implementations directly
 #include "../VanDerPolOscillatorAPI/enumerators.cpp"
 #include "../VanDerPolOscillatorAPI/systemModel.cpp"
 #include "../VanDerPolOscillatorAPI/controlAlgorithm.cpp"
@@ -599,6 +601,121 @@ namespace VanDerPolOscillatorTests
 				counter += 1;
 			}
 			Assert::AreEqual(Perf, testSPSA.P, L"FAILED - Should not fail but always fails - Performance is not correct");
+		}
+		TEST_METHOD(TestFDSensitivityAnalyzer)
+		{
+			double x[2] = { 1, 0.5 };
+			double x0[2] = { 1, 0.5 };
+			double theta[3] = { 0.1,0.1, 0.05 };
+			double dTheta = dtheta;
+			double dx[2] = { 0.0, 0.0 };
+			double k = 1;
+			double m = 3;
+			double c = 2;
+			vdpo::systemModel testModel = vdpo::systemModel::systemModel(1.0, 3.0, 2.0, vdpo::theta::two);
+
+			// Default constructor FD , 2 theta , run sensitivity analysis
+			vdpo::FD testFD = vdpo::FD::FD(vdpo::theta::two, true);
+
+			//pass the x and theta values
+			testFD.x[0] = x[0];
+			testFD.x[1] = x[1];
+			testFD.thetaVar[0] = theta[0];
+			testFD.thetaVar[1] = theta[1];
+			testFD.thetaVar[2] = theta[2];
+
+			// Set times for simulation (performance / value / cost functions)
+			testFD.setStartTime(0);
+			testFD.setStepTime(0.5);
+			testFD.setFinalTime(10);
+			testFD.iterationsCalculate();
+			Assert::AreEqual(21.0, testFD.simulationIterations, L"FAILED - (should not fail) time iterations are not correctly  calculated");
+
+			testFD.setMaxIterations(100);
+
+			testFD.thetaVar[0] = theta[0];
+			testFD.thetaVar[1] = theta[1];
+			Assert::AreEqual(theta[0], testFD.thetaVar[0], L"FAILED - theta0 is not setted correctly");
+			Assert::AreEqual(theta[1], testFD.thetaVar[1], L"FAILED - theta1 is not setted correctly");
+			//Assert::AreEqual(theta[2], testFD.thetaVar[2], L"FAILED - (should fail) theta2 is not setted correctly");
+			//testFD.setDtheta(0.5);
+			//testFD.setHetta(1);
+
+			testFD.setSystemModel(testModel);
+			testFD.runAlgorithm();
+			Logger::WriteMessage("Finished testing FD sensitivity analysis.");
+		}
+		TEST_METHOD(TestSPSASensitivityAnalyzer)
+		{
+			double x[2] = { 0.5, 0.1 };
+			double x0[2] = { 0.5, 0.1 };
+			double theta[3] = { -0.1,0.1, 1 };
+			double dTheta = dtheta;
+			double dx[2] = { 0.0, 0.0 };
+			double k = 1;
+			double m = 3;
+			double c = 2;
+			vdpo::systemModel testModel = vdpo::systemModel::systemModel(k, m, c, vdpo::theta::two);
+
+			// Default constructor FD , 2 theta , no sensitivity analysis
+			vdpo::SPSA testSPSA = vdpo::SPSA::SPSA(vdpo::theta::two,true);
+
+			//pass the x and theta values
+			testSPSA.x[0] = x[0];
+			testSPSA.x[1] = x[1];
+			testSPSA.thetaVar[0] = theta[0];
+			testSPSA.thetaVar[1] = theta[1];
+			testSPSA.thetaVar[2] = theta[2];
+
+			// Set times for simulation (performance / value / cost functions)
+			testSPSA.setStartTime(0);
+			testSPSA.setStepTime(0.5);
+			testSPSA.setFinalTime(20);
+			testSPSA.iterationsCalculate();
+			Assert::AreEqual(41.0, testSPSA.simulationIterations, L"FAILED - (should not fail) time iterations are not correctly  calculated");
+
+			testSPSA.setMaxIterations(100);
+
+			testSPSA.thetaVar[0] = theta[0];
+			testSPSA.thetaVar[1] = theta[1];
+			Assert::AreEqual(theta[0], testSPSA.thetaVar[0], L"FAILED - theta0 is not setted correctly");
+			Assert::AreEqual(theta[1], testSPSA.thetaVar[1], L"FAILED - theta1 is not setted correctly");
+			
+
+			testSPSA.setSystemModel(testModel);
+			testSPSA.runAlgorithm();
+			Logger::WriteMessage("Finished testing SPSA sensitivity analysis.");
+		}
+		TEST_METHOD(TestLQRSensitivityAnalyzer)
+		{
+			double x[2] = { 1, 0.5 };
+			double dx[2] = { 0.0, 0.0 };
+			double k = 1;
+			double m = 3;
+			double c = 2;
+			vdpo::systemModel testModel = vdpo::systemModel::systemModel(k, m, c, vdpo::theta::two);
+
+			double Q[4] = { 1.0, 0.0, 0.0, 1.0 };
+			double r = 1.0;
+			// constructor LQR , with sensitivity analysis
+			vdpo::LQR testLQR = vdpo::LQR::LQR(Q, r, true);
+
+			//pass the x and theta values
+			testLQR.x[0] = x[0];
+			testLQR.x[1] = x[1];
+
+			// Set times for simulation (performance / value / cost functions)
+			testLQR.setStartTime(0);
+			testLQR.setStepTime(0.5);
+			testLQR.setFinalTime(20);
+			testLQR.iterationsCalculate();
+			Assert::AreEqual(41.0, testLQR.simulationIterations, L"FAILED - (should not fail) time iterations are not correctly  calculated");
+
+			testLQR.setMaxIterations(100);
+
+			testLQR.setSystemModel(testModel);
+			testLQR.runAlgorithm();
+			Logger::WriteMessage("Finished testing LQR sensitivity analysis.");
 		}
 		//-------------------------------------------------------------------------------------------//
 		// Compare results from functions and Classes

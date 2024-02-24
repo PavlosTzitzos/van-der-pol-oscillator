@@ -22,6 +22,11 @@ There are three sections in the test project:
 
 3. Section 3 tests both of them to compare their results.
 
+## About Random values , Generators and Distributions
+
+Since rand() function in C++ is a pseudo-random values generator it is not recommended for scientific calculations especially for control systems where the system analysis and systhesis is important. Do not get confused with MATLAB rand() function which is already a uniform distribution of random numbers in range (0,1). To implement the same concept in C++ we declare a 'default_random_engine' object and then we create a distribution of elements in a range we want eg(0.9,1.1) and then we take from the distribution an element randomly selected from the 'default_random_engine'. In this way we can implemnt the Spall requiremnt of Dk to be random with some requirements*. According to Spall the simplest distribution that matches the requirements* is the bernoulli distribution with 0.5 percent probability. Then change the sign if the number is negative or positive.
+
+In the sensitivity analysis the distributions' ranges where selected based on tests. All those parameters cannot have big changes otherwise the control algorithm cannot drive the system to the final state and goes to infinity.
 
 ## Conventions
 

@@ -104,6 +104,10 @@ void    vdpo::FD::finiteDifferences()
         this->performanceValue2.clear();
     if (!this->performanceValue3.empty())
         this->performanceValue3.clear();
+    if (!this->x1.empty())
+        this->x1.clear();
+    if (!this->x2.empty())
+        this->x2.clear();
 
     bool plotFlag = false;
 
@@ -262,36 +266,50 @@ void    vdpo::FD::performance()
 }
 void    vdpo::FD::sensitivityAnalyzer()
 {
-    double min = 0;
-    double step = 1;
-    double max = 10;
-    
+    if (!this->parameter0.empty())
+        this->parameter0.clear();
+    if (!this->parameter1.empty())
+        this->parameter1.clear();
     // this might be unnecessary , but for now the values will be stored and then loaded again
 
     double localVar1 = this->hetta;
     double localVar2 = this->dtheta;
+
+    std::default_random_engine generator;
+    std::uniform_real_distribution<double> distribution0(0.0001, 0.002);
     // Vary hetta only
+    double step = 0.001;
+    double min = 0.005;
+    double max = 0.015;
     for (double i = min; i < max; i+= step)
     { 
         // Step the parameter
         this->hetta = i;
         // Give random values to all other parameters
-        this->dtheta = ((double)rand()) / RAND_MAX;
+        this->dtheta = distribution0(generator);
         // Calculate
         this->finiteDifferences();
         // Save results
+        this->parameter0.push_back(this->hetta);
+        this->parameter1.push_back(this->dtheta);
     }
 
+    std::uniform_real_distribution<double> distribution1(0.001,0.02);
     // Vary dtheta only
+    step = 0.0001;
+    min = 0.0005;
+    max = 0.0015;
     for (double i = min; i < max; i += step)
     {
         // Step the parameter
         this->dtheta = i;
         // Give random values to all other parameters
-        this->hetta = ((double)rand()) / RAND_MAX;
+        this->hetta = distribution1(generator);
         // Calculate
         this->finiteDifferences();
-        // Save the results
+        // Save results
+        this->parameter0.push_back(this->hetta);
+        this->parameter1.push_back(this->dtheta);
     }
     this->hetta  = localVar1;
     this->dtheta = localVar2;
@@ -588,114 +606,165 @@ void    vdpo::SPSA::performance()
 }
 void    vdpo::SPSA::sensitivityAnalyzer()
 {
-    double min = 0.01;
-    double step = 0.01;
-    double max = 1;
-    double localVars[6] = { this->betta, this->gamma, this->alpha, this->A, this->a, this->p};
+    if (!this->parameter0.empty())
+        this->parameter0.clear();
+    if (!this->parameter1.empty())
+        this->parameter1.clear();
+    if (!this->parameter2.empty())
+        this->parameter2.clear();
+    if (!this->parameter3.empty())
+        this->parameter3.clear();
+    if (!this->parameter4.empty())
+        this->parameter4.clear();
 
+    double localVars[5] = { this->betta, this->gamma, this->alpha, this->A, this->a};
+
+    std::default_random_engine generator;
+    std::uniform_real_distribution<double> distribution0(0.9, 1.1);  // this is for betta and alpha only
+    std::uniform_real_distribution<double> distribution1(0.099, 0.11);// this is for gamma, A and a only
     // Vary betta only
+    double min = 0.9;
+    double step = 0.01;
+    double max = 1.1;
     for (double i = min; i < max; i += step)
     {
         // Step the parameter
         this->betta = i;
         // Give random values to all other parameters
-        this->gamma = ((double)rand()) / RAND_MAX;
-        this->alpha = ((double)rand()) / RAND_MAX;
-        this->A = ((double)rand()) / RAND_MAX;
-        this->a = ((double)rand()) / RAND_MAX;
-        this->p = ((double)rand()) / RAND_MAX;
+        this->gamma = distribution1(generator);
+        this->alpha = distribution0(generator);
+        this->A = distribution1(generator);
+        this->a = distribution1(generator);
         // Calculate
         this->spsa();
         // Save results
-        // plot diagram of P for every value
+        this->parameter0.push_back(this->betta);
+        this->parameter1.push_back(this->gamma);
+        this->parameter2.push_back(this->alpha);
+        this->parameter3.push_back(this->A);
+        this->parameter4.push_back(this->a);
     }
-
+    // plot diagram of P for every value
+    
+    this->parameter0.clear();
+    this->parameter1.clear();
+    this->parameter2.clear();
+    this->parameter3.clear();
+    this->parameter4.clear();
+    min = 0.05;
+    step = 0.01;
+    max = 0.15;
     // Vary gamma only
     for (double i = min; i < max; i += step)
     {
         // Step the parameter
         this->gamma = i;
         // Give random values to all other parameters
-        this->betta = ((double)rand()) / RAND_MAX;
-        this->alpha = ((double)rand()) / RAND_MAX;
-        this->A = ((double)rand()) / RAND_MAX;
-        this->a = ((double)rand()) / RAND_MAX;
-        this->p = ((double)rand()) / RAND_MAX;
+        this->betta = distribution0(generator);
+        this->alpha = distribution0(generator);
+        this->A = distribution1(generator);
+        this->a = distribution1(generator);
         // Calculate
         this->spsa();
         // Save the results
+        this->parameter0.push_back(this->betta);
+        this->parameter1.push_back(this->gamma);
+        this->parameter2.push_back(this->alpha);
+        this->parameter3.push_back(this->A);
+        this->parameter4.push_back(this->a);
     }
 
+    this->parameter0.clear();
+    this->parameter1.clear();
+    this->parameter2.clear();
+    this->parameter3.clear();
+    this->parameter4.clear();
+    min = 0.9;
+    step = 0.01;
+    max = 1.1;
     // Vary alpha only
     for (double i = min; i < max; i += step)
     {
         // Step the parameter
         this->alpha = i;
         // Give random values to all other parameters
-        this->betta = ((double)rand()) / RAND_MAX;
-        this->gamma = ((double)rand()) / RAND_MAX;
-        this->A = ((double)rand()) / RAND_MAX;
-        this->a = ((double)rand()) / RAND_MAX;
-        this->p = ((double)rand()) / RAND_MAX;
+        this->betta = distribution0(generator);
+        this->gamma = distribution1(generator);
+        this->A = distribution1(generator);
+        this->a = distribution1(generator);
         // Calculate
         this->spsa();
         // Save the results
+        this->parameter0.push_back(this->betta);
+        this->parameter1.push_back(this->gamma);
+        this->parameter2.push_back(this->alpha);
+        this->parameter3.push_back(this->A);
+        this->parameter4.push_back(this->a);
     }
 
+    this->parameter0.clear();
+    this->parameter1.clear();
+    this->parameter2.clear();
+    this->parameter3.clear();
+    this->parameter4.clear();
+    min = 0.099;
+    step = 0.001;
+    max = 0.11;
     // Vary A only
     for (double i = min; i < max; i += step)
     {
         // Step the parameter
         this->A = i;
         // Give random values to all other parameters
-        this->betta = ((double)rand()) / RAND_MAX;
-        this->gamma = ((double)rand()) / RAND_MAX;
-        this->alpha = ((double)rand()) / RAND_MAX;
-        this->a = ((double)rand()) / RAND_MAX;
-        this->p = ((double)rand()) / RAND_MAX;
+        this->betta = distribution0(generator);
+        this->gamma = distribution1(generator);
+        this->alpha = distribution0(generator);
+        this->a = distribution1(generator);
         // Calculate
         this->spsa();
         // Save the results
+        this->parameter0.push_back(this->betta);
+        this->parameter1.push_back(this->gamma);
+        this->parameter2.push_back(this->alpha);
+        this->parameter3.push_back(this->A);
+        this->parameter4.push_back(this->a);
     }
 
+    this->parameter0.clear();
+    this->parameter1.clear();
+    this->parameter2.clear();
+    this->parameter3.clear();
+    this->parameter4.clear();
     // Vary a only
     for (double i = min; i < max; i += step)
     {
         // Step the parameter
         this->a = i;
         // Give random values to all other parameters
-        this->betta = ((double)rand()) / RAND_MAX;
-        this->gamma = ((double)rand()) / RAND_MAX;
-        this->alpha = ((double)rand()) / RAND_MAX;
-        this->A = ((double)rand()) / RAND_MAX;
-        this->p = ((double)rand()) / RAND_MAX;
+        this->betta = distribution0(generator);
+        this->gamma = distribution1(generator);
+        this->alpha = distribution0(generator);
+        this->A = distribution1(generator);
         // Calculate
         this->spsa();
         // Save the results
+        this->parameter0.push_back(this->betta);
+        this->parameter1.push_back(this->gamma);
+        this->parameter2.push_back(this->alpha);
+        this->parameter3.push_back(this->A);
+        this->parameter4.push_back(this->a);
     }
 
-    // Vary p only
-    for (double i = min; i < max; i += step)
-    {
-        // Step the parameter
-        this->p = i;
-        // Give random values to all other parameters
-        this->betta = ((double)rand()) / RAND_MAX;
-        this->gamma = ((double)rand()) / RAND_MAX;
-        this->alpha = ((double)rand()) / RAND_MAX;
-        this->A = ((double)rand()) / RAND_MAX;
-        this->a = ((double)rand()) / RAND_MAX;
-        // Calculate
-        this->spsa();
-        // Save the results
-    }
-    
+    this->parameter0.clear();
+    this->parameter1.clear();
+    this->parameter2.clear();
+    this->parameter3.clear();
+    this->parameter4.clear();
     this->betta = localVars[0];
     this->gamma = localVars[1];
     this->alpha = localVars[2];
     this->A     = localVars[3];
     this->a     = localVars[4];
-    this->p     = localVars[5];
 }
 
 // LQR Class
@@ -746,13 +815,20 @@ void    vdpo::LQR::setMatrices(double matQ[4], double rValue)
 void    vdpo::LQR::runAlgorithm()
 {
     if (this->sensitivityAnalysis)
-        sensitivityAnalyzer();
+        this->sensitivityAnalyzer();
     else
         //this->cost();// for debugging and testing
         this->riccati();
 }
 void    vdpo::LQR::riccati()
 {
+    if (!this->x1.empty())
+        this->x1.clear();
+    if (!this->x2.empty())
+        this->x2.clear();
+    if (!this->costValue.empty())
+        this->costValue.clear();
+    
     bool plotFlag = false;
 
     for (int i = 0; i < this->maxRepeats; i++)
@@ -970,11 +1046,19 @@ void    vdpo::LQR::cost()
 }
 void    vdpo::LQR::sensitivityAnalyzer()
 {
-    double min = 0.0;
-    double step = 0.01;
-    double max = 1;
+    if (!this->parameter0.empty())
+        this->parameter0.clear();
+    if (!this->parameter1.empty())
+        this->parameter1.clear();
+    if (!this->parameter2.empty())
+        this->parameter2.clear();
+    if (!this->parameter3.empty())
+        this->parameter3.clear();
     double localVars[5] = { this->Q[0], this->Q[1], this->Q[2], this->Q[3], this->R};
     
+    double min = 0.5;
+    double step = 0.1;
+    double max = 1.5;
     // Vary R only from 0 to 1
     for (double i = min; i < max; i += step)
     {
@@ -983,20 +1067,16 @@ void    vdpo::LQR::sensitivityAnalyzer()
         // Calculate
         this->riccati();
         // Save results
-        // plot diagram of P for every value
-    }
-    // Vary R only from 1 to 2
-    for (double i = min; i < max; i += step)
-    {
-        // Step the parameter
-        this->R = localVars[4] + i;
-        // Calculate
-        this->riccati();
-        // Save results
+        this->parameter0.push_back(i);
         // plot diagram of P for every value
     }
     this->R = localVars[4];
 
+    
+    this->parameter0.clear();
+    min = 0.0;
+    step = 0.1;
+    max = 0.5;
     std::default_random_engine generator;
     std::uniform_real_distribution<double> distribution(-1, 1); //doubles from -1 to 1
     // Vary Q only around their initial values (init +- variation) with random sign
@@ -1010,11 +1090,19 @@ void    vdpo::LQR::sensitivityAnalyzer()
         // Calculate
         this->riccati();
         // Save results
+        this->parameter0.push_back(this->Q[0]);
+        this->parameter1.push_back(this->Q[1]);
+        this->parameter2.push_back(this->Q[2]);
+        this->parameter3.push_back(this->Q[3]);
         // plot diagram of P for every value
     }
+    this->parameter0.clear();
+    this->parameter1.clear();
+    this->parameter2.clear();
+    this->parameter3.clear();
 }
 
-// Adaptive Control Class - NOT WORKING
+// AC Class - NOT WORKING
 
 vdpo::AC::AC()
 {
@@ -1048,6 +1136,6 @@ void    vdpo::AC::value()
 }
 void    vdpo::AC::sensitivityAnalyzer()
 {
-    //
+    // Add implementation
 }
 

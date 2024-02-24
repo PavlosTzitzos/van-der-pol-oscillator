@@ -18,7 +18,7 @@ namespace vdpo {
     class controlAlgorithm
     {
     public:
-        bool displayGraphs = true;
+        bool displayGraphs = false; // change this to true to display the plots.
 
         double x[2];
 
@@ -76,6 +76,7 @@ namespace vdpo {
         // a plot object with default parameters
         vdpo::displayData plotSSV = vdpo::displayData::displayData();
         vdpo::displayData plotPerformance = vdpo::displayData::displayData();
+        vdpo::displayData plotParameters = vdpo::displayData::displayData();
 
         // system model to be used by the algorithms
         vdpo::systemModel localModel = vdpo::systemModel::systemModel(1.0,1.0,1.0,theta::two);
@@ -99,7 +100,7 @@ namespace vdpo {
         double performanceThreshold = 1;
         double costThreshold = 1;
 
-        // Perfomrance Storage - Used for diagrams only
+        // Performance Storage - Used for diagrams only
         std::vector<double> performanceValue0;
         std::vector<double> performanceValue1;
         std::vector<double> performanceValue2;
@@ -113,6 +114,13 @@ namespace vdpo {
         std::vector<double> x1;
         std::vector<double> x2;
         std::vector<double> timeVector;
+
+        // Parameters Storage - Used for diagrams only
+        std::vector<double> parameter0;
+        std::vector<double> parameter1;
+        std::vector<double> parameter2;
+        std::vector<double> parameter3;
+        std::vector<double> parameter4;
     };
 
     // Finite Differences with Performance
