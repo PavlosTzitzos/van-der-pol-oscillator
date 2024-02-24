@@ -32,3 +32,10 @@ The Tests where necessary since there was no easy way to test all this methods.
 
 - [The VS code extension for LaTeX comments](https://github.com/kindermannhubert/VsTeXCommentsExtension)
 
+# Block Diagram
+
+![BlockDiagram](Diagrams/BlockDiagram.png)
+
+# Classes
+
+![Classes](Diagrams/Classes.png)
