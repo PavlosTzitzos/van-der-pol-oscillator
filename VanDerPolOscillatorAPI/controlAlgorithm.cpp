@@ -748,7 +748,6 @@ void    vdpo::LQR::runAlgorithm()
 }
 void    vdpo::LQR::riccati()
 {
-    this->costValue.clear();
     bool plotFlag = false;
 
     for (int i = 0; i < this->maxRepeats; i++)
@@ -871,11 +870,11 @@ void    vdpo::LQR::riccati()
     }
     if (plotFlag && this->displayGraphs)
     {
-        this->plotPerformance.setVector1(this->performanceValue0);
-        this->plotPerformance.graphTitle = "Performance over iterations";
-        this->plotPerformance.axisYlabel = "Performance";
+        this->plotPerformance.setVector1(this->costValue);
+        this->plotPerformance.graphTitle = "Cost over iterations";
+        this->plotPerformance.axisYlabel = "Cost";
         this->plotPerformance.axisXlabel = "Iterations";
-        this->plotPerformance.label1 = "P";
+        this->plotPerformance.label1 = "J";
         this->plotPerformance.plotData1();
 
         this->plotSSV.setVector1(this->x1);
@@ -902,6 +901,9 @@ void    vdpo::LQR::performance()
     double localX[2] = { this->x[0],this->x[1] };
     this->x1.clear();
     this->x2.clear();
+    this->P = 0.0;
+    this->performanceValue0.clear();
+    this->timeVector.clear();
 
     this->x1.push_back(localX[0]);
     this->x2.push_back(localX[1]);
@@ -918,7 +920,7 @@ void    vdpo::LQR::performance()
 
             this->x1.push_back(localX[0]);
             this->x2.push_back(localX[1]);
-
+            this->timeVector.push_back(t);
             // Do something when NaN or inf appears - Exception and Error handling
             if (isnan(localX[0]) || isnan(localX[1]))
             {
@@ -940,13 +942,14 @@ void    vdpo::LQR::performance()
             }
             norm = std::sqrt(localX[0] * localX[0] + localX[1] * localX[1]);
             this->P += norm;
+            this->performanceValue0.push_back(this->J);
         }
         catch (const std::overflow_error& e)
         {
             std::cout << "Inside Finite Differencies Performance method at iteration: " << i << " an overflow has occured. More details are shown below: " << std::endl;
             std::cout << "Exception " << e.what() << std::endl;
             std::cout << "Stoping execution..." << std::endl;
-            exit(100);
+            return;
         }
     }
 }
@@ -959,6 +962,7 @@ void    vdpo::LQR::cost()
     this->x2.clear();
     this->J = 0.0;
     this->timeVector.clear();
+    this->costValue.clear();
 
     this->x1.push_back(localX[0]);
     this->x2.push_back(localX[1]);
@@ -1002,16 +1006,17 @@ void    vdpo::LQR::cost()
                 + localX[1] * localX[1] * this->Q[3];
 
             this->J += sum;
+            this->costValue.push_back(this->J);
         }
         catch (const std::overflow_error& e)
         {
             std::cout << "Inside LQR Cost method at iteration: " << i << " an overflow has occured. More details are shown below: " << std::endl;
             std::cout << "Exception " << e.what() << std::endl;
             std::cout << "Stoping execution..." << std::endl;
-            exit(100);
+            return;
         }
     }
-    this->costValue.push_back(this->J);
+    
 }
 void    vdpo::LQR::sensitivityAnalyzer()
 {

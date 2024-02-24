@@ -22,7 +22,7 @@
 
 /* LQR */
 #define N 100           /* Riccati number of iterations */
-#define timeFinalLQR 5000 /* Final time for LQR performance */
+#define timeFinalLQR 100/* Final time for LQR performance */
 
 /* Adaptive Control Parameters */
 #define dt 0.01         /* Step parameter for AC */
@@ -130,7 +130,7 @@ std::array<std::array<double, timeFinal + 1>, 3> performance(std::array<double, 
 * @param filename : File name to save data
 * @return Total performance
 */
-std::array<std::array<double, timeFinalLQR + 1>, 3> performanceLQR(std::array<double, 2> x_old, std::array<double, 2> K, std::string filename);
+std::array<std::array<double, timeFinalLQR + 1>, 3> costLQR(std::array<double, 2> x_old, std::array<double, 2> K, std::array<double, 3> systemParameters, std::array<double, 4> Q, std::string filename);
 
 /** Algebraic Riccati Equation Solver. Solved for a 2x2 matrices or a system of 4 equations.
 * @param matA : A matrix (2x2)
@@ -161,7 +161,7 @@ std::array<double, 2> lqr(std::array<double, 2>x_old, double q, double r);
 std::array<std::array<double, timeFinal + 3>, 2> value(std::array<double, 2> x, std::array<double, 2> thetaA, std::array<double, 2> thetaR, std::array<double, 2> dThetaE, double m);
 
 // Correct LQR implementation - basicly this works
-std::array<double, timeFinalLQR + 1> lqrTop(std::array<double, 2> x0, std::array<double, 3> theta, std::array<double, 3> systemParameters, std::string st, algorithms algo_sel, std::array<double, 10> constantParameters);
+std::array<double, timeFinalLQR> lqrTop(std::array<double, 2> x0, std::array<double, 3> theta, std::array<double, 3> systemParameters, std::string st, algorithms algo_sel, std::array<double, 10> constantParameters);
 
 /** Gradient Descent with Algorithm selection.
 * @param x0 : Initial state

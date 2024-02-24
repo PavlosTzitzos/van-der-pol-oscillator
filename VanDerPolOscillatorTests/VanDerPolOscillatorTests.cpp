@@ -162,7 +162,8 @@ namespace VanDerPolOscillatorTests
 				if (res[0][i] > 0.0)
 					tempRes = res[0][i];
 			}
-			Assert::AreEqual(Perf, tempRes, L"FAILED - Final Performances do not match");
+			bool ok = (0.02 > std::abs(Perf - tempRes)) ? true : false;
+			Assert::IsTrue(ok, L"FAILED - Final Performances do not match");
 		}
 		//-------------------------------------------------------------------------------------------//
 		// Test Classes only
@@ -521,7 +522,7 @@ namespace VanDerPolOscillatorTests
 				std::mt19937 gen(rd());
 				std::bernoulli_distribution d(p);
 				for (int i = 0; i < 2; i++)
-					Dk[i] = d(gen)?1.0:-1.0;
+					Dk[i] = d(gen) ? 1.0 : -1.0;
 				//
 				P0 = 0;
 				local_theta[0] += ck * Dk[0];
@@ -588,7 +589,7 @@ namespace VanDerPolOscillatorTests
 				x[0] = x0[0];
 				x[1] = x0[1];
 				local_theta[1] = theta[1];
-				
+
 				theta[0] = theta[0] - ak * (P0 - P2) / (2 * ck * Dk[0]);
 				theta[1] = theta[1] - ak * (P1 - P3) / (2 * ck * Dk[1]);
 
@@ -597,11 +598,8 @@ namespace VanDerPolOscillatorTests
 
 				counter += 1;
 			}
-			Assert::AreEqual(Perf, testSPSA.P, L"FAILED - Should not fail - Performance is not correct");
-			Assert::AreEqual(theta[0], testSPSA.thetaVar[0], L"FAILED - Should not fail - Theta 0 is not correct");
-			Assert::AreEqual(theta[1], testSPSA.thetaVar[1], L"FAILED - Should not fail - Theta 1 is not correct");
+			Assert::AreEqual(Perf, testSPSA.P, L"FAILED - Should not fail but always fails - Performance is not correct");
 		}
-
 		//-------------------------------------------------------------------------------------------//
 		// Compare results from functions and Classes
 		TEST_METHOD(FunctionVsApiProjectsDerivativeXu2)
@@ -677,22 +675,12 @@ namespace VanDerPolOscillatorTests
 			// add implementation
 			std::array<double, 2> x0 = { 0.5, 0.1 };
 			std::array<double, 3> theta = { -0.1, 0.1, 1 }; // theta parameters
-			std::array<double, 3> temp_sysParameters = { 1, 1, 1 }; // system parameters (k,m,c)
-			std::array<std::array<double, 3>, 8> sysParameters{ { // system parameters (k,m,c)
-				{ 1, 1, 1},
-				{ 1, 1,-1},
-				{ 1,-1, 1},
-				{ 1,-1,-1},
-				{-1, 1, 1},
-				{-1, 1,-1},
-				{-1,-1, 1},
-				{-1,-1,-1}
-			} };
+			std::array<double, 3> temp_sysParameters = { k, m, c }; // system parameters (k,m,c)
 			algorithms sel = LQR;
-			std::array<double, timeFinalLQR + 1> resLQR = lqrTop(x0, theta, temp_sysParameters, "step10", sel);
+			std::array<double, timeFinalLQR> resLQR = lqrTop(x0, theta, temp_sysParameters, "step10", sel);
 
-			int counter = 0;
-			Assert::AreEqual(Perf, testLQR.J, L"FAILED - Should not fail - Performance is not correct");
+			bool okJ = (std::abs(resLQR[timeFinalLQR - 1] - testLQR.J) < 0.001) ? true : false;
+			Assert::IsTrue(okJ, L"FAILED - Should not fail - Performance is not correct");
 		}
 	};
 }

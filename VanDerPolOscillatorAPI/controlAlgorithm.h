@@ -115,7 +115,7 @@ namespace vdpo {
         std::vector<double> timeVector;
     };
 
-    // Finite Differences Algorithm
+    // Finite Differences with Performance
     class FD : public controlAlgorithm
     {
     public:
@@ -171,6 +171,7 @@ namespace vdpo {
         void sensitivityAnalyzer();
     };
 
+    // Simultaneous Perturbation Stochastic Approximation with Performance
     class SPSA : public controlAlgorithm
     {
     public:
@@ -247,6 +248,7 @@ namespace vdpo {
         void sensitivityAnalyzer();
     };
 
+    // Linear Quadratic Regulator with DARE and Cost Function
     class LQR : public controlAlgorithm
     {
     public:
@@ -323,6 +325,7 @@ namespace vdpo {
         void sensitivityAnalyzer();
     };
 
+    // Adaptive Control - NOT WORKING
     class AC :public controlAlgorithm
     {
     public:

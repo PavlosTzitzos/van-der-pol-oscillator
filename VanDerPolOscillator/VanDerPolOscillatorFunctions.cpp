@@ -164,26 +164,26 @@ std::array<std::array<double, timeFinal + 1>, 3> performance(std::array<double, 
     return res;
 }
 
-std::array<std::array<double, timeFinalLQR + 1>, 3> performanceLQR(std::array<double, 2> x_old, std::array<double, 2> K, std::string filename = "dump.txt")
+std::array<std::array<double, timeFinalLQR + 1>, 3> costLQR(std::array<double, 2> x_old, std::array<double, 2> K, std::array<double, 3> systemParameters = {1,1,1}, std::array<double, 4> Q = {1,0,0,1}, std::string filename = "dump.txt")
 {
     std::ofstream results;
     results.open(filename, std::ofstream::app);
     results << "\n" << std::endl;
     results << "t" << "\t" << "x[0]" << "\t" << "x[1]" << "\t" << "P" << "\t" << "theta[0]" << "\t" << "theta[1]" << "\t" << "theta[2]" << std::endl;
 
-    double P = 0;
+    double J = 0;
     std::array<double, 2> x_new;
     x_new[0] = x_old[0];
     x_new[1] = x_old[1];
 
-    std::array<double, timeFinalLQR> norm;
+    std::array<double, timeFinalLQR> sum;
 
     std::array<std::array<double, timeFinalLQR + 1>, 3> res;
 
     for (int i = 0; i < timeFinalLQR; i++)
-        norm[i] = 0;
+        sum[i] = 0;
 
-    res[0][0] = P;
+    res[0][0] = J;
     res[1][0] = x_old[0];
     res[2][0] = x_old[1];
 
@@ -195,17 +195,25 @@ std::array<std::array<double, timeFinalLQR + 1>, 3> performanceLQR(std::array<do
         //tex:
         //$\begin{align*} \vec{x}_{new} = \vec{x}_{old} + dt \cdot \dot{\vec{x}} = \vec{x}_{old} + dt \cdot f(\vec{x}_{old} , u(\vec{x}_{old} , \vec{\theta} ) ) \end{align*}$
 
-        x_new[0] = x_old[0] - timeStep * fLQR(x_old, uLQR(x_old, K))[0];
-        x_new[1] = x_old[1] - timeStep * fLQR(x_old, uLQR(x_old, K))[1];
+        x_new[0] = x_old[0] - timeStep * f(x_old, uLQR(x_old, K), systemParameters[0], systemParameters[1], systemParameters[2])[0];
+        x_new[1] = x_old[1] - timeStep * f(x_old, uLQR(x_old, K), systemParameters[0], systemParameters[1], systemParameters[2])[1];
 
         // Calculate the norm
-        norm[t] = sqrt(std::abs(std::pow(x_new[0], 2)) + std::abs(std::pow(x_new[1], 2)));
+        //norm[t] = sqrt(std::abs(std::pow(x_new[0], 2)) + std::abs(std::pow(x_new[1], 2)));
         // Calculate the performance
         //tex:
         //$\begin{align*} P = \sum_{t=0}^{t_{final}} \sqrt{x_{new , t , 1}^2 + x_{new , t , 2}^2} \end{align*}$
 
 
-        P = P + norm[t];
+        //P = P + norm[t];
+
+        // Calculate cost
+        sum[t] = x_new[0] * x_new[0] * Q[0]
+            + x_new[0] * x_new[1] * Q[2]
+            + x_new[0] * x_new[1] * Q[1]
+            + x_new[1] * x_new[1] * Q[3];
+
+        J = J + sum[t];
 
         // Replace x old with x new:
         x_old[0] = x_new[0];
@@ -213,12 +221,14 @@ std::array<std::array<double, timeFinalLQR + 1>, 3> performanceLQR(std::array<do
 
         if (results.is_open())
         {
-            results << t << "\t" << x_new[0] << "\t" << x_new[1] << "\t" << norm[t] << "\t" << P << "\t" << K[0] << "\t" << K[1] << std::endl;
+            results << t << "\t" << x_new[0] << "\t" << x_new[1] << "\t" << sum[t] << "\t" << J << "\t" << K[0] << "\t" << K[1] << std::endl;
         }
         else std::cout << "\nUnable to open file\n";
-        res[0][t + 1] = P;
+        res[0][t + 1] = J;
         res[1][t + 1] = x_old[0];
         res[2][t + 1] = x_old[1];
+
+        //if (x_old[0] < 0.01 && x_old[1] < 0.01) break;
     }
     return res;
 }
@@ -317,10 +327,12 @@ std::array<double, 2> lqr(std::array<double, 2>x_old, double q, double r)
     // Step 1 : Calculate the P matrix backwards using algebraic riccati equation
     //tex:
     //$\begin{align*} P =  Q + A^T P A - A^T P B (R + B^T P B)^{-1} B^T P A\end{align*}$
-    for (int i = N - 1; i >= 0; i--) // riccati iterations
-    {
-        tempP = riccati2(matA, matB, matQ, tempP, matR);
-    }
+    
+    
+    //for (int i = N - 1; i >= 0; i--) // riccati iterations
+    //{
+    tempP = riccati2(matA, matB, matQ, tempP, matR);
+    //}
     // Final Solution :
     matP[0] = tempP[0];
     matP[1] = tempP[1];
@@ -416,7 +428,7 @@ std::array<std::array<double, timeFinal + 3>, 2> value(std::array<double, 2> x, 
     return res;
 }
 
-std::array<double, timeFinalLQR + 1> lqrTop(std::array<double, 2> x0, std::array<double, 3> theta, std::array<double, 3> systemParameters = { 1,1,1 }, std::string st = "", algorithms algo_sel = FD2, std::array<double, 10> constantParameters = { hetta, dtheta, betta, gamma, alpha, A, a, p, gac, dt })
+std::array<double, timeFinalLQR> lqrTop(std::array<double, 2> x0, std::array<double, 3> theta, std::array<double, 3> systemParameters = { 1,1,1 }, std::string st = "", algorithms algo_sel = FD2, std::array<double, 10> constantParameters = { hetta, dtheta, betta, gamma, alpha, A, a, p, gac, dt })
 {
 
     std::array<double, timeFinalLQR> v0, v1;
@@ -429,9 +441,9 @@ std::array<double, timeFinalLQR + 1> lqrTop(std::array<double, 2> x0, std::array
     local_x[1] = x0[1];
 
 
-    std::array<double, timeFinalLQR + 1> ret;
+    std::array<double, timeFinalLQR> ret;
 
-    while (std::abs(Perf) < 10 && counter < MAX_REPEATS)
+    while (counter < MAX_REPEATS)
     {
         std::ofstream results;
         std::string filename = "results_lqr_" + std::to_string(counter) + ".txt";
@@ -443,7 +455,7 @@ std::array<double, timeFinalLQR + 1> lqrTop(std::array<double, 2> x0, std::array
         //results << "\n" << "Current K : [ " << K[0] << " , " << K[1] << " ] " << std::endl;
 
         // Step 2 : Calculate performance
-        resPerf = performanceLQR(x0, K, filename);
+        resPerf = costLQR(x0, K, systemParameters, {1,0,0,1}, filename);
 
         // Prepare data for diagram :
         for (int i = 0; i < timeFinalLQR; i++)
@@ -466,6 +478,8 @@ std::array<double, timeFinalLQR + 1> lqrTop(std::array<double, 2> x0, std::array
         // Check for anomalies
         if (isinf<double>(Perf) || isnan<double>(Perf)) break;
 
+        if (counter > 0)
+            if (std::abs(ret[counter] - ret[counter - 1]) < 1) break;
         counter += 1;
     }
     Gnuplot gp("\"C:\\Program Files\\gnuplot\\bin\\gnuplot.exe\"");
@@ -969,7 +983,7 @@ std::array<std::array<double, MAX_REPEATS>, 2> gradientDescent(std::array<double
         // DO NOT USE THIS SWITCH CASE
         return P_res;
     }
-    case AC: // Adaptive Control ALgorithm
+    case AC: // Adaptive Control ALgorithm - NOT WORKING
     {
         std::array<double, 2> P = { 0,0 };
         std::array<double, 2> thetaHat = { theta[0],theta[1] };
