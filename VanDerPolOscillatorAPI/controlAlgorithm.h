@@ -318,9 +318,6 @@ namespace vdpo {
         // Calculate Cost
         void cost();
 
-        // Calculate Performance
-        void performance();
-
         // Sensitivity Analysis Implementation
         void sensitivityAnalyzer();
     };

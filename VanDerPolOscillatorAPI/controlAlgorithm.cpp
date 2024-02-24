@@ -894,65 +894,6 @@ void    vdpo::LQR::riccati()
         this->plotSSV.plotPair();
     }
 }
-void    vdpo::LQR::performance()
-{
-    double norm = 0;
-    int i = 0;
-    double localX[2] = { this->x[0],this->x[1] };
-    this->x1.clear();
-    this->x2.clear();
-    this->P = 0.0;
-    this->performanceValue0.clear();
-    this->timeVector.clear();
-
-    this->x1.push_back(localX[0]);
-    this->x2.push_back(localX[1]);
-    for (double t = this->startTime; t < this->finalTime; t += this->stepTime)
-    {
-        try
-        {
-            i++;
-            this->localModel.setSSV(localX);
-            this->localModel.setTheta2(this->K);
-            this->localModel.dxCalculate();
-            localX[0] = localX[0] - this->stepTime * (this->localModel.getDx()[0]);
-            localX[1] = localX[1] - this->stepTime * (this->localModel.getDx()[1]);
-
-            this->x1.push_back(localX[0]);
-            this->x2.push_back(localX[1]);
-            this->timeVector.push_back(t);
-            // Do something when NaN or inf appears - Exception and Error handling
-            if (isnan(localX[0]) || isnan(localX[1]))
-            {
-                throw std::runtime_error("103 - Calculated x is NaN!");
-            }
-            if (isinf(localX[0]) || isinf(localX[1]))
-            {
-                throw std::runtime_error("104 - Calculated x is infinity!");
-            }
-            if (std::abs(localX[0]) > 1e7 || std::abs(localX[1]) > 1e7)
-            {
-                throw std::runtime_error("104 - Calculated x is infinity!");
-            }
-
-            if (std::abs(localX[0]) < 1e-7 || std::abs(localX[1]) < 1e-7)
-            {
-                std::cout << "Zero reached successfully at time " << t << " with performance P = " << this->P << std::endl;
-                break;
-            }
-            norm = std::sqrt(localX[0] * localX[0] + localX[1] * localX[1]);
-            this->P += norm;
-            this->performanceValue0.push_back(this->J);
-        }
-        catch (const std::overflow_error& e)
-        {
-            std::cout << "Inside Finite Differencies Performance method at iteration: " << i << " an overflow has occured. More details are shown below: " << std::endl;
-            std::cout << "Exception " << e.what() << std::endl;
-            std::cout << "Stoping execution..." << std::endl;
-            return;
-        }
-    }
-}
 void    vdpo::LQR::cost()
 {
     double sum = 0;
