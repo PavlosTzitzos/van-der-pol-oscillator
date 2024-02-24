@@ -702,16 +702,16 @@ void    vdpo::SPSA::sensitivityAnalyzer()
 
 vdpo::LQR::LQR()
 {
-    //
+    this->sensitivityAnalysis = false;
     this->numberOfThetaType = theta::none;
     this->x[0] = 0.0;
     this->x[1] = 0.0;
     this->K[0] = 0.0;
     this->K[1] = 0.0;
 }
-vdpo::LQR::LQR(double Q[4], double R)
+vdpo::LQR::LQR(double Q[4], double R, bool sensitivityAnalysis)
 {
-    //
+    this->sensitivityAnalysis = sensitivityAnalysis;
     this->numberOfThetaType = theta::none;
     this->x[0] = 0.0;
     this->x[1] = 0.0;
@@ -727,7 +727,6 @@ double* vdpo::LQR::getQ() { return this->Q; }
 double  vdpo::LQR::getR() { return this->R; }
 double* vdpo::LQR::getK() { return this->K; }
 double  vdpo::LQR::getJ() { return this->J; }
-double  vdpo::LQR::getP() { return this->P; }
 void    vdpo::LQR::setQ(double matrix[4])
 { 
     this->Q[0] = matrix[0];
@@ -1015,7 +1014,7 @@ void    vdpo::LQR::sensitivityAnalyzer()
     }
 }
 
-// Adaptive Control Class
+// Adaptive Control Class - NOT WORKING
 
 vdpo::AC::AC()
 {

@@ -256,7 +256,7 @@ namespace vdpo {
 
         LQR();
 
-        LQR(double Q[4], double R);
+        LQR(double Q[4], double R, bool sensitivityAnalysis);
 
         // NOTE:
         // 
@@ -280,9 +280,6 @@ namespace vdpo {
         // Final calculated cost
         double getJ();
 
-        // Final calculated performance
-        double getP();
-
         // Access Methods - Setters
 
         // Input Q matrix elements like: 
@@ -296,9 +293,6 @@ namespace vdpo {
 
         // Cost result
         double J = 0;
-
-        // Performance result
-        double P = 0;
 
         // run the implementation
         void runAlgorithm();
